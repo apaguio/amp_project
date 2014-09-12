@@ -1,0 +1,4 @@
+apt-get install python-dev mongodb-server redis-server
+
+wget http://s3.amazonaws.com/influxdb/influxdb_latest_amd64.deb
+sudo dpkg -i influxdb_latest_amd64.deb
