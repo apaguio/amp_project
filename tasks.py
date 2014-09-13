@@ -1,22 +1,23 @@
 import settings
 import requests
-from datetime import datetime, timedelta
 from celery import Celery
+from celery.utils.log import get_task_logger
 import xml.etree.ElementTree as ET
 from influxdb_factory import get_influxdb
 
 celery = Celery('cenergy_insights')
 celery.config_from_object('settings')
 influxdb = get_influxdb()
+logger = get_task_logger(__name__)
 
 @celery.task
 def add(x, y):
     return x + y
 
 @celery.task(name="tasks.ekm.collect")
-def ekm_collect(meter_id, nr_readings, key, endpoint='io.ekmpush.com'):
-    def _to_epoch(d):
-        return (d - datetime(1970, 1, 1)).total_seconds()
+def ekm_collect(meter_id, nr_readings, key, endpoint='io.ekmpush.com', simulate_solar=False):
+    logger.info('executing task: "ekm_collect" with args: meter_id:%s, nr_readings:%s, key:%s' %
+                (meter_id, nr_readings, key))
     def _compute_pf(pf):
         if pf < 100:
             pf = pf / 100.0
@@ -30,10 +31,12 @@ def ekm_collect(meter_id, nr_readings, key, endpoint='io.ekmpush.com'):
     data = {'name': meter_id, 'columns': ['time', 'P', 'L1_PF', 'L1_V'], 'points': []}
     root = ET.fromstring(ekm_data)
     for read in root.iter('read'):
-        seq = _to_epoch(datetime.fromtimestamp(long(read.get('seq'))/1000) - timedelta(minutes=5))
+        seq = long(read.get('seq'))/1000
         P = long(read.get('P')) # TODO: measured by W, to be converted to kW (i.e: /1000)
+        if simulate_solar:
+            P = P / 3
         L1_PF = _compute_pf(int(read.get('L1_PF')))
         L1_V = int(read.get('L1_V')) / 10
         data['points'].append([seq, P, L1_PF, L1_V])
 
-    influxdb.write_points_with_precision(data, 'ms')
+    influxdb.write_points([data])
