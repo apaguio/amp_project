@@ -9,10 +9,6 @@ celery.config_from_object('celery_settings')
 influxdb = get_influxdb()
 logger = get_task_logger(__name__)
 
-@celery.task
-def add(x, y):
-    return x + y
-
 @celery.task(name="tasks.ekm.collect")
 def ekm_collect(meter_id, nr_readings, key, endpoint='io.ekmpush.com', simulate_solar=False):
     logger.info('executing task: "ekm_collect" with args: meter_id:%s, nr_readings:%s, key:%s' %

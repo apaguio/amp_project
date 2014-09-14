@@ -9,16 +9,6 @@ app.config.from_object('flask_settings')
 influxdb = get_influxdb()
 mongodb = PyMongo(app)
 
-@app.route("/test")
-def hello_world(x=16, y=16):
-    x = int(request.args.get("x", x))
-    y = int(request.args.get("y", y))
-    res = add.apply_async((x, y))
-    context = {"id": res.task_id, "x": x, "y": y}
-    result = "add((x){}, (y){})".format(context['x'], context['y'])
-    goto = "{}".format(context['id'])
-    return jsonify(body=result, goto=goto, result=res.get())
-
 @app.route('/tarrif/<name>')
 def get_tarrif_details(name):
     # later on, can be extended by periods
