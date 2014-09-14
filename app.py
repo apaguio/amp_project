@@ -15,5 +15,14 @@ def get_tarrif_details(name):
     result = mongodb.db.tarrif.find_one({'name': name}, fields={'_id': False}) or list()
     return jsonify(result)
 
+@app.route('/ekm_data_one_second/<meter_id>/<int:duration_in_seconds>')
+def get_ekm_data_one_sec_intervals(duration_in_seconds):
+    query = 'select * from "%s" where time > now() - %ss' % (meter_id, duration_in_seconds)
+    result = influxdb.query(query)
+    if result:
+        return jsonify(result[0])
+    else:
+        return jsonify(result)
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
