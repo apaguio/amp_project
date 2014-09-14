@@ -1,4 +1,3 @@
-import settings
 import requests
 from celery import Celery
 from celery.utils.log import get_task_logger
@@ -6,7 +5,7 @@ import xml.etree.ElementTree as ET
 from influxdb_factory import get_influxdb
 
 celery = Celery('cenergy_insights')
-celery.config_from_object('settings')
+celery.config_from_object('celery_settings')
 influxdb = get_influxdb()
 logger = get_task_logger(__name__)
 
