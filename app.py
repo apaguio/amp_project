@@ -2,7 +2,6 @@ from flask_settings import *
 from flask import Flask, Blueprint, abort, jsonify, request, session
 from influxdb_factory import get_influxdb
 from flask.ext.pymongo import PyMongo
-from tasks import add
 
 app = Flask(__name__)
 app.config.from_object('flask_settings')
@@ -16,13 +15,17 @@ def get_tarrif_details(name):
     return jsonify(result)
 
 @app.route('/ekm_data_one_second/<meter_id>/<int:duration_in_seconds>')
-def get_ekm_data_one_sec_intervals(duration_in_seconds):
+def get_ekm_data_one_sec_intervals(meter_id, duration_in_seconds):
     query = 'select * from "%s" where time > now() - %ss' % (meter_id, duration_in_seconds)
     result = influxdb.query(query)
     if result:
         return jsonify(result[0])
     else:
         return jsonify(result)
+
+@app.route('/current_demand/<meter_id>')
+def get_current_demand(meter_id):
+    pass
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
