@@ -25,7 +25,12 @@ def get_ekm_data_one_sec_intervals(meter_id, duration_in_seconds):
 
 @app.route('/current_demand/<meter_id>')
 def get_current_demand(meter_id):
-    pass
+    query = 'select mean(P) as current_demand from "%s" group by time(15m) limit 1' % meter_id
+    result = influxdb.query(query)
+    if result:
+        return jsonify(result[0]['points'][0][1])
+    else:
+        return jsonify(result)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
