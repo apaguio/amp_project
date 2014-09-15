@@ -1,0 +1,41 @@
+<nav></nav>
+
+<div id="main" class="container">
+  <div class="row">
+
+    <div class="logincontainer col-xs-12 col-sm-offset-2 col-sm-8 col-md-offset-3 col-md-6
+      col-lg-offset-4 col-lg-4">
+
+      <h2 class="text-center">Welcome to Insight</h2>
+
+      <iframe src="sink.html" name="sink" style="display:none"></iframe>
+      <form class="form-horizontal" role="form" name="loginform"
+        ng-submit="login(credentials)" novalidate form-autofill-fix>
+        <div class="alert alert-danger" role="alert" ng-show="error"
+          ng-animate="{show: 'fadeIn', hide:'fadeOut'}">{{error}}</div>
+        <div class="form-group">
+          <label for="username" class="col-sm-3 control-label">Username</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" id="username"
+            placeholder="Username" ng-model="credentials.username"
+            ng-change="typing()">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="password" class="col-sm-3 control-label">Password</label>
+          <div class="col-sm-9">
+            <input type="password" class="form-control" id="password"
+            placeholder="Password" ng-model="credentials.password"
+            ng-change="typing()">
+          </div>
+        </div>
+        <div class="form-group buttons">
+          <div class="pull-right">
+            <button type="submit" class="btn btn-default">OK</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>

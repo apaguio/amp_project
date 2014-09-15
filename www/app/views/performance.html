@@ -1,0 +1,82 @@
+<nav link="performance"></nav>
+<div class="">
+  <div class="col-xs-12 col-sm-5 col-md-4 col-lg-3 leftwidgets">
+    <div class="mediumwidget col-xs-12">
+      <h4 class="title">Current Billing Period</h4>
+      <h3 class="maincontent capitalize">{{data.billing_period}}</h3>
+      <h4 class="time">{{data.billingPeriodStartDate | date:'MMM d'}} -
+        {{data.billingPeriodEndDate | date:'MMM d, yyyy'}}</h4>
+    </div>
+    <div class="mediumwidget col-xs-12">
+      <h4 class="title">Current Season</h4>
+      <h3 class="maincontent capitalize">{{data.season}}</h3>
+      <h4 class="time">{{data.seasonStartDate | date:'MMM d'}} -
+        {{data.seasonEndDate | date:'MMM d'}}</h4>
+    </div>
+    <div class="mediumwidget col-xs-12">
+      <h4 class="title">Rate Tariff</h4>
+      <h3 class="maincontent">{{data.tariff}}</h3>
+    </div>
+  </div>
+  <div class="hidden-xs col-sm-7 col-md-8 col-lg-9">
+    <div class="col-xs-12" class="chartcontainer">
+      <div id="performancechart"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+$(function () {
+    $('#performancechart').highcharts({
+
+        chart: {
+            type: 'column'
+        },
+
+        title: {
+            text: "This month's projections"
+        },
+
+        xAxis: {
+            categories: ['Energy', 'Demand', 'Solar', 'Total']
+        },
+
+        yAxis: {
+            allowDecimals: false,
+            min: 0,
+            title: {
+                text: 'Number of fruits'
+            }
+        },
+
+        tooltip: {
+            formatter: function () {
+                return '<b>' + this.x + '</b><br/>' +
+                    this.series.name + ': ' + this.y + '<br/>' +
+                    'Total: ' + this.point.stackTotal;
+            }
+        },
+
+        plotOptions: {
+            column: {
+                stacking: 'normal'
+            }
+        },
+
+        series: [{
+            name: 'Last Year',
+            data: [5, 3, 4, 7],
+            stack: 'male'
+        }, {
+            name: 'Last Month',
+            data: [3, 4, 4, 2],
+            stack: 'male'
+        }, {
+            name: 'This Month',
+            data: [2, 5, 6, 2],
+            stack: 'female'
+        }]
+    });
+});
+</script>
