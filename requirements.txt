@@ -3,4 +3,3 @@ flask-pymongo
 celery[redis]
 redis
 influxdb
-pytz
