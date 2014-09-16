@@ -1,4 +1,5 @@
 flask
+flask-jsonpify
 flask-pymongo
 celery[redis]
 redis

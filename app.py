@@ -6,7 +6,7 @@ from helpers import CreateResponse
 
 app = Flask(__name__)
 app.config.from_object('flask_settings')
-app.secret_key = SECRET_KEY
+app.secret_key = "somesecretkey77"
 influxdb = get_influxdb()
 mongodb = PyMongo(app)
 # Building the Response instance that is used to form the json structure
