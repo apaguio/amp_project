@@ -1,8 +1,11 @@
 from flask_settings import *
+from gevent import monkey
+from socketio.server import SocketIOServer
 from flask import Flask, Blueprint, abort, jsonify, request, session
 from influxdb_factory import get_influxdb
 from flask.ext.pymongo import PyMongo
 from helpers import CreateResponse
+import redis
 
 app = Flask(__name__)
 app.config.from_object('flask_settings')
@@ -10,6 +13,8 @@ app.secret_key = "somesecretkey77"
 influxdb = get_influxdb()
 mongodb = PyMongo(app)
 # Building the Response instance that is used to form the json structure
+redisServer = redis.Redis()
+pubsub = redisServer.pubsub()
 r = CreateResponse()
 
 @app.route('/tarrif/<name>')
@@ -40,6 +45,12 @@ def get_current_demand(meter_id):
 from views.performance import *
 from views.powerview import *
 
+monkey.patch_all()
+
+PORT = 5000
+SOCKETIOPORT = 5001
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=PORT)
+    SocketIOServer(('', SOCKETIOPORT), app, resource="socket.io").serve_forever()
+

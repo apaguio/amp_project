@@ -3,6 +3,7 @@ from celery import Celery
 from celery.utils.log import get_task_logger
 import xml.etree.ElementTree as ET
 from influxdb_factory import get_influxdb
+from app import redisSrever
 
 celery = Celery('cenergy_insights')
 celery.config_from_object('celery_settings')
@@ -34,4 +35,9 @@ def ekm_collect(meter_id, nr_readings, key, endpoint='io.ekmpush.com', simulate_
         L1_V = int(read.get('L1_V')) / 10
         data['points'].append([seq, P, L1_PF, L1_V])
 
+    # Publishing to pubsub when event occurs, to be sent by socket.io
+    publishMsg = {"meter_id": meter_id, "point": [seq, P, L1_PF, L1_V]}
+    redisSrever.publish('point', publishMsg)
+
+    # Write to timeseries db
     influxdb.write_points([data])

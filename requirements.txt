@@ -4,3 +4,4 @@ flask-pymongo
 celery[redis]
 redis
 influxdb
+gevent-socketio

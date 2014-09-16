@@ -1,4 +1,11 @@
-from app import app, r
+from flask import Response, request
+from socketio import socketio_manage
+from socketio.namespace import BaseNamespace
+from socketio.mixins import RoomsMixin, BroadcastMixin
+from werkzeug.exceptions import NotFound
+from gevent import monkey
+from app import r, app, pubsub
+
 
 @app.route("/powerview", methods=["POST"])
 def powerview():
@@ -21,3 +28,23 @@ def powerview():
         "power_factor": 0.9
     })
 
+
+class PowerViewNS(BaseNamespace, RoomsMixin, BroadcastMixin):
+
+    data = []
+
+    def initialize(self):
+        self.logger = app.logger
+        self.log("Socketio session started")
+        points = pubsub.subscribe(['point'])
+        for point in points:
+            self.broadcast_event('point', point)
+
+@app.route('/socket.io/<path:remaining>')
+def socketio(remaining):
+    try:
+        socketio_manage(request.environ, {'/powerview': PowerViewNS}, request)
+    except:
+        app.logger.error("Exception while handling socketio connection",
+                         exc_info=True)
+    return Response()
