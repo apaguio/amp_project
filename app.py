@@ -36,12 +36,12 @@ def get_current_demand(meter_id):
     else:
         return jsonify(result)
 
-@app.route("/api/logout", methods=["POST"])
+@app.route("/logout", methods=["POST"])
 def logout():
     session['logged_in'] = False
     return r.success()
 
-@app.route("/api/login", methods=["POST"])
+@app.route("/login", methods=["POST"])
 def login():
     credentials = request.json
     if credentials['username'] != 'test' or credentials['password'] != 'test':
@@ -57,7 +57,7 @@ def login():
             "csrf_token": session.get('csrf_token')
         })
 
-@app.route("/api/performance", methods=["POST"])
+@app.route("/performance", methods=["POST"])
 def performance():
     return r.success({
         "billing_period": "september",
@@ -69,7 +69,7 @@ def performance():
         "tariff": "AG-5E"
     })
 
-@app.route("/api/powerview", methods=["POST"])
+@app.route("/powerview", methods=["POST"])
 def powerview():
     return r.success({
         "billing_period": "september",
