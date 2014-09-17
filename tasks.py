@@ -3,6 +3,7 @@ from celery import Celery
 from celery.utils.log import get_task_logger
 import xml.etree.ElementTree as ET
 from influxdb_factory import get_influxdb
+from datetime import datetime
 
 celery = Celery('cenergy_insights')
 celery.config_from_object('celery_settings')
@@ -27,11 +28,13 @@ def ekm_collect(meter_id, nr_readings, key, endpoint='io.ekmpush.com', simulate_
     root = ET.fromstring(ekm_data)
     for read in root.iter('read'):
         seq = (long(read.get('seq'))/1000) - 300 # -300 seconds, fix ekm bug +5 mins
+        utc_reading = datetime.utcfromtimestamp(seq)
+        utc_seq = int((utc_reading - datetime(1970, 1, 1)).total_seconds()) # save points in db with UTC timestamps
         P = long(read.get('P')) # TODO: measured by W, to be converted to kW (i.e: /1000)
         if simulate_solar:
             P = P / 3
         L1_PF = _compute_pf(int(read.get('L1_PF')))
         L1_V = int(read.get('L1_V')) / 10
-        data['points'].append([seq, P, L1_PF, L1_V])
+        data['points'].append([utc_seq, P, L1_PF, L1_V])
 
     influxdb.write_points([data])
