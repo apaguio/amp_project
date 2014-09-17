@@ -1,0 +1,11 @@
+<div class="header" ng-if="visible">
+  <ul class="nav nav-pills pull-right">
+    <li ng-class="{active: link=='powerview'}"><a ng-href="#/powerview">PowerView</a></li>
+    <li ng-class="{active: link=='performance'}"><a ng-href="#/performance">Performance</a></li>
+    <li ng-class="{active: link=='diagnosis'}"><a ng-href="#/diagnosis">Diagnosis</a></li>
+    <li ng-class="{active: link=='alerts'}"><a ng-href="#/alerts">Alerts</a></li>
+    <li ng-class="{active: link=='settings'}"><a ng-href="#/settings">Settings</a></li>
+    <li><a ng-href="javascript:;" ng-click="logout()">Logout</a></li>
+  </ul>
+  <h3 class="text-muted">Insight</h3>
+</div>

@@ -1,0 +1,156 @@
+/* Space out content a bit */
+body {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+.lowercase {
+  text-transform: lowercase;
+}
+.capitalize {
+  text-transform: capitalize;
+}
+
+/* Everything but the jumbotron gets side spacing for mobile first views */
+.header,
+.marketing,
+.footer {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* Custom page header */
+.header {
+  /*border-bottom: 1px solid #e5e5e5;*/
+    padding: 20px;
+    background-color: rgb(222, 219, 203);
+}
+/* Make the masthead heading the same height as the navigation */
+.header h3 {
+  margin-top: 0;
+  margin-bottom: 0;
+  line-height: 40px;
+  margin-left: 20px;
+  display: inline-block;
+  color: white;
+}
+
+#main {
+    .fadeIn-setup,.fadeOut-setup {
+        -webkit-transition: 1s linear opacity;
+        -moz-transition: 1s linear opacity;
+        -o-transition: 1s linear opacity;
+        transition: 1s linear opacity;
+    }
+    .fadeIn-setup{
+        opacity:0;
+    }
+    .fadeOut-setup{
+        opacity:1;
+    }
+    .fadeIn-setup.fadeIn-start {
+        opacity: 1;
+    }
+    .fadeOut-setup.fadeOut-start{
+        opacity:0;
+    }
+    .logincontainer {
+        margin-top: 10%;
+        h2 {
+            margin: 10% 0;
+            color: rgb(77, 127, 29);
+        }
+        .form-group.buttons {
+            button {
+                margin-right: 15px;
+            }
+        }
+    }
+}
+
+.mediumwidget, .smallwidget, .largewidget {
+    border-bottom: 1px solid black;
+    padding: 10px 5px;
+    .title {
+        margin: 5px auto;
+        font-size: 14px;
+        font-weight: normal;
+        color: rgb(126, 126, 126);
+    }
+    .maincontent {
+        margin: 5px auto;
+        font-size: 16px;
+        font-weight: bold;
+        font-family: "Open Sans", sans-serif;
+    }
+    .time {
+        color: rgb(126, 126, 126);
+        margin: 5px auto;
+        font-size: 14px;
+        font-weight: normal;
+    }
+
+}
+.largewidget {
+    border-bottom: 0;
+    text-align: center;
+    .title {
+        font-size: 18px;
+    }
+    .maincontent {
+        font-size: 24px;
+    }
+    .time {
+        font-size: 18px;
+    }
+}
+.leftwidgets {
+    padding: 20px;
+    padding-left: 35px;
+}
+.chartcontainer {
+    border-bottom: 1px solid black;
+    padding: 20px;
+}
+
+#alerts {
+    .inlinecontainer {
+        margin: 5px auto;
+        .form-inline {
+            display: inline-block;
+            width: 120px;
+            input {
+                height: 26px;
+                padding: 1px 12px;
+            }
+        }
+    }
+}
+
+#settings {
+    padding-top: 5%;
+    .inlinecontainer {
+        margin: 5px auto;
+        label{
+            min-width: 100px;
+        }
+    }
+}
+
+#powerview {
+    svg {
+        font: 10px sans-serif;
+    }
+
+    .axis path, .axis line {
+        fill: none;
+        stroke: #000;
+        shape-rendering: crispEdges;
+    }
+}
+
+
+

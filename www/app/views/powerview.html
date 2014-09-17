@@ -1,0 +1,52 @@
+<nav link="powerview"></nav>
+<div id="powerview" class="">
+  <div class="col-xs-12 col-sm-5 col-md-4 col-lg-3 leftwidgets">
+    <div class="mediumwidget col-xs-12">
+      <h4 class="title">Current Billing Period</h4>
+      <h3 class="maincontent capitalize">{{data.billing_period}}</h3>
+      <h4 class="time">{{data.billingPeriodStartDate | date:'MMM d'}} -
+        {{data.billingPeriodEndDate | date:'MMM d, yyyy'}}</h4>
+    </div>
+    <div class="mediumwidget col-xs-12">
+      <h4 class="title">Current Season</h4>
+      <h3 class="maincontent capitalize">{{data.season}}</h3>
+      <h4 class="time">{{data.seasonStartDate | date:'MMM d'}} -
+        {{data.seasonEndDate | date:'MMM d'}}</h4>
+    </div>
+    <div class="mediumwidget col-xs-12">
+      <h4 class="title">Current Period</h4>
+      <h3 class="maincontent capitalize">{{data.period}}</h3>
+      <h4 class="time">{{data.billingPeriodStartDate | date:'h:mm'}} -
+        {{data.billingPeriodEndDate | date:'h:mm a'}}</h4>
+    </div>
+    <div class="smallwidget col-xs-12">
+      <h4 class="title">Current Energy Charge</h4>
+      <h3 class="maincontent">$ {{data.energy_charge}} / kWh</h3>
+    </div>
+    <div class="smallwidget col-xs-12">
+      <h4 class="title">Current Demand Charges</h4>
+      <h3 class="maincontent">$ {{data.demand_charge}} / kW</h3>
+    </div>
+  </div>
+  <div class="hidden-xs col-sm-7 col-md-8 col-lg-9">
+    <div class="col-xs-12" class="chartcontainer">
+      <powergraph data="graphdata"></powergraph>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 largewidget">
+      <h4 class="title">Current Demand</h4>
+      <h3 class="maincontent">{{data.current_demand | number}}</h3>
+      <h4 class="time">{{data.currentDemandStartDate | date:'h:mm a'}} - {{data.currentDemandEndDate | date:'h:mm a'}}</h4>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 largewidget">
+      <h4 class="title">Max Demand</h4>
+      <h3 class="maincontent">{{data.max_demand | number}} <small>kW</small></h3>
+      <h4 class="time">{{data.maxDemandStartDate | date:'fullDate'}}<br/>
+        {{data.maxDemandStartDate | date:'h:mm'}} - {{data.maxDemandEndDate | date:'h:mm a'}}</h4>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 largewidget">
+      <h4 class="title">Power Factor</h4>
+      <h3 class="maincontent">{{data.power_factor}}</h3>
+      <h4 class="time">&nbsp;</h4>
+    </div>
+  </div>
+</div>

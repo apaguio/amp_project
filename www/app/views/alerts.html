@@ -1,0 +1,118 @@
+<nav link="alerts"></nav>
+<div class="container" id="alerts">
+  <div class="col-xs-12">
+    <h4>Fixed Alerts</h4>
+
+    <div class="col-xs-12 col-sm-offset-1 col-sm-11 inlinecontainer">
+      Alert me when 1 minute net load average exceeds
+      <form class="form-inline" role="form">
+        <div class="form-group form-group-sm">
+          <label class="sr-only" for="fixedNet">Net value</label>
+          <div class="col-xs-12">
+            <input type="number" class="form-control" id="fixedNet" placeholder="ie. 738" ng-model="fixedNet" min="0">
+          </div>
+        </div>
+      </form>
+      kW.
+    </div>
+
+    <div class="col-xs-12 col-sm-offset-1 col-sm-11 inlinecontainer">
+      Alert me when Power Factor moves below 
+      <form class="form-inline" role="form">
+        <div class="form-group form-group-sm">
+          <label class="sr-only" for="fixPowerBelow">Power Below Value</label>
+          <div class="col-xs-12">
+            <input type="number" class="form-control" id="fixPowerBelow" placeholder="ie. 73" ng-model="fixPowerBelow" min="0">
+          </div>
+        </div>
+      </form>
+      or above 
+      <form class="form-inline" role="form">
+        <div class="form-group form-group-sm">
+          <label class="sr-only" for="fixedPowerAbove">Power Below Value</label>
+          <div class="col-xs-12">
+            <input type="number" class="form-control" id="fixedPowerAbove" placeholder="ie. 73" ng-model="fixedPowerAbove" min="0">
+          </div>
+        </div>
+      </form>
+      .
+    </div>
+  </div>
+
+  <div class="col-xs-12">
+    <h4>Dynamic Alerts</h4>
+    <div class="col-xs-12 col-sm-offset-1 col-sm-11 inlinecontainer">
+      Alert me when 1 minute net load average is within
+      <form class="form-inline" role="form">
+        <div class="form-group form-group-sm">
+          <label class="sr-only" for="dynamicNet">Power Below Value</label>
+          <div class="col-xs-12">
+            <input type="number" class="form-control" id="dynamicNet" placeholder="ie. 52" ng-model="dynamicNet" min="0">
+          </div>
+        </div>
+      </form>
+      kW of current max.</p>
+    </div>
+  </div>
+
+  <div class="col-xs-12">
+    <h4>Send alerts to</h4>
+
+    <div class="col-xs-12">
+      <form class="form-inline inlinecontainer" role="form">
+        <div class="form-group col-xs-10 col-sm-8 col-md-6 col-lg-4">
+          <label class="sr-only" for="email1">Email address</label>
+          <input type="email" class="form-control" id="email1"
+          placeholder="Enter email" ng-model="email1">
+        </div>
+        <button type="submit" class="btn btn-default">Save</button>
+      </form>
+    </div>
+
+    <div class="col-xs-12">
+      <form class="form-inline inlinecontainer" role="form">
+        <div class="form-group col-xs-10 col-sm-8 col-md-6 col-lg-4">
+          <label class="sr-only" for="email2">Add email or phone number</label>
+          <input type="email" class="form-control" id="email2"
+          placeholder="Add email or phone number" ng-model="email2">
+        </div>
+        <button type="submit" class="btn btn-default">Save</button>
+      </form>
+    </div>
+
+    <div class="col-xs-12">
+      <form class="form-inline inlinecontainer" role="form">
+        <div class="form-group col-xs-10 col-sm-8 col-md-6 col-lg-4">
+          <label class="sr-only" for="email3">Add email or phone number</label>
+          <input type="email" class="form-control" id="email3"
+          placeholder="Add email or phone number" ng-model="email3">
+        </div>
+        <button type="submit" class="btn btn-default">Save</button>
+      </form>
+    </div>
+
+    <div class="col-xs-12">
+      <form class="form-inline inlinecontainer" role="form">
+        <div class="form-group col-xs-10 col-sm-8 col-md-6 col-lg-4">
+          <label class="sr-only" for="email4">Add email or phone number</label>
+          <input type="email" class="form-control" id="email4"
+          placeholder="Add email or phone number" ng-model="email4">
+        </div>
+        <button type="submit" class="btn btn-default">Save</button>
+      </form>
+    </div>
+
+    <div class="col-xs-12">
+      <form class="form-inline inlinecontainer" role="form">
+        <div class="form-group col-xs-10 col-sm-8 col-md-6 col-lg-4">
+          <label class="sr-only" for="email5">Add another email or phone number</label>
+          <input type="email" class="form-control" id="email5"
+          placeholder="Add another email or phone number" ng-model="email5">
+        </div>
+        <button type="submit" class="btn btn-default">Save</button>
+      </form>
+    </div>
+
+  </div>
+</div>
+
