@@ -5,10 +5,21 @@ from socketio.mixins import RoomsMixin, BroadcastMixin
 from werkzeug.exceptions import NotFound
 from gevent import monkey
 from app import r, app, pubsub
+from models import powerview
 
+
+@app.route("/powerview/points", methods=["GET"])
+def powerview_points():
+    consumption_meter_id = 10068
+    solar_meter_id = 10054
+    duration = '5d'
+    result = dict()
+    result['consumption'] = powerview.get_ekm_data(consumption_meter_id, duration)
+    result['solar'] = powerview.get_ekm_data(solar_meter_id, duration)
+    return r.success(result)
 
 @app.route("/powerview", methods=["POST"])
-def powerview():
+def powerview_data():
     return r.success({
         "billing_period": "september",
         "billing_period_startdate": 1410380825,
