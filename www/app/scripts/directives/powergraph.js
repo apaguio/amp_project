@@ -2,7 +2,6 @@
 
 (function() {
 
-
     function plot(el) {
 
         var n = 243,
@@ -95,6 +94,7 @@
     function postLink(scope, element, attrs) {
         scope.$watch('data', function() {
             if (scope.data) {
+                console.log(scope.data);
                 plot(element);
             }
         });

@@ -8,8 +8,7 @@
         return d;
     }
 
-    //TODO: Update this with real data
-    var api = 'http://www.highcharts.com/samples/data/jsonp.php?filename=range.json&callback=?';
+    var api = '/api/powerview/points';
 
     function controller(scope, Session, http) {
         http.defaults.headers.post['CSRF-TOKEN'] = Session.csrfToken;
@@ -40,12 +39,9 @@
         }
 
         load(onLoad);
-        //$.getJSON(api, function (data) {
-            //scope.$apply(function() {
-                //scope.graphdata = data;
-            //});
-        //});
-        scope.graphdata = {};
+        http({method: 'get', url: api}).success(function (data) {
+            scope.graphdata = data;
+        });
     }
 
     angular.module('insightApp')
