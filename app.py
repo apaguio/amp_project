@@ -5,6 +5,8 @@ from flask import Flask, Blueprint, abort, jsonify, request, session
 from influxdb_factory import get_influxdb
 from flask.ext.pymongo import PyMongo
 from helpers import CreateResponse
+from views.performance import *
+from views.powerview import *
 import redis
 
 app = Flask(__name__)
@@ -40,10 +42,6 @@ def get_current_demand(meter_id):
         return jsonify(result[0]['points'][0][1])
     else:
         return jsonify(result)
-
-
-from views.performance import *
-from views.powerview import *
 
 monkey.patch_all()
 
