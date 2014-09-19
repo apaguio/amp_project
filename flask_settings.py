@@ -1,4 +1,4 @@
 DEBUG = True
-MONGO_HOST = 'localhost'
-MONGO_PORT = 27017
-MONGO_DBNAME = 'cenergy_insights'
+MONGODB_HOST = 'localhost'
+MONGODB_PORT = 27017
+MONGODB_DB = 'cenergy_insights'

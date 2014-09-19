@@ -14,7 +14,6 @@ pubsub = redisServer.pubsub()
 r = CreateResponse()
 
 monkey.patch_all()
-# DO NOT MOVE UP
 from views.performance import *
 from views.powerview import *
 

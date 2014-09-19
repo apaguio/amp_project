@@ -1,6 +1,6 @@
 from app import app
-from flask.ext.pymongo import PyMongo
+from flask.ext.mongoengine import MongoEngine
 from influxdb_factory import get_influxdb
 
-mongodb = PyMongo(app)
+mongodb = MongoEngine(app)
 influxdb = get_influxdb()

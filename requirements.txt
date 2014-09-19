@@ -1,7 +1,8 @@
 flask
 flask-jsonpify
-flask-pymongo
+flask-mongoengine
 celery[redis]
 redis
 influxdb
+gevent
 gevent-socketio
