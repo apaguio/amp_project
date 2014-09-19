@@ -1,6 +1,5 @@
 from models import mongodb, influxdb
 
-
 #@app.route('/ekm_data_one_second/<meter_id>/<int:duration_in_seconds>')
 def get_ekm_data(meter_id, period):
     """
