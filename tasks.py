@@ -1,10 +1,12 @@
 import requests
+import time
 from app import celery
 from celery.utils.log import get_task_logger
 import xml.etree.ElementTree as ET
 from influxdb_factory import get_influxdb
 from datetime import datetime
 from redis import Redis
+from models import powerview
 
 influxdb = get_influxdb()
 logger = get_task_logger(__name__)
@@ -47,11 +49,15 @@ def ekm_collect(meter_id, nr_readings, key, endpoint='io.ekmpush.com', simulate_
 
 @celery.task(name='tasks.ekm.facility.15mins.aggregator')
 def ekm_facility_aggregate(meter_id):
+    utc_now = datetime.utcfromtimestamp(time.time())
+    # get user information (customer_id) from session
+    tarrif_data = powerview.get_tarrif_details(customer_name='test')
+
     query = 'select mean(P) as demand from "%s" group by time(15m) limit 1;' % meter_id
     result = influxdb.query(query)
-    timestamp, demand = result[0]['points'][0]
+    demand = result[0]['points'][0][1]
 
-    utc_reading = datetime.utcfromtimestamp(timestamp)
-    utc_timestamp = int((utc_reading - datetime(1970, 1, 1)).total_seconds())
-    data = {'name': '%s_15mins' % meter_id, 'columns': ['time', 'demand'], 'points': [[utc_timestamp, demand]]}
+    utc_timestamp = int((utc_now - datetime(1970, 1, 1)).total_seconds())
+    data = {'name': '%s_15mins_%s' % (meter_id, tarrif_data['peak_period']), 'columns': ['time', 'demand'], 
+            'points': [[utc_timestamp, demand]]}
     influxdb.write_points([data])

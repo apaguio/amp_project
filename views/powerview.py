@@ -30,6 +30,13 @@ def get_current_demand():
     result['current_demand'] = powerview.get_current_demand(consumption_meter_id)
     return r.success(result)
 
+@app.route("/powerview/max_demand", methods=["GET"])
+def get_max_demand():
+    result = dict()
+    consumption_meter_id = 10054
+    result['max_demand'] = powerview.get_max_demand(consumption_meter_id)
+    return r.success(result)
+
 @app.route("/powerview", methods=["GET"])
 def powerview_data():
     return r.success(powerview.get_tarrif_details())
