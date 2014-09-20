@@ -19,7 +19,7 @@ def get_ekm_data(meter_id, period):
 def get_current_demand(meter_id):
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
     # round to nearest 15-min interval, and calculate minutes difference
-    number_of_miutes = utc_now.minute - ((utc_now.minute / 15) * 15)
+    number_of_miutes = utc_now.minute % 15
     #utc_now.strftime('%Y-%m-%d %H:%M:%S')
     query = 'select mean(P) as current_demand from "%s" group by time(%sm) limit 1;' % (meter_id, number_of_miutes)
     result = influxdb.query(query)
