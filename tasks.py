@@ -1,13 +1,11 @@
 import requests
-from celery import Celery
+from app import celery
 from celery.utils.log import get_task_logger
 import xml.etree.ElementTree as ET
 from influxdb_factory import get_influxdb
 from datetime import datetime
 from redis import Redis
 
-celery = Celery('cenergy_insights')
-celery.config_from_object('celery_settings')
 influxdb = get_influxdb()
 logger = get_task_logger(__name__)
 redis = Redis()

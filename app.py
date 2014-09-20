@@ -1,7 +1,9 @@
 from flask_settings import *
+from celery_settings import *
 from gevent import monkey
 from socketio.server import SocketIOServer
 from flask import Flask
+from celery import Celery
 from helpers import CreateResponse
 import redis
 
@@ -13,6 +15,20 @@ redisServer = redis.Redis()
 pubsub = redisServer.pubsub()
 r = CreateResponse()
 
+def make_celery(app):
+    celery = Celery(app.import_name)
+    TaskBase = celery.Task
+    class ContextTask(TaskBase):
+        abstract = True
+        def __call__(self, *args, **kwargs):
+            with app.app_context():
+                return TaskBase.__call__(self, *args, **kwargs)
+    celery.Task = ContextTask
+    return celery
+
+celery = make_celery(app)
+celery.config_from_object('celery_settings')
+
 monkey.patch_all()
 from views.performance import *
 from views.powerview import *
@@ -23,4 +39,3 @@ SOCKETIOPORT = 5001
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=PORT)
     SocketIOServer(('', SOCKETIOPORT), app, resource="socket.io").serve_forever()
-
