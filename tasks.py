@@ -46,3 +46,14 @@ def ekm_collect(meter_id, nr_readings, key, endpoint='io.ekmpush.com', simulate_
 
     # Write to influxdb
     influxdb.write_points([data])
+
+@celery.task(name='ekm.facility.15mins.aggregator')
+def ekm_facility_aggregate(meter_id):
+    query = 'select mean(P) as demand from "%s" group by time(15m) limit 1;' % meter_id
+    result = influxdb.query(query)
+    timestamp, demand = result[0]['points'][0]
+
+    utc_reading = datetime.utcfromtimestamp(timestamp)
+    utc_timestamp = int((utc_reading - datetime(1970, 1, 1)).total_seconds())
+    data = {'name': '%s_15mins' % meter_id, 'columns': ['time', 'demand'], 'points': [utc_timestamp, demand]}
+    influxdb.write_points([data])

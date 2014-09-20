@@ -1,3 +1,5 @@
+from celery.schedules import crontab
+
 BROKER_URL = 'redis://localhost:6379/0'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
@@ -17,5 +19,10 @@ CELERYBEAT_SCHEDULE = {
         'task': 'tasks.ekm.collect',
         'schedule': EKM_READING_INTERVAL,
         'args': ('10068', EKM_READING_INTERVAL, 'MTAxMDoyMDIw', 'io.ekmpush.com', True)
+    },
+    'ekm.facility.15mins.aggregator': {
+        'task': 'tasks.ekm.aggregate.15mins',
+        'schedule': crontab(minute=[0, 15, 30, 45]),
+        'args': ('10054')
     },
 }
