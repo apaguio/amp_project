@@ -18,6 +18,13 @@ def powerview_points():
     result['solar'] = powerview.get_ekm_data(solar_meter_id, duration)
     return r.success(result)
 
+@app.route("/powerview/current_demand", methods=["GET"])
+def get_current_demand():
+    result = dict()
+    consumption_meter_id = 10054
+    result['current_demand'] = powerview.get_current_demand(consumption_meter_id)
+    return r.success(result)
+
 @app.route("/powerview", methods=["POST"])
 def powerview_data():
     return r.success({
