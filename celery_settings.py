@@ -21,7 +21,7 @@ CELERYBEAT_SCHEDULE = {
         'args': ('10068', EKM_READING_INTERVAL, 'MTAxMDoyMDIw', 'io.ekmpush.com', True)
     },
     'ekm.facility.15mins.aggregator': {
-        'task': 'ekm.facility.15mins.aggregator',
+        'task': 'tasks.ekm.facility.15mins.aggregator',
         'schedule': crontab(minute=[0, 15, 30, 45]),
         'args': ('10054',)
     },
