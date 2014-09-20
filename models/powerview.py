@@ -1,8 +1,7 @@
 import time
 from datetime import datetime
-from models import mongodb, influxdb
+from models import mongodb, influxdb, db
 
-#@app.route('/ekm_data_one_second/<meter_id>/<int:duration_in_seconds>')
 def get_ekm_data(meter_id, period):
     """
     Gets EKM Data
@@ -15,7 +14,10 @@ def get_ekm_data(meter_id, period):
         return result[0]
     return result
 
-#@app.route('/current_demand/<meter_id>')
+def generate_demo_data():
+    import demo_data
+    demo_data.generate()
+
 def get_current_demand(meter_id):
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
     # round to nearest 15-min interval, and calculate minutes difference
@@ -27,13 +29,47 @@ def get_current_demand(meter_id):
         return result[0]['points'][0][1]
     return result
 
-#@app.route('/tarrif/<name>')
-def get_tarrif_details(name):
+def get_max_demand(meter_id):
+    utc_now = datetime.utcfromtimestamp(time.time()) # current request time
+    mongodb.customer
+    number_of_days = utc_now.day
+    query = 'select max(demand) as max_demand from "%s_15mins" group by time(%sd) limit 1;' % (meter_id, number_of_days)
+
+def _is_time_in_range(start, end, x):
+    """Return true if x is in the range [start, end]"""
+    if start <= end:
+        return start <= x <= end
+    else:
+        return start <= x or x <= end
+
+def get_tarrif_details(customer_name='test'):
     """
     Gets the Tarrif Details
-    TODO: PLEASE ADD MORE INFORMATION
     """
-    # later on, can be extended by periods
-    result = mongodb.db.tarrif.find_one({'name': name}, fields={'_id': False}) or list()
+    #TODO use customer_id instead of name
+    result = dict()
+    utc_now = datetime.utcfromtimestamp(time.time()) # current request time
+    customer = db.Customer.objects(name=customer_name).first()
+    for season in customer.seasons:
+        if season.start <= utc_now and season.end >= utc_now:
+            result['season'] = season.name
+            result['season_startdate'] = int((season.start - datetime(1970, 1, 1)).total_seconds())
+            result['season_enddate'] = int((season.end - datetime(1970, 1, 1)).total_seconds())
+            for peak_period in season.peak_periods:
+                if _is_time_in_range(peak_period.start, peak_period.end, utc_now.time().isoformat().split('.')[0]):
+                    result['peak_period'] = peak_period.name
+                    result['peak_period_start'] = peak_period.start
+                    result['peak_period_end'] = peak_period.end
+                    result['energy_charge'] = peak_period.energy_charge
+                    result['demand_charge'] = peak_period.demand_charge
+                    break
+            break
+    for billing_period in customer.read_cycle.billing_periods:
+        if billing_period.start <= utc_now and billing_period.end >= utc_now:
+            result['billing_period'] = billing_period.name
+            result['billing_period_startdate'] = int((billing_period.start - datetime(1970, 1, 1)).total_seconds())
+            result['billing_period_enddate'] = int((billing_period.end - datetime(1970, 1, 1)).total_seconds())
+            result['number_of_days'] = billing_period.number_of_days
+            break
     return result
 

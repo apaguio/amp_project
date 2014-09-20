@@ -7,6 +7,11 @@ from gevent import monkey
 from app import r, app, pubsub
 from models import powerview
 
+@app.route("/demo_data/generate", methods=["GET"])
+def generate_demo_data():
+    powerview.generate_demo_data()
+    result = {'result': True}
+    return r.success(result)
 
 @app.route("/powerview/points", methods=["GET"])
 def powerview_points():
@@ -25,27 +30,9 @@ def get_current_demand():
     result['current_demand'] = powerview.get_current_demand(consumption_meter_id)
     return r.success(result)
 
-@app.route("/powerview", methods=["POST"])
+@app.route("/powerview", methods=["GET"])
 def powerview_data():
-    return r.success({
-        "billing_period": "september",
-        "billing_period_startdate": 1410380825,
-        "billing_period_enddate": 1410380825,
-        "season": "summer",
-        "season_startdate": 1410380825,
-        "season_enddate": 1410380825,
-        "period": "peak",
-        "energy_charge": 0.19,
-        "demand_charge": 21.46,
-        "current_demand": 1254,
-        "current_demand_startdate": 1410380825,
-        "current_demand_enddate": 1410380825,
-        "max_demand": 1455,
-        "max_demand_startdate": 1410380825,
-        "max_demand_enddate": 1410380825,
-        "power_factor": 0.9
-    })
-
+    return r.success(powerview.get_tarrif_details())
 
 class PowerViewNS(BaseNamespace, RoomsMixin, BroadcastMixin):
 
