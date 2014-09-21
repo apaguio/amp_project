@@ -4,6 +4,8 @@ DEBUG = True
 MONGODB_HOST = 'localhost'
 MONGODB_PORT = 27017
 MONGODB_DB = 'cenergy_insights'
+SECRET_KEY = 'somesecretkey77'
+SERVER_NAME = 'localhost:5000'
 
 # celery settings
 CELERY_BROKER_URL = 'redis://localhost:6379/0'

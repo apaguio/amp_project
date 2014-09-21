@@ -7,7 +7,6 @@ import redis
 
 app = Flask(__name__)
 app.config.from_object('settings')
-app.secret_key = "somesecretkey77"
 # Building the Response instance that is used to form the json structure
 redisServer = redis.Redis()
 pubsub = redisServer.pubsub()
@@ -32,9 +31,8 @@ from views.performance import *
 from views.powerview import *
 from views.diagnosis import *
 
-PORT = 5000
 SOCKETIOPORT = 5001
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=PORT)
+    app.run()
     SocketIOServer(('', SOCKETIOPORT), app, resource="socket.io").serve_forever()
