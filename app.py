@@ -1,5 +1,4 @@
 from flask_settings import *
-from celery_settings import *
 from gevent import monkey
 from socketio.server import SocketIOServer
 from flask import Flask
@@ -17,6 +16,7 @@ r = CreateResponse()
 
 def make_celery(app):
     celery = Celery(app.import_name)
+    celery.conf.update(app.config)
     TaskBase = celery.Task
     class ContextTask(TaskBase):
         abstract = True
@@ -27,7 +27,6 @@ def make_celery(app):
     return celery
 
 celery = make_celery(app)
-celery.config_from_object('celery_settings')
 
 monkey.patch_all()
 from views.performance import *
