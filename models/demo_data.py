@@ -4,7 +4,7 @@ from models import db
 def generate():
     customer = db.Customer(name='test', email='test@example.com')
     billing_periods = init_billing_periods()
-    read_cycle = db.ReadCycle(name='V', billing_periods=billing_periods)
+    read_cycle = db.ReadCycle(name='V', billing_periods=billing_periods, rate_tarrif='AG-5E')
     customer.read_cycle = read_cycle
     customer.save()
 
