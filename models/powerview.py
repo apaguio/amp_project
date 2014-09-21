@@ -34,6 +34,10 @@ def get_max_demand(meter_id):
     tarrif_data = get_tarrif_details(customer_name='test')
     number_of_days = (utc_now - datetime.utcfromtimestamp(tarrif_data['billing_period_startdate'])).days
     query = 'select max(demand) as max_demand from "%s_15mins_%s" group by time(%sd) limit 1;' % (meter_id, tarrif_data['peak_period'], number_of_days)
+    result = influxdb.query(query)
+    if result:
+        return result[0]['points'][0][1]
+    return result
 
 def _is_time_in_range(start, end, x):
     """Return true if x is in the range [start, end]"""
