@@ -1,4 +1,3 @@
-from flask_settings import *
 from gevent import monkey
 from socketio.server import SocketIOServer
 from flask import Flask
@@ -7,7 +6,7 @@ from helpers import CreateResponse
 import redis
 
 app = Flask(__name__)
-app.config.from_object('flask_settings')
+app.config.from_object('settings')
 app.secret_key = "somesecretkey77"
 # Building the Response instance that is used to form the json structure
 redisServer = redis.Redis()
@@ -15,7 +14,7 @@ pubsub = redisServer.pubsub()
 r = CreateResponse()
 
 def make_celery(app):
-    celery = Celery(app.import_name)
+    celery = Celery(app.import_name, broker=app.config['CELERY_BROKER_URL'])
     celery.conf.update(app.config)
     TaskBase = celery.Task
     class ContextTask(TaskBase):
