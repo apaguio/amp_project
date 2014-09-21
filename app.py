@@ -27,7 +27,7 @@ def make_celery(app):
 
 celery = make_celery(app)
 
-monkey.patch_all()
+#monkey.patch_all()
 from views.performance import *
 from views.powerview import *
 
