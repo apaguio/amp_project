@@ -54,26 +54,29 @@ def get_tarrif_details(customer_name='test'):
     result = dict()
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
     customer = db.Customer.objects(name=customer_name).first()
-    for season in customer.seasons:
-        if season.start <= utc_now and season.end >= utc_now:
-            result['season'] = season.name
-            result['season_startdate'] = int((season.start - datetime(1970, 1, 1)).total_seconds())
-            result['season_enddate'] = int((season.end - datetime(1970, 1, 1)).total_seconds())
-            for peak_period in season.peak_periods:
-                if _is_time_in_range(peak_period.start, peak_period.end, utc_now.time().isoformat().split('.')[0]):
-                    result['peak_period'] = peak_period.name
-                    result['peak_period_start'] = peak_period.start
-                    result['peak_period_end'] = peak_period.end
-                    result['energy_charge'] = peak_period.energy_charge
-                    result['demand_charge'] = peak_period.demand_charge
-                    break
-            break
-    for billing_period in customer.read_cycle.billing_periods:
-        if billing_period.start <= utc_now and billing_period.end >= utc_now:
-            result['billing_period'] = billing_period.name
-            result['billing_period_startdate'] = int((billing_period.start - datetime(1970, 1, 1)).total_seconds())
-            result['billing_period_enddate'] = int((billing_period.end - datetime(1970, 1, 1)).total_seconds())
-            result['number_of_days'] = billing_period.number_of_days
-            break
+    if customer:
+        result['rate_tarrif'] = customer.read_cycle.rate_tarrif
+        result['read_cycle'] = customer.read_cycle.name
+        for season in customer.seasons:
+            if season.start <= utc_now and season.end >= utc_now:
+                result['season'] = season.name
+                result['season_startdate'] = int((season.start - datetime(1970, 1, 1)).total_seconds())
+                result['season_enddate'] = int((season.end - datetime(1970, 1, 1)).total_seconds())
+                for peak_period in season.peak_periods:
+                    if _is_time_in_range(peak_period.start, peak_period.end, utc_now.time().isoformat().split('.')[0]):
+                        result['peak_period'] = peak_period.name
+                        result['peak_period_start'] = peak_period.start
+                        result['peak_period_end'] = peak_period.end
+                        result['energy_charge'] = peak_period.energy_charge
+                        result['demand_charge'] = peak_period.demand_charge
+                        break
+                break
+        for billing_period in customer.read_cycle.billing_periods:
+            if billing_period.start <= utc_now and billing_period.end >= utc_now:
+                result['billing_period'] = billing_period.name
+                result['billing_period_startdate'] = int((billing_period.start - datetime(1970, 1, 1)).total_seconds())
+                result['billing_period_enddate'] = int((billing_period.end - datetime(1970, 1, 1)).total_seconds())
+                result['number_of_days'] = billing_period.number_of_days
+                break
     return result
 
