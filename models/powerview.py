@@ -8,7 +8,7 @@ def get_ekm_data(meter_id, period):
     @parm meter_id  currently ( 10068 - consumption, 10054 - solar )
     @parm period    time window in appended by time letter ( s - seconds, m - minutes, h - hours, d - days)
     """
-    query = 'select P from "%s" where time > now() - %s limit 1000;' % (meter_id, period)
+    query = 'select * from "%s" where time > now() - %s limit 1000;' % (meter_id, period)
     result = influxdb.query(query)
     if result:
         return result[0]
