@@ -1,5 +1,6 @@
 from datetime import datetime
 from models import mongodb
+import uuid
 
 class PeakPeriod(mongodb.EmbeddedDocument):
     name = mongodb.StringField()
@@ -25,6 +26,7 @@ class ReadCycle(mongodb.EmbeddedDocument):
     billing_periods = mongodb.ListField(mongodb.EmbeddedDocumentField(BillingPeriod))
 
 class Customer(mongodb.Document):
+    uid = mongodb.UUIDField(default=uuid.uuid4())
     name = mongodb.StringField()
     email = mongodb.EmailField()
     read_cycle = mongodb.EmbeddedDocumentField(ReadCycle)
