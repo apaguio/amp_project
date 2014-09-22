@@ -1,13 +1,14 @@
-from flask import request, session
-from app import app, r
+from flask import request, session, Blueprint
+from servers import r
 
+auth_app = Blueprint('auth', __name__)
 
-@app.route("/logout", methods=["POST"])
+@auth_app.route("/logout", methods=["POST"])
 def logout():
     session['logged_in'] = False
     return r.success()
 
-@app.route("/login", methods=["POST"])
+@auth_app.route("/login", methods=["POST"])
 def login():
     credentials = request.json
     if not credentials or credentials.get('username', '') != 'test' or credentials.get('password', '') != 'test':

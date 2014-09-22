@@ -1,6 +1,7 @@
 import time
 from datetime import datetime
-from models import mongodb, influxdb, db
+from models import db
+from models import influxdb
 
 def get_ekm_data(meter_id, period):
     """

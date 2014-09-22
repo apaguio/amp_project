@@ -2,15 +2,10 @@ from gevent import monkey
 from socketio.server import SocketIOServer
 from flask import Flask, request
 from celery import Celery
-from helpers import CreateResponse
-import redis
 
 app = Flask(__name__)
 app.config.from_object('settings')
 # Building the Response instance that is used to form the json structure
-redisServer = redis.Redis()
-pubsub = redisServer.pubsub()
-r = CreateResponse()
 
 def make_celery(app):
     celery = Celery(app.import_name, broker=app.config['CELERY_BROKER_URL'])
@@ -33,10 +28,21 @@ monkey.patch_all()
 def page_not_found(error):
     return 'This route does not exist {}'.format(request.url), 404
 
-from views.performance import *
-from views.powerview import *
-from views.diagnosis import *
-from views.auth import *
+# Preventing circular imports
+def register_views(app):
+    from models import mongodb
+    mongodb.init_app(app)
+    from views.performance import performance_app
+    from views.powerview import powerview_app
+    from views.diagnosis import diagnosis_app
+    from views.auth import auth_app
+    app.register_blueprint(performance_app)
+    app.register_blueprint(powerview_app)
+    app.register_blueprint(diagnosis_app)
+    app.register_blueprint(auth_app)
+
+
+register_views(app)
 
 SOCKETIOPORT = 5001
 

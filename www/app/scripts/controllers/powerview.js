@@ -27,7 +27,7 @@
 
         function load(onLoad) {
             http
-                .post('/api/powerview', {})
+                .get('/api/powerview', {})
                 .then(function (res) {
                     var d = res.data;
                     if (d.status === "error") {

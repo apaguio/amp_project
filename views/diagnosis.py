@@ -1,10 +1,10 @@
-from socketio.mixins import RoomsMixin, BroadcastMixin
-from werkzeug.exceptions import NotFound
-from gevent import monkey
-from app import r, app, pubsub
+from flask import Blueprint
+from servers import r
 from models import diagnosis
 
-@app.route("/diagnosis/points/<start>/<end>", methods=["GET"])
+diagnosis_app = Blueprint('diagnosis', __name__)
+
+@diagnosis_app.route("/diagnosis/points/<start>/<end>", methods=["GET"])
 def diagnosis_points(start, end):
     consumption_meter_id = 10068
     solar_meter_id = 10054

@@ -1,6 +1,9 @@
-from app import app, r
+from flask import Blueprint
+from servers import r
 
-@app.route("/performance", methods=["POST"])
+performance_app = Blueprint('performance', __name__)
+
+@performance_app.route("/performance", methods=["POST"])
 def performance():
     return r.success({
         "billing_period": "september",

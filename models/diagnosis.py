@@ -1,4 +1,4 @@
-from models import mongodb, influxdb, db
+from models import influxdb
 
 def get_ekm_data_range(meter_id, start, end):
     """
