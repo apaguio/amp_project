@@ -4,5 +4,5 @@ flask-mongoengine
 celery[redis]
 redis
 influxdb
-gevent
 gevent-socketio
+flower
