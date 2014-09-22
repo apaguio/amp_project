@@ -10,8 +10,7 @@
 
         this.login = function(credentials) {
             var deferred = q.defer();
-            http
-                .post('/api/login', credentials)
+            http.post('/api/login', credentials)
                 .then(function (res) {
                     var d = res.data;
                     if (d.status === "error") {
@@ -22,6 +21,9 @@
                             d.data.user_role, d.data.csrf_token);
                         deferred.resolve(d.data);
                     }
+                }, function(err) {
+                    console.log(err);
+                    alert(err);
                 });
             return deferred.promise;
         };

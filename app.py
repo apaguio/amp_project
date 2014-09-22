@@ -1,6 +1,6 @@
 from gevent import monkey
 from socketio.server import SocketIOServer
-from flask import Flask
+from flask import Flask, request
 from celery import Celery
 from helpers import CreateResponse
 import redis
@@ -27,9 +27,16 @@ def make_celery(app):
 celery = make_celery(app)
 
 monkey.patch_all()
+
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return 'This route does not exist {}'.format(request.url), 404
+
 from views.performance import *
 from views.powerview import *
 from views.diagnosis import *
+from views.auth import *
 
 SOCKETIOPORT = 5001
 
