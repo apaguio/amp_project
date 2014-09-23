@@ -85,13 +85,24 @@
         scope.end = _.max(data, 'time').time;
 
         scope.x.domain([scope.start, scope.end]);
-        scope.y.domain([0, maxDemand]);
+        scope.y.domain([0, maxDemand + 20]);
         var minPF = _.min(data, 'L1_PF').L1_PF - 0.1;
         var maxPF = _.max(data, 'L1_PF').L1_PF + 0.1;
 
         scope.pfy.domain([minPF, maxPF]);
 
         scope.lines.selectAll("path").attr("transform", null);
+
+        var maxdemandLine = scope.lines.select('line.maxdemand');
+        if (maxdemandLine.empty()) {
+            maxdemandLine = scope.lines.append('line')
+                .attr("class", "maxdemand");
+        }
+        maxdemandLine
+            .attr("x1", scope.x.range()[0])
+            .attr("x2", scope.x.range()[1])
+            .attr("y1", scope.y(maxDemand))
+            .attr("y2", scope.y(maxDemand));
 
         // slide the x-axis left
         scope.xAxis

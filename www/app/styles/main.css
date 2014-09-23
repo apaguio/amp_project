@@ -137,6 +137,13 @@ body {
 #powerview svg {
   font: 10px sans-serif;
 }
+#powerview svg line.maxdemand {
+  stroke: #222;
+  stroke-width: 1px;
+  shape-rendering: crispedges;
+  fill: none;
+  stroke-dasharray: 5,5;
+}
 #powerview svg .lines path {
   stroke: #222;
   stroke-width: 1px;
