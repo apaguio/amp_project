@@ -137,6 +137,12 @@ body {
 #powerview svg {
   font: 10px sans-serif;
 }
+#powerview svg .lines path {
+  stroke: #000;
+  stroke-width: 1px;
+  shape-rendering: crispedges;
+  fill: none;
+}
 #powerview .axis path,
 #powerview .axis line {
   fill: none;
