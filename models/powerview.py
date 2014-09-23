@@ -24,20 +24,30 @@ def get_current_demand(meter_id):
     # round to nearest 15-min interval, and calculate minutes difference
     number_of_miutes = utc_now.minute % 15
     #utc_now.strftime('%Y-%m-%d %H:%M:%S')
-    query = 'select mean(P) as current_demand from "%s" group by time(%sm) limit 1;' % (meter_id, number_of_miutes)
-    result = influxdb.query(query)
-    if result:
-        return result[0]['points'][0][1]
+    # (number_of_miutes * 60), to get the seconds precision
+    query = 'select mean(P) as current_demand from "%s" group by time(%ss) limit 1;' % (meter_id, number_of_miutes*60)
+    query_result = influxdb.query(query)
+    result = dict()
+    if query_result:
+        query_result = query_result[0]
+        for point in query_result['points']:
+            for i, value in enumerate(point):
+                result[query_result['columns'][i]] = value
     return result
 
 def get_max_demand(meter_id):
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
-    tarrif_data = get_tarrif_details(customer_name='test')
+    tarrif_data = get_tarrif_details(customer_name='test') # TODO replace with current customer_id
     number_of_days = (utc_now - datetime.utcfromtimestamp(tarrif_data['billing_period_startdate'])).days
     query = 'select max(demand) as max_demand from "%s_15mins_%s" group by time(%sd) limit 1;' % (meter_id, tarrif_data['peak_period'], number_of_days)
-    result = influxdb.query(query)
-    if result:
-        return result[0]['points'][0][1]
+    result = dict()
+    query_result = influxdb.query(query)
+    if query_result:
+        query_result = query_result[0]
+        max_demand = query_result['points'][0][1]
+        time_point_query = 'select time from "%s_15mins_%s" where demand=%s' % (meter_id, tarrif_data['peak_period'], max_demand)
+        result['time'] = influxdb.query(time_point_query)[0]['points'][0][0]
+        result['max_demand'] = max_demand
     return result
 
 def _is_time_in_range(start, end, x):
