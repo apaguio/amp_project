@@ -8,8 +8,6 @@
         return d;
     }
 
-    var api = '/api/powerview/points';
-
     function controller(scope, Session, http) {
         http.defaults.headers.post['CSRF-TOKEN'] = Session.csrfToken;
 
@@ -18,6 +16,7 @@
             scope.data.billingPeriodStartDate  = toDate(data.billing_period_startdate);
             scope.data.billingPeriodEndDate = toDate(data.billing_period_enddate);
             scope.data.seasonEndDate = toDate(data.season_enddate);
+
             scope.data.seasonStartDate = toDate(data.season_startdate);
             scope.data.currentDemandEndDate = toDate(data.current_demand_enddate);
             scope.data.currentDemandStartDate = toDate(data.current_demand_startdate);
@@ -31,17 +30,41 @@
                 .then(function (res) {
                     var d = res.data;
                     if (d.status === "error") {
-                        alert(d.message);
+                        console.log("Error : " + d.message);
                     } else {
                         onLoad(d.data);
                     }
                 });
         }
 
+        function tick() {
+            http({method: 'get', url: '/api/powerview/max_demand'}).success(function (data) {
+                scope.data.max_demand = data.data.max_demand;
+            });
+            http({method: 'get', url: '/api/powerview/current_demand'}).success(function (data) {
+                scope.data.current_demand = data.data.current_demand;
+            });
+            http({method: 'get', url: '/api/powerview/points'}).success(function (data) {
+                var c = data.data.consumption;
+                var s = data.data.solar;
+                var points = _.map(c.points, function(p, i) {
+                    var consumedPoint = _.zipObject(c.columns, p);
+                    var solarPoint = _.zipObject(s.columns, s.points[i]);
+                    //  Add the solar saved power to the consumed point
+                    consumedPoint.S = solarPoint.P;
+                    consumedPoint.time *= 1000;
+                    return consumedPoint;
+                });
+                var lastPoint = _.last(points);
+                scope.data.power_factor = lastPoint.L1_PF;
+                scope.graphdata = points;
+            });
+        }
+
+        // Run tick every 5 seconds
+        setInterval(tick, 5000);
+
         load(onLoad);
-        http({method: 'get', url: api}).success(function (data) {
-            scope.graphdata = data;
-        });
     }
 
     angular.module('insightApp')

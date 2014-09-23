@@ -1,125 +1,117 @@
+/* jshint quotmark: false */
+/* global d3, _ */
 'use strict';
 
 (function() {
 
-    function plot(el, data, maxDemand) {
+    var duration = 4900;
+    function plot(scope, el, data, maxDemand) {
 
         if (!data || !data.length) {
             return;
         }
 
-        var margin = {top: 6, right: 0, bottom: 20, left: 40},
-            width = el.width() - margin.right - margin.left,
-            height = el.height() - margin.top - margin.bottom;
+        scope.margin = {top: 6, right: 0, bottom: 20, left: 40};
+        scope.width = el.width() - scope.margin.right - scope.margin.left;
+        scope.height = el.height() - scope.margin.top - scope.margin.bottom;
 
-        var start = _.min(data, 'time').time,
-            end = _.max(data, 'time').time;
+        scope.x = d3.time.scale()
+            .range([0, scope.width]);
 
-        var x = d3.time.scale()
-            .domain([start, end])
-            .range([0, width]);
+        scope.y = d3.scale.linear()
+            .range([scope.height, 0]);
 
-        var y = d3.scale.linear()
-            .domain([0, maxDemand])
-            .range([height, 0]);
-
-        var linePower = d3.svg.line()
+        scope.linePower = d3.svg.line()
             //.interpolate("basis")
-            .x(function(d, i) { return x(d.time); })
-            .y(function(d, i) { return y(d.P); });
+            .x(function(d) { return scope.x(d.time); })
+            .y(function(d) { return scope.y(d.P); });
 
-        var lineSolar = d3.svg.line()
+        scope.lineSolar = d3.svg.line()
             //.interpolate("basis")
-            .x(function(d, i) { return x(d.time); })
-            .y(function(d, i) { return y(d.S); });
+            .x(function(d) { return scope.x(d.time); })
+            .y(function(d) { return scope.y(d.P - d.S); });
 
-        var svg = d3.select(el[0]).append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .style("margin-left", -margin.left + "px")
+        scope.svg = d3.select(el[0]).append("svg")
+            .attr("width", scope.width + scope.margin.left + scope.margin.right)
+            .attr("height", scope.height + scope.margin.top + scope.margin.bottom)
         .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            .attr("transform", "translate(" + scope.margin.left + "," + scope.margin.top + ")");
 
-        //svg.append("defs").append("clipPath")
-            //.attr("id", "clip")
-        //.append("rect")
-            //.attr("width", width)
-            //.attr("height", height);
+        scope.svg.append("defs").append("clipPath")
+            .attr("id", "clip")
+        .append("rect")
+            .attr("width", scope.width)
+            .attr("height", scope.height);
 
-        var axis = svg.append("g")
+        scope.xAxis = scope.svg.append("g")
             .attr("class", "x axis")
-            .attr("transform", "translate(0," + height + ")")
-            .call(x.axis = d3.svg.axis().scale(x).orient("bottom"));
+            .attr("transform", "translate(0," + scope.height + ")")
+            .call(scope.x.axis = d3.svg.axis().scale(scope.x).orient("bottom"));
 
-        var lines = svg.append("g")
-            //.attr("clip-path", "url(#clip)")
+        scope.lines = scope.svg.append("g")
+            .attr("clip-path", "url(#clip)")
             .attr("class", "lines");
-
-        lines.append("path")
-            .data([data])
-            .attr("class", "lineSolar")
-            .attr("d", lineSolar);
-
-        lines.append("path")
-            .data([data])
-            .attr("class", "linePower")
-            .attr("d", linePower);
-
-        //tick();
-
-        //d3.select(window)
-            //.on("scroll", function() { ++count; });
-
-        function tick() {
-
-            // update the domains
-            now = new Date();
-            x.domain([now - (n - 2) * duration, now - duration]);
-            y.domain([0, d3.max(data)]);
-
-            // push the accumulated count onto the back, and reset the count
-            data.push(Math.min(30, count));
-            count = 0;
-
-            // redraw the line
-            svg.select(".line")
-                .attr("d", line)
-                .attr("transform", null);
-
-            // slide the x-axis left
-            axis.transition()
-                .duration(duration)
-                .ease("linear")
-                .call(x.axis);
-
-            // slide the line left
-            path.transition()
-                .duration(duration)
-                .ease("linear")
-                .attr("transform", "translate(" + x(now - (n - 1) * duration) + ")")
-                .each("end", tick);
-
-            // pop the old data point off the front
-            data.shift();
-
-        }
-
     }
 
-    function postLink(scope, element, attrs) {
+    function update(scope, data, maxDemand) {
+
+        scope.start = _.min(data, 'time').time;
+        scope.end = _.max(data, 'time').time;
+
+        scope.x.domain([scope.start, scope.end]);
+        scope.y.domain([0, maxDemand]);
+
+        scope.lines.selectAll("path").attr("transform", null);
+
+        // slide the x-axis left
+        scope.xAxis
+            //.transition()
+            //.duration(duration)
+            //.ease("linear")
+            .call(scope.x.axis);
+
+        //var oldTime = _.min(allData, 'time').time;
+        var solarLines = scope.lines.selectAll("path.lineSolar");
+        solarLines.data([data]).enter().append("path")
+            .attr("class", "lineSolar")
+            .attr("d", scope.lineSolar);
+
+        solarLines.attr("d", scope.lineSolar);
+            //.transition()
+            //.duration(duration)
+            //.ease("linear")
+            //.attr("transform", "translate(" + scope.x(oldTime) + ")");
+        solarLines.data([data]).exit().remove();
+
+        var powerLines = scope.lines.selectAll("path.linePower")
+            
+        powerLines.data([data]).enter().append("path")
+            .attr("class", "linePower")
+            .attr("d", scope.linePower);
+        powerLines
+            .attr("d", scope.linePower);
+            //.transition()
+            //.duration(duration)
+            //.ease("linear")
+            //.attr("transform", "translate(" + scope.x(oldTime) + ")");
+        powerLines.data([data]).exit().remove();
+
+            // slide the line left
+            //path.transition()
+                //.attr("transform", "translate(" + x(now - (n - 1) * duration) + ")")
+                //.each("end", tick);
+    }
+
+    function controller(scope, element) {
         scope.$watch('data', function() {
             if (scope.data) {
-                var c = scope.data.data.consumption;
-                var s = scope.data.data.solar;
-                var points = _.map(c.points, function(p, i) {
-                    var consumedPoint = _.zipObject(c.columns, p);
-                    var solarPoint = _.zipObject(s.columns, s.points[i]);
-                    //  Add the solar saved power to the consumed point
-                    consumedPoint.S = solarPoint.P;
-                    consumedPoint.time *= 1000;
-                    return consumedPoint;
-                });
-                plot(element, points, scope.max_demand || _.max([_.max(points, 'S').S, _.max(points, 'P').P]) );
+                var maxDemand = scope.maxDemand || _.max([_.max(scope.data, 'S').S, _.max(scope.data, 'P').P]);
+                if (scope.svg) {
+                    update(scope, scope.data, maxDemand);
+                } else {
+                    scope.time = _.max(scope.data, 'time').time;
+                    plot(scope, element, scope.data, maxDemand);
+                }
             }
         });
     }
@@ -134,7 +126,7 @@
                 data: '=',
                 maxDemand: '@',
             },
-            link: postLink
+            controller: ['$scope', '$element', controller]
         };
     });
 

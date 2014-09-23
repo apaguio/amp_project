@@ -15,9 +15,9 @@ def generate_demo_data():
 
 @powerview_app.route("/powerview/points", methods=["GET"])
 def powerview_points():
-    consumption_meter_id = 10068
-    solar_meter_id = 10054
-    duration = '5d'
+    solar_meter_id = 10068
+    consumption_meter_id = 10054
+    duration = '5m'
     result = dict()
     result['consumption'] = powerview.get_ekm_data(consumption_meter_id, duration)
     result['solar'] = powerview.get_ekm_data(solar_meter_id, duration)

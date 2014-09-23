@@ -143,6 +143,9 @@ body {
   shape-rendering: crispedges;
   fill: none;
 }
+#powerview svg .lines path.linePower {
+  stroke-dasharray: 10,10;
+}
 #powerview .axis path,
 #powerview .axis line {
   fill: none;
