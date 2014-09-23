@@ -138,13 +138,19 @@ body {
   font: 10px sans-serif;
 }
 #powerview svg .lines path {
-  stroke: #000;
+  stroke: #222;
   stroke-width: 1px;
   shape-rendering: crispedges;
   fill: none;
 }
 #powerview svg .lines path.linePower {
   stroke-dasharray: 10,10;
+}
+#powerview svg .pflines path.linePF {
+  fill: none;
+  shape-rendering: crispedges;
+  stroke-width: 1px;
+  stroke: #222;
 }
 #powerview .axis path,
 #powerview .axis line {

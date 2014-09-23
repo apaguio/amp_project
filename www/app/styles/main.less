@@ -145,13 +145,21 @@ body {
         font: 10px sans-serif;
         .lines {
             path {
-                stroke: #000;
+                stroke: #222;
                 stroke-width: 1px;
                 shape-rendering: crispedges;
                 fill: none;
                 &.linePower {
                     stroke-dasharray: 10,10;
                 }
+            }
+        }
+        .pflines {
+            path.linePF {
+                fill: none;
+                shape-rendering: crispedges;
+                stroke-width: 1px;
+                stroke: #222;
             }
         }
     }
