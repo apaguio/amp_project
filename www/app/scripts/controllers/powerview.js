@@ -29,6 +29,10 @@
             scope.data.billingPeriodEndDate = toDate(data.billing_period_enddate);
             scope.data.seasonEndDate = toDate(data.season_enddate);
             scope.data.seasonStartDate = toDate(data.season_startdate);
+            var today = new Date().toString().split(' ').slice(0, 4).join(' ') + ' ' ;
+            var format = "hh:mm a";
+            scope.data.peakStart = moment(today + data.peak_period_start).format(format);
+            scope.data.peakEnd = moment(today + data.peak_period_end).format(format);
         }
 
         function load(onLoad) {
