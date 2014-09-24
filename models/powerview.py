@@ -92,7 +92,7 @@ def get_tarrif_details(customer_name='test'):
         result['rate_tarrif'] = customer.read_cycle.rate_tarrif
         result['read_cycle'] = customer.read_cycle.name
         for season in customer.seasons:
-            if season.start <= customer_tz_now and season.end >= customer_tz_now:
+            if customer_tz.localize(season.start) <= customer_tz_now and customer_tz.localize(season.end) >= customer_tz_now:
                 result['season'] = season.name
                 result['season_startdate'] = season.start.strftime('%Y-%m-%d %H:%M:%S')
                 result['season_enddate'] = season.end.strftime('%Y-%m-%d %H:%M:%S')
@@ -106,7 +106,7 @@ def get_tarrif_details(customer_name='test'):
                         break
                 break
         for billing_period in customer.read_cycle.billing_periods:
-            if billing_period.start <= customer_tz_now and billing_period.end >= customer_tz_now:
+            if customer_tz.localize(billing_period.start) <= customer_tz_now and customer_tz.localize(billing_period.end) >= customer_tz_now:
                 result['billing_period'] = billing_period.name
                 result['billing_period_startdate'] = billing_period.start.strftime('%Y-%m-%d %H:%M:%S')
                 result['billing_period_enddate'] = billing_period.end.strftime('%Y-%m-%d %H:%M:%S')
