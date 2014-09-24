@@ -8,6 +8,18 @@
         return d;
     }
 
+    var fifteen = 15 * 60;
+
+    function toDateRange(pyTimestamp) {
+        var d0 = new Date(),
+            d1 = new Date();
+        var start = Math.floor(pyTimestamp - (pyTimestamp % fifteen));
+        var end = start + fifteen;
+        d0.setTime(start * 1000);
+        d1.setTime(end * 1000);
+        return [d0, d1];
+    }
+
     function controller(scope, Session, http) {
         http.defaults.headers.post['CSRF-TOKEN'] = Session.csrfToken;
 
@@ -38,13 +50,15 @@
                     return ;
                 }
                 scope.data.max_demand = data.data.max_demand;
-                scope.data.maxDemandStartDate = new Date(data.data.time * 100);
-                scope.data.maxDemandEndDate = new Date(data.data.time * 100);
+                var maxDemandRange = toDateRange(data.data.time);
+                scope.data.maxDemandStartDate = maxDemandRange[0];
+                scope.data.maxDemandEndDate = maxDemandRange[1];
             });
             http({method: 'get', url: '/api/powerview/current_demand'}).success(function (data) {
                 scope.data.current_demand = data.data.current_demand;
-                scope.data.currentDemandStartDate = new Date(data.data.time * 100);
-                scope.data.currentDemandEndDate = new Date(data.data.time * 100);
+                var currentDemandRange = toDateRange(data.data.time);
+                scope.data.currentDemandStartDate = currentDemandRange[0];
+                scope.data.currentDemandEndDate = currentDemandRange[1];
             });
             http({method: 'get', url: '/api/powerview/points'}).success(function (data) {
                 var c = data.data.consumption;

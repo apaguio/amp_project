@@ -162,7 +162,7 @@
     function controller(scope, element) {
         scope.$watch('data', function() {
             if (scope.data) {
-                var maxDemand = scope.maxDemand || _.max([_.max(scope.data, 'S').S, _.max(scope.data, 'P').P]);
+                var maxDemand = parseInt(scope.maxDemand) || _.max([_.max(scope.data, 'S').S, _.max(scope.data, 'P').P]);
                 if (scope.svg) {
                     update(scope, scope.data, maxDemand);
                 } else {
