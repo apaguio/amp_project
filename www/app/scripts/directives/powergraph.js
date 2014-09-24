@@ -18,8 +18,8 @@
         scope.margin = {top: 6, right: 0, bottom: 20, left: 40};
         scope.width = el.width() - scope.margin.right - scope.margin.left;
         scope.height = el.height() - scope.margin.top - scope.margin.bottom;
-        scope.bigheight = scope.height * 2 / 3;
-        scope.smallheight = (scope.height / 3) - marginBetween;
+        scope.bigheight = scope.height / 2;
+        scope.smallheight = (scope.height / 4) - (2 * marginBetween);
 
         scope.x = d3.time.scale().range([0, scope.width]);
         scope.x.domain([scope.start, scope.end]);
@@ -30,10 +30,18 @@
 
         // Power Factor Y
         var minPF = _.min(data, 'L1_PF').L1_PF - 0.1;
-        var maxPF = _.max(data, 'L1_PF').L1_PF + 0.1;
+        //var maxPF = _.max(data, 'L1_PF').L1_PF + 0.1;
+        var maxPF = 1;
+        var minV = _.min(data, 'L1_V').L1_V - 5;
+        var maxV = _.max(data, 'L1_V').L1_V + 5;
+
         scope.pfy = d3.scale.linear().range([scope.smallheight, 0]);
         scope.pfy.domain([minPF, maxPF]);
-        scope.pfy.axis = d3.svg.axis().scale(scope.pfy).ticks(5).orient("left");
+        scope.pfy.axis = d3.svg.axis().scale(scope.pfy).ticks(3).orient("left");
+
+        scope.vy = d3.scale.linear().range([scope.smallheight, 0]);
+        scope.vy.domain([minV, maxV]);
+        scope.vy.axis = d3.svg.axis().scale(scope.vy).ticks(3).orient("left");
 
         scope.linePower = d3.svg.line()
             //.interpolate("basis")
@@ -49,6 +57,11 @@
             //.interpolate("basis")
             .x(function(d) { return scope.x(d.time); })
             .y(function(d) { return scope.pfy(d.L1_PF); });
+
+        scope.lineV = d3.svg.line()
+            //.interpolate("basis")
+            .x(function(d) { return scope.x(d.time); })
+            .y(function(d) { return scope.vy(d.L1_V); });
 
         scope.svg = d3.select(el[0]).select(".graph").append("svg")
             .attr("width", scope.width + scope.margin.left + scope.margin.right)
@@ -66,9 +79,13 @@
             .attr("class", "big")
             .attr("transform", "translate(" + scope.margin.left + "," + scope.margin.top + ")");
 
-        scope.small = scope.svg.append("g")
-            .attr("class", "small")
+        scope.powerfactorSVG = scope.svg.append("g")
+            .attr("class", "powerfactorSVG")
             .attr("transform", "translate(" + scope.margin.left + "," + (scope.margin.top + scope.bigheight + marginBetween) + ")");
+
+        scope.voltageSVG = scope.svg.append("g")
+            .attr("class", "voltageSVG")
+            .attr("transform", "translate(" + scope.margin.left + "," + (scope.margin.top + scope.bigheight + scope.smallheight + (2 * marginBetween) ) + ")");
 
         scope.svg.append("defs").append("clipPath")
             .attr("id", "clip")
@@ -84,7 +101,7 @@
             .y1(function(d) { return scope.y(d.P || 0); });
 
         scope.yAxis = scope.big.append("g")
-            .attr("class", "x axis")
+            .attr("class", "y axis")
             .call(scope.y.axis);
 
         scope.xAxis = scope.big.append("g")
@@ -92,22 +109,35 @@
             .attr("transform", "translate(0," + scope.bigheight + ")")
             .call(scope.x.axis = d3.svg.axis().scale(scope.x).orient("bottom"));
 
-        scope.smallXAxis = scope.small.append("g")
-            .attr("class", "x axis small")
+        scope.powerFactorXAxis = scope.powerfactorSVG.append("g")
+            .attr("class", "x axis powerfactor")
             .attr("transform", "translate(0," + scope.smallheight + ")")
             .call(scope.x.axis);
 
-        scope.pfyAxis = scope.small.append("g")
-            .attr("class", "x axis")
+        scope.voltageXAxis = scope.voltageSVG.append("g")
+            .attr("class", "x axis voltage")
+            .attr("transform", "translate(0," + scope.smallheight + ")")
+            .call(scope.x.axis);
+
+        scope.powerFactorYAxis = scope.powerfactorSVG.append("g")
+            .attr("class", "y axis powerfactor")
             .call(scope.pfy.axis);
+
+        scope.voltageYAxis = scope.voltageSVG.append("g")
+            .attr("class", "y axis voltage")
+            .call(scope.vy.axis);
 
         scope.lines = scope.big.append("g")
             .attr("clip-path", "url(#clip)")
             .attr("class", "lines");
 
-        scope.pflines = scope.small.append("g")
+        scope.powerFactorLines = scope.powerfactorSVG.append("g")
             .attr("clip-path", "url(#clip)")
-            .attr("class", "pflines");
+            .attr("class", "powerfactorlines");
+
+        scope.voltageLines = scope.voltageSVG.append("g")
+            .attr("clip-path", "url(#clip)")
+            .attr("class", "voltagelines");
 
         scope.hoverLineGroup = scope.svg.append("g").attr("class", "hoverLine");
 
@@ -176,7 +206,17 @@
             .on('mouseover', mouseover)
             .on('mouseout', mouseout);
 
+        scope.powerfactorSVG.append('text')
+            .attr('class', 'title')
+            .attr('x', scope.x.range()[1])
+            .attr('y', scope.pfy.range()[0] - 2)
+            .text('Power Factor');
 
+        scope.voltageSVG.append('text')
+            .attr('class', 'title')
+            .attr('x', scope.x.range()[1])
+            .attr('y', scope.vy.range()[0] - 2)
+            .text('Voltage');
     }
 
     function update(scope, data, maxDemand) {
@@ -186,10 +226,14 @@
 
         scope.x.domain([scope.start, scope.end]);
         scope.y.domain([0, maxDemand + 20]);
+
         var minPF = _.min(data, 'L1_PF').L1_PF - 0.1;
         var maxPF = _.max(data, 'L1_PF').L1_PF + 0.1;
-
         scope.pfy.domain([minPF, maxPF]);
+
+        var minV = _.min(data, 'L1_V').L1_V - 5;
+        var maxV = _.max(data, 'L1_V').L1_V + 5;
+        scope.vy.domain([minV, maxV]);
 
         scope.lines.selectAll("path").attr("transform", null);
 
@@ -214,38 +258,23 @@
             .attr("d", scope.area(data));
 
         // slide the x-axis left
-        scope.xAxis
-            //.transition()
-            //.duration(duration)
-            //.ease("linear")
-            .call(scope.x.axis);
-
-        scope.smallXAxis.call(scope.x.axis);
+        scope.xAxis.call(scope.x.axis);
+        scope.powerFactorXAxis.call(scope.x.axis);
+        scope.voltageXAxis.call(scope.x.axis);
 
         //var oldTime = _.min(allData, 'time').time;
         var solarLines = scope.lines.selectAll("path.lineSolar");
         solarLines.data([data]).enter().append("path")
             .attr("class", "lineSolar")
             .attr("d", scope.lineSolar);
-
         solarLines.attr("d", scope.lineSolar);
-            //.transition()
-            //.duration(duration)
-            //.ease("linear")
-            //.attr("transform", "translate(" + scope.x(oldTime) + ")");
         solarLines.data([data]).exit().remove();
 
         var powerLines = scope.lines.selectAll("path.linePower");
-            
         powerLines.data([data]).enter().append("path")
             .attr("class", "linePower")
             .attr("d", scope.linePower);
-        powerLines
-            .attr("d", scope.linePower);
-            //.transition()
-            //.duration(duration)
-            //.ease("linear")
-            //.attr("transform", "translate(" + scope.x(oldTime) + ")");
+        powerLines.attr("d", scope.linePower);
         powerLines.data([data]).exit().remove();
 
             // slide the line left
@@ -253,18 +282,19 @@
                 //.attr("transform", "translate(" + x(now - (n - 1) * duration) + ")")
                 //.each("end", tick);
 
-        var pflines = scope.pflines.selectAll("path.linePF");
-            
+        var pflines = scope.powerFactorLines.selectAll("path.linePF");
         pflines.data([data]).enter().append("path")
             .attr("class", "linePF")
             .attr("d", scope.linePF);
-        pflines
-            .attr("d", scope.linePF);
-            //.transition()
-            //.duration(duration)
-            //.ease("linear")
-            //.attr("transform", "translate(" + scope.x(oldTime) + ")");
+        pflines.attr("d", scope.linePF);
         pflines.data([data]).exit().remove();
+
+        var vlines = scope.voltageLines.selectAll("path.lineV");
+        vlines.data([data]).enter().append("path")
+            .attr("class", "lineV")
+            .attr("d", scope.lineV);
+        vlines.attr("d", scope.lineV);
+        vlines.data([data]).exit().remove();
 
     }
 
