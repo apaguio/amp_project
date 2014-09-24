@@ -5,6 +5,7 @@
 (function() {
 
     var duration = 4900;
+    var marginBetween = 30;
     function plot(scope, el, data, maxDemand) {
 
         if (!data || !data.length) {
@@ -15,17 +16,21 @@
         scope.width = el.width() - scope.margin.right - scope.margin.left;
         scope.height = el.height() - scope.margin.top - scope.margin.bottom;
         scope.bigheight = scope.height * 2 / 3;
-        scope.smallheight = scope.height / 3;
+        scope.smallheight = (scope.height / 3) - marginBetween;
 
-        scope.x = d3.time.scale()
-            .range([0, scope.width]);
+        scope.x = d3.time.scale().range([0, scope.width]);
+        scope.x.domain([scope.start, scope.end]);
 
-        scope.y = d3.scale.linear()
-            .range([scope.bigheight, 0]);
+        scope.y = d3.scale.linear().range([scope.bigheight, 0]);
+        scope.y.domain([0, maxDemand + 20]);
+        scope.y.axis = d3.svg.axis().scale(scope.y).ticks(5).orient("left");
 
         // Power Factor Y
-        scope.pfy = d3.scale.linear()
-            .range([scope.smallheight, 0]);
+        var minPF = _.min(data, 'L1_PF').L1_PF - 0.1;
+        var maxPF = _.max(data, 'L1_PF').L1_PF + 0.1;
+        scope.pfy = d3.scale.linear().range([scope.smallheight, 0]);
+        scope.pfy.domain([minPF, maxPF]);
+        scope.pfy.axis = d3.svg.axis().scale(scope.pfy).ticks(5).orient("left");
 
         scope.linePower = d3.svg.line()
             //.interpolate("basis")
@@ -52,13 +57,30 @@
 
         scope.small = scope.svg.append("g")
             .attr("class", "small")
-            .attr("transform", "translate(" + scope.margin.left + "," + (scope.margin.top + scope.bigheight) + ")");
+            .attr("transform", "translate(" + scope.margin.left + "," + (scope.margin.top + scope.bigheight + marginBetween) + ")");
 
         scope.svg.append("defs").append("clipPath")
             .attr("id", "clip")
         .append("rect")
             .attr("width", scope.width)
             .attr("height", scope.height);
+
+        // An area generator, for the light fill.
+        //var area = d3.svg.area()
+            //.interpolate("monotone")
+            //.x(function(d) { return x(d.date); })
+            //.y0(height)
+            //.y1(function(d) { return y(d.price); });
+
+        // Add the area path.
+        //svg.append("path")
+            //.attr("class", "area")
+            //.attr("clip-path", "url(#clip)")
+            //.attr("d", area(values));
+
+        scope.yAxis = scope.big.append("g")
+            .attr("class", "x axis")
+            .call(scope.y.axis);
 
         scope.xAxis = scope.big.append("g")
             .attr("class", "x axis")
@@ -69,6 +91,10 @@
             .attr("class", "x axis small")
             .attr("transform", "translate(0," + scope.smallheight + ")")
             .call(scope.x.axis);
+
+        scope.pfyAxis = scope.small.append("g")
+            .attr("class", "x axis")
+            .call(scope.pfy.axis);
 
         scope.lines = scope.big.append("g")
             .attr("clip-path", "url(#clip)")
