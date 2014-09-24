@@ -69,17 +69,11 @@
             .attr("height", scope.height);
 
         // An area generator, for the light fill.
-        //var area = d3.svg.area()
+        scope.area = d3.svg.area()
             //.interpolate("monotone")
-            //.x(function(d) { return x(d.date); })
-            //.y0(height)
-            //.y1(function(d) { return y(d.price); });
-
-        // Add the area path.
-        //svg.append("path")
-            //.attr("class", "area")
-            //.attr("clip-path", "url(#clip)")
-            //.attr("d", area(values));
+            .x(function(d) { return scope.x(d.time); })
+            .y0(function(d) { return scope.y((d.P || 0) - (d.S || 0)); })
+            .y1(function(d) { return scope.y(d.P || 0); });
 
         scope.yAxis = scope.big.append("g")
             .attr("class", "x axis")
@@ -132,6 +126,15 @@
             .attr("x2", scope.x(scope.end))
             .attr("y1", scope.y(maxDemand))
             .attr("y2", scope.y(maxDemand));
+
+        // Add the area path.
+        var area = scope.lines.select('path.area');
+        if (area.empty()) {
+            area = scope.lines.append('path')
+                .attr("class", "area");
+        }
+        area.attr("clip-path", "url(#clip)")
+            .attr("d", scope.area(data));
 
         // slide the x-axis left
         scope.xAxis

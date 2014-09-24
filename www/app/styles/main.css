@@ -153,6 +153,10 @@ body {
 #powerview svg .lines path.linePower {
   stroke-dasharray: 10,10;
 }
+#powerview svg .lines path.area {
+  stroke-width: 0;
+  fill: yellow;
+}
 #powerview svg .pflines path.linePF {
   fill: none;
   shape-rendering: crispedges;
