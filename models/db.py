@@ -29,5 +29,6 @@ class Customer(mongodb.Document):
     uid = mongodb.UUIDField(default=uuid.uuid4())
     name = mongodb.StringField()
     email = mongodb.EmailField()
+    timezone = mongodb.StringField(default='PST8PDT')
     read_cycle = mongodb.EmbeddedDocumentField(ReadCycle)
     seasons = mongodb.ListField(mongodb.EmbeddedDocumentField(Season))

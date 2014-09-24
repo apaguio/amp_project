@@ -1,16 +1,20 @@
 from datetime import datetime, time
 from models import db
+from pytz import timezone
 
 def generate():
     customer = db.Customer(name='test', email='test@example.com')
-    billing_periods = init_billing_periods()
+    CUSTOMER_TZ = timezone(customer.timezone)
+    billing_periods = init_billing_periods(CUSTOMER_TZ)
     read_cycle = db.ReadCycle(name='V', billing_periods=billing_periods, rate_tarrif='AG-5E')
     customer.read_cycle = read_cycle
     customer.save()
 
-    summer = db.Season(name='Summer', start=datetime(2014, 5, 1), end=datetime(2014, 10, 31))
+    summer = db.Season(name='Summer', start=CUSTOMER_TZ.localize(datetime(2014, 5, 1)),
+                       end=CUSTOMER_TZ.localize(datetime(2014, 10, 31)))
     get_summer_peak_periods(summer)
-    winter = db.Season(name='Winter', start=datetime(2013, 11, 1), end=datetime(2014, 4, 30))
+    winter = db.Season(name='Winter', start=CUSTOMER_TZ.localize(datetime(2013, 11, 1)),
+                       end=CUSTOMER_TZ.localize(datetime(2014, 4, 30)))
     get_winter_peak_periods(winter)
     customer.seasons = [winter, summer]
     customer.save()
@@ -29,17 +33,17 @@ def get_winter_peak_periods(winter):
                                 end=time(8, 29, 59).isoformat(), energy_charge=0.07, demand_charge=4.58)
     winter.peak_periods = [partpeak_period, offpeak_period]
 
-def init_billing_periods():
-    b1 = db.BillingPeriod(name='JAN', start=datetime(2013, 12, 17), end=datetime(2014, 1, 15), number_of_days=30)
-    b2 = db.BillingPeriod(name='FEB', start=datetime(2014, 1, 16), end=datetime(2014, 2, 17), number_of_days=33)
-    b3 = db.BillingPeriod(name='MAR', start=datetime(2014, 2, 18), end=datetime(2014, 3, 18), number_of_days=29)
-    b4 = db.BillingPeriod(name='APR', start=datetime(2014, 3, 19), end=datetime(2014, 4, 17), number_of_days=30)
-    b5 = db.BillingPeriod(name='MAY', start=datetime(2014, 4, 18), end=datetime(2014, 5, 18), number_of_days=31)
-    b6 = db.BillingPeriod(name='JUN', start=datetime(2014, 5, 19), end=datetime(2014, 6, 17), number_of_days=30)
-    b7 = db.BillingPeriod(name='JUL', start=datetime(2014, 6, 18), end=datetime(2014, 7, 17), number_of_days=30)
-    b8 = db.BillingPeriod(name='AUG', start=datetime(2014, 7, 18), end=datetime(2014, 8, 18), number_of_days=32)
-    b9 = db.BillingPeriod(name='SEP', start=datetime(2014, 8, 19), end=datetime(2014, 9, 17), number_of_days=30)
-    b10 = db.BillingPeriod(name='OCT', start=datetime(2014, 9, 18), end=datetime(2014, 10, 16), number_of_days=29)
-    b11 = db.BillingPeriod(name='NOV', start=datetime(2014, 10, 17), end=datetime(2014, 11, 17), number_of_days=32)
-    b12 = db.BillingPeriod(name='DEC', start=datetime(2014, 11, 18), end=datetime(2014, 12, 16), number_of_days=29)
+def init_billing_periods(CUSTOMER_TZ):
+    b1 = db.BillingPeriod(name='JAN', start=CUSTOMER_TZ.localize(datetime(2013, 12, 17)), end=CUSTOMER_TZ.localize(datetime(2014, 1, 15)), number_of_days=30)
+    b2 = db.BillingPeriod(name='FEB', start=CUSTOMER_TZ.localize(datetime(2014, 1, 16)), end=CUSTOMER_TZ.localize(datetime(2014, 2, 17)), number_of_days=33)
+    b3 = db.BillingPeriod(name='MAR', start=CUSTOMER_TZ.localize(datetime(2014, 2, 18)), end=CUSTOMER_TZ.localize(datetime(2014, 3, 18)), number_of_days=29)
+    b4 = db.BillingPeriod(name='APR', start=CUSTOMER_TZ.localize(datetime(2014, 3, 19)), end=CUSTOMER_TZ.localize(datetime(2014, 4, 17)), number_of_days=30)
+    b5 = db.BillingPeriod(name='MAY', start=CUSTOMER_TZ.localize(datetime(2014, 4, 18)), end=CUSTOMER_TZ.localize(datetime(2014, 5, 18)), number_of_days=31)
+    b6 = db.BillingPeriod(name='JUN', start=CUSTOMER_TZ.localize(datetime(2014, 5, 19)), end=CUSTOMER_TZ.localize(datetime(2014, 6, 17)), number_of_days=30)
+    b7 = db.BillingPeriod(name='JUL', start=CUSTOMER_TZ.localize(datetime(2014, 6, 18)), end=CUSTOMER_TZ.localize(datetime(2014, 7, 17)), number_of_days=30)
+    b8 = db.BillingPeriod(name='AUG', start=CUSTOMER_TZ.localize(datetime(2014, 7, 18)), end=CUSTOMER_TZ.localize(datetime(2014, 8, 18)), number_of_days=32)
+    b9 = db.BillingPeriod(name='SEP', start=CUSTOMER_TZ.localize(datetime(2014, 8, 19)), end=CUSTOMER_TZ.localize(datetime(2014, 9, 17)), number_of_days=30)
+    b10 = db.BillingPeriod(name='OCT', start=CUSTOMER_TZ.localize(datetime(2014, 9, 18)), end=CUSTOMER_TZ.localize(datetime(2014, 10, 16)), number_of_days=29)
+    b11 = db.BillingPeriod(name='NOV', start=CUSTOMER_TZ.localize(datetime(2014, 10, 17)), end=CUSTOMER_TZ.localize(datetime(2014, 11, 17)), number_of_days=32)
+    b12 = db.BillingPeriod(name='DEC', start=CUSTOMER_TZ.localize(datetime(2014, 11, 18)), end=CUSTOMER_TZ.localize(datetime(2014, 12, 16)), number_of_days=29)
     return [b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12]
