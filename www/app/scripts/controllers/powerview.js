@@ -16,12 +16,7 @@
             scope.data.billingPeriodStartDate  = toDate(data.billing_period_startdate);
             scope.data.billingPeriodEndDate = toDate(data.billing_period_enddate);
             scope.data.seasonEndDate = toDate(data.season_enddate);
-
             scope.data.seasonStartDate = toDate(data.season_startdate);
-            scope.data.currentDemandEndDate = toDate(data.current_demand_enddate);
-            scope.data.currentDemandStartDate = toDate(data.current_demand_startdate);
-            scope.data.maxDemandEndDate = toDate(data.max_demand_enddate);
-            scope.data.maxDemandStartDate = toDate(data.max_demand_startdate);
         }
 
         function load(onLoad) {
@@ -39,10 +34,17 @@
 
         function tick() {
             http({method: 'get', url: '/api/powerview/max_demand'}).success(function (data) {
+                if (!data.data.max_demand) {
+                    return ;
+                }
                 scope.data.max_demand = data.data.max_demand;
+                scope.data.maxDemandStartDate = new Date(data.data.time * 100);
+                scope.data.maxDemandEndDate = new Date(data.data.time * 100);
             });
             http({method: 'get', url: '/api/powerview/current_demand'}).success(function (data) {
                 scope.data.current_demand = data.data.current_demand;
+                scope.data.currentDemandStartDate = new Date(data.data.time * 100);
+                scope.data.currentDemandEndDate = new Date(data.data.time * 100);
             });
             http({method: 'get', url: '/api/powerview/points'}).success(function (data) {
                 var c = data.data.consumption;
