@@ -77,6 +77,7 @@
                 });
                 var lastPoint = _.last(points);
                 scope.data.power_factor = lastPoint.L1_PF;
+                scope.data.voltage = lastPoint.L1_V;
                 scope.graphdata = points;
             });
         }

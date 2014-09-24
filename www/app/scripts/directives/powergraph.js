@@ -50,9 +50,17 @@
             .x(function(d) { return scope.x(d.time); })
             .y(function(d) { return scope.pfy(d.L1_PF); });
 
-        scope.svg = d3.select(el[0]).append("svg")
+        scope.svg = d3.select(el[0]).select(".graph").append("svg")
             .attr("width", scope.width + scope.margin.left + scope.margin.right)
             .attr("height", scope.height + scope.margin.top + scope.margin.bottom);
+
+        scope.mouseRect = scope.svg.append('rect')
+            .attr('x', scope.x.range()[0])
+            .attr('y', 0)
+            .style('fill', 'blue')
+            .style('opacity', 1)
+            .attr('width', scope.x.range()[1] - scope.x.range[0])
+            .attr('height', scope.margin.top + scope.height);
 
         scope.big = scope.svg.append("g")
             .attr("class", "big")
@@ -100,6 +108,75 @@
         scope.pflines = scope.small.append("g")
             .attr("clip-path", "url(#clip)")
             .attr("class", "pflines");
+
+        scope.hoverLineGroup = scope.svg.append("g").attr("class", "hoverLine");
+
+        scope.lineHover = scope.hoverLineGroup
+            .append("line")
+            .attr("class", "lineHover")
+            .attr("x1", 0)
+            .attr("x2", 0)
+            .attr("y1", 0)
+            .attr("y2", scope.height );
+
+        scope.hoverLineGroup.style("opacity", 1e-6);
+
+        /**
+         * Formats a single entry in the tooltip
+         */
+        function formatEntry(key, value) {
+            var html = '<div class="entry">';
+            html += '<span class="left">' + key + '</span>';
+            html += '<span class="right">' + value + '</span>';
+            html += "</div>";
+            return html;
+        }
+
+        /**
+         * Sets the tooltip html content with the data relative to the passed
+         * point
+         */
+        function setTooltip(point) {
+            var html = '';
+            html += formatEntry('Price', '$' + point.price.toFixed(2));
+            html += formatEntry('ROM', (point.payout / data.margin).toFixed(2) + "%");
+            html += formatEntry('Prob >', (1 - point.cdf).toFixed(2) + "%");
+            html += formatEntry('Prob <', point.cdf.toFixed(2) + "%");
+            html += formatEntry('SD', ((point.price - data.forecast) / data.sd).toFixed(2));
+            scope.tooltip.html(html);
+            scope.tooltip.transition().duration(200).style("opacity", 0.9);
+        }
+
+        function mouseover() {
+            scope.hoverLineGroup.style("opacity", "1");
+        }
+
+        function mouseout() {
+            scope.hoverLineGroup.style("opacity", 1e-6);
+            scope.tooltip.transition()
+                .duration(200)
+                .style("opacity", 0);
+        }
+
+        function mousemove(d) {
+            if (!d3.event) {
+                return;
+            }
+            var xPoint = d3.mouse(scope.svg.node())[0];
+            var time = scope.x.invert(xPoint);
+            //var point = findNearestPoint(price);
+            //hoverLineGroup.attr('transform', 'translate(' + (scope.x(point.price) + margin.left) + ', 0)');
+            //setTooltip(point);
+
+            //tooltip.style("left", (d3.event.pageX + 10) + "px")
+            //.style("top", (d3.event.pageY - 28) + "px");
+        }
+
+        scope.mouseRect.on('mousemove', mousemove)
+            .on('mouseover', mouseover)
+            .on('mouseout', mouseout);
+
+
     }
 
     function update(scope, data, maxDemand) {
@@ -195,6 +272,11 @@
         scope.$watch('data', function() {
             if (scope.data) {
                 var maxDemand = parseInt(scope.maxDemand) || _.max([_.max(scope.data, 'S').S, _.max(scope.data, 'P').P]);
+
+                scope.tooltip = d3.select(element[0])
+                    .select("div.tooltip")
+                    .style("opacity", 0);
+
                 if (scope.svg) {
                     update(scope, scope.data, maxDemand);
                 } else {
@@ -208,7 +290,7 @@
     angular.module('insightApp')
     .directive('powergraph', function () {
         return {
-            template: '<div style="height: 500px"></div>',
+            template: '<div><div class="tooltip"></div><div class="graph" style="height: 500px"></div></div>',
             replace: true,
             restrict: 'E',
             scope: {
