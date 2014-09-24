@@ -12,6 +12,9 @@
             return;
         }
 
+        scope.start = _.min(data, 'time').time;
+        scope.end = _.max(data, 'time').time;
+
         scope.margin = {top: 6, right: 0, bottom: 20, left: 40};
         scope.width = el.width() - scope.margin.right - scope.margin.left;
         scope.height = el.height() - scope.margin.top - scope.margin.bottom;
@@ -125,8 +128,8 @@
                 .attr("class", "maxdemand");
         }
         maxdemandLine
-            .attr("x1", scope.x.range()[0])
-            .attr("x2", scope.x.range()[1])
+            .attr("x1", scope.x(scope.start))
+            .attr("x2", scope.x(scope.end))
             .attr("y1", scope.y(maxDemand))
             .attr("y2", scope.y(maxDemand));
 
