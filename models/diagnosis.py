@@ -1,4 +1,6 @@
 from models import influxdb
+from pytz import timezone
+from models.powerview import get_customer_timezone
 
 def get_ekm_data_range(meter_id, start, end):
     """
@@ -8,7 +10,16 @@ def get_ekm_data_range(meter_id, start, end):
     @parm end end UTC timestamp (in seconds)
     """
     query = 'select * from "%s" where time > %ss and time < %ss' % (meter_id, start, end)
-    result = influxdb.query(query)
-    if result:
-        return result[0]
+    query_result = influxdb.query(query)
+    result = list()
+    if query_result:
+        query_result = query_result[0]
+        customer_tz = timezone(get_customer_timezone(customer_name='test')) # TODO replace with current customer_id
+        for point in query_result['points']:
+            point_dict = dict()
+            for i, value in enumerate(point):
+                point_dict[query_result['columns'][i]] = value
+                result.append(point_dict)
+        for point_dict in result:
+            point_dict['time'] = customer_tz.fromutc(datetime.fromtimestamp(point_dict['time'])).strftime('%Y-%m-%d %H:%M:%S')
     return result
