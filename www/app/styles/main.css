@@ -137,18 +137,19 @@ body {
 #powerview svg {
   font: 10px sans-serif;
 }
-#powerview svg line.maxdemand {
+#powerview svg line,
+#powerview svg path {
   stroke: #222;
   stroke-width: 1px;
   shape-rendering: crispedges;
   fill: none;
-  stroke-dasharray: 5,5;
 }
-#powerview svg .lines path {
-  stroke: #222;
-  stroke-width: 1px;
-  shape-rendering: crispedges;
-  fill: none;
+#powerview svg text.title {
+  text-anchor: end;
+  fill: #777;
+}
+#powerview svg line.maxdemand {
+  stroke-dasharray: 5,5;
 }
 #powerview svg .lines path.linePower {
   stroke-dasharray: 10,10;
@@ -157,7 +158,8 @@ body {
   stroke-width: 0;
   fill: yellow;
 }
-#powerview svg .pflines path.linePF {
+#powerview svg .powerFactorLines path.linePF,
+#powerview svg .voltageLines path.linePF {
   fill: none;
   shape-rendering: crispedges;
   stroke-width: 1px;
@@ -165,7 +167,5 @@ body {
 }
 #powerview .axis path,
 #powerview .axis line {
-  fill: none;
   stroke: #000;
-  shape-rendering: crispEdges;
 }
