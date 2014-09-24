@@ -30,17 +30,18 @@
 
         // Power Factor Y
         var minPF = _.min(data, 'L1_PF').L1_PF - 0.1;
-        var maxPF = _.max(data, 'L1_PF').L1_PF + 0.1;
+        //var maxPF = _.max(data, 'L1_PF').L1_PF + 0.1;
+        var maxPF = 1;
         var minV = _.min(data, 'L1_V').L1_V - 5;
         var maxV = _.max(data, 'L1_V').L1_V + 5;
 
         scope.pfy = d3.scale.linear().range([scope.smallheight, 0]);
         scope.pfy.domain([minPF, maxPF]);
-        scope.pfy.axis = d3.svg.axis().scale(scope.pfy).ticks(5).orient("left");
+        scope.pfy.axis = d3.svg.axis().scale(scope.pfy).ticks(3).orient("left");
 
         scope.vy = d3.scale.linear().range([scope.smallheight, 0]);
         scope.vy.domain([minV, maxV]);
-        scope.vy.axis = d3.svg.axis().scale(scope.vy).ticks(5).orient("left");
+        scope.vy.axis = d3.svg.axis().scale(scope.vy).ticks(3).orient("left");
 
         scope.linePower = d3.svg.line()
             //.interpolate("basis")
