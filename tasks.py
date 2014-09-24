@@ -55,7 +55,7 @@ def ekm_facility_aggregate(meter_id):
 
     query = 'select mean(P) as demand from "%s" group by time(15m) limit 1;' % meter_id
     result = influxdb.query(query)
-    demand = result[0]['points'][0][1]
+    demand = round(result[0]['points'][0][1], 2)
 
     utc_timestamp = int((utc_now - datetime(1970, 1, 1)).total_seconds())
     data = {'name': '%s_15mins_%s' % (meter_id, tarrif_data['peak_period']), 'columns': ['time', 'demand'], 
