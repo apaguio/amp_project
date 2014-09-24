@@ -19,20 +19,25 @@ def generate_demo_data():
     import demo_data
     demo_data.generate()
 
-def get_current_demand(meter_id):
+def get_current_demand(facility_meter_id, solar_meter_id):
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
     # round to nearest 15-min interval, and calculate minutes difference
     number_of_miutes = utc_now.minute % 15
     #utc_now.strftime('%Y-%m-%d %H:%M:%S')
     # (number_of_miutes * 60), to get the seconds precision
-    query = 'select mean(P) as current_demand from "%s" group by time(%ss) limit 1;' % (meter_id, number_of_miutes*60)
-    query_result = influxdb.query(query)
+    facility_query = 'select mean(P) as current_demand from "%s" group by time(%ss) limit 1;' % (facility_meter_id, number_of_miutes*60)
+    facility_query_result = influxdb.query(facility_query)
     result = dict()
-    if query_result:
-        query_result = query_result[0]
-        for point in query_result['points']:
-            for i, value in enumerate(point):
-                result[query_result['columns'][i]] = value
+    if facility_query_result:
+        facility_query_result = facility_query_result[0]
+        current_demand = round(facility_query_result['points'][0][1], 2)
+        result['current_demand'] = current_demand
+        result['time'] = facility_query_result['points'][0][0]
+        solar_query = 'select mean(P) as solar_power from "%s" group by time(%ss) limit 1;' % (solar_meter_id, number_of_miutes*60)
+        solar_query_result = influxdb.query(solar_query)
+        if solar_query_result:
+            solar_query_result = solar_query_result[0]
+            result['current_demand'] = result['current_demand'] - round(solar_query_result['points'][0][1], 2)
     return result
 
 def get_max_demand(meter_id):
