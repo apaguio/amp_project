@@ -134,6 +134,14 @@ body {
 #settings .inlinecontainer label {
   min-width: 100px;
 }
+#powerview div.tooltip {
+  pointer-events: none;
+  border: 1px solid #222;
+  background-color: white;
+  opacity: 0.7;
+  border-radius: 4px;
+  padding: 10px;
+}
 #powerview svg {
   font: 10px sans-serif;
 }
@@ -143,6 +151,12 @@ body {
   stroke-width: 1px;
   shape-rendering: crispedges;
   fill: none;
+}
+#powerview svg * {
+  pointer-events: none;
+}
+#powerview svg rect.mouserect {
+  pointer-events: all;
 }
 #powerview svg text.title {
   text-anchor: end;

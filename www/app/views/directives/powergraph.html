@@ -1,0 +1,13 @@
+<div>
+  <div class="tooltip">
+    <center><b>{{currentPoint.time | date:'h:mm a'}} </b></center> <br/>
+    <br/>
+    Facility : {{currentPoint.P}} <br/>
+    Solar : {{currentPoint.S}} <br/>
+    Net Load : {{currentPoint.P - currentPoint.S}} <br/>
+    PF: {{currentPoint.L1_PF}} <br/>
+    voltage: {{currentPoint.L1_V}}
+  </div>
+  <div class="graph" style="height: 500px">
+  </div>
+</div>

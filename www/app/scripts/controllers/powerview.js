@@ -67,6 +67,10 @@
             http({method: 'get', url: '/api/powerview/points'}).success(function (data) {
                 var c = data.data.consumption;
                 var s = data.data.solar;
+                if (!c.points || !c.points.length) {
+                    console.log("Error, No Data Received.");
+                    return;
+                }
                 var points = _.map(c.points, function(p, i) {
                     var consumedPoint = _.zipObject(c.columns, p);
                     var solarPoint = _.zipObject(s.columns, s.points[i]);
@@ -79,6 +83,10 @@
                 scope.data.power_factor = lastPoint.L1_PF;
                 scope.data.voltage = lastPoint.L1_V;
                 scope.graphdata = points;
+                scope.dataUpdated = ++scope.dataUpdated || 0;
+            }).error(function(err) {
+                console.log(err);
+                console.log("Error, Connection issue.");
             });
         }
 

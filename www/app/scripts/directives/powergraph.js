@@ -6,14 +6,16 @@
 
     var duration = 4900;
     var marginBetween = 30;
+    var bisectDate = d3.bisector(function(d) { return d.time; }).left;
     function plot(scope, el, data, maxDemand) {
 
         if (!data || !data.length) {
             return;
         }
 
-        scope.start = _.min(data, 'time').time;
-        scope.end = _.max(data, 'time').time;
+        scope.yBegining = el[0].getBoundingClientRect().top;
+        scope.start = scope.min.time;
+        scope.end = scope.max.time;
 
         scope.margin = {top: 6, right: 0, bottom: 20, left: 40};
         scope.width = el.width() - scope.margin.right - scope.margin.left;
@@ -21,7 +23,7 @@
         scope.bigheight = scope.height / 2;
         scope.smallheight = (scope.height / 4) - (2 * marginBetween);
 
-        scope.x = d3.time.scale().range([0, scope.width]);
+        scope.x = d3.time.scale().range([0, scope.width - scope.margin.left - scope.margin.right]);
         scope.x.domain([scope.start, scope.end]);
 
         scope.y = d3.scale.linear().range([scope.bigheight, 0]);
@@ -29,11 +31,11 @@
         scope.y.axis = d3.svg.axis().scale(scope.y).ticks(5).orient("left");
 
         // Power Factor Y
-        var minPF = _.min(data, 'L1_PF').L1_PF - 0.1;
+        var minPF = scope.min.L1_PF - 0.1;
         //var maxPF = _.max(data, 'L1_PF').L1_PF + 0.1;
         var maxPF = 1;
-        var minV = _.min(data, 'L1_V').L1_V - 5;
-        var maxV = _.max(data, 'L1_V').L1_V + 5;
+        var minV = scope.min.L1_V - 5;
+        var maxV = scope.max.L1_V + 5;
 
         scope.pfy = d3.scale.linear().range([scope.smallheight, 0]);
         scope.pfy.domain([minPF, maxPF]);
@@ -46,33 +48,34 @@
         scope.linePower = d3.svg.line()
             //.interpolate("basis")
             .x(function(d) { return scope.x(d.time); })
-            .y(function(d) { return scope.y(d.P); });
+            .y(function(d) { return scope.y(d.P || 0); });
 
         scope.lineSolar = d3.svg.line()
             //.interpolate("basis")
             .x(function(d) { return scope.x(d.time); })
-            .y(function(d) { return scope.y(d.P - d.S); });
+            .y(function(d) { return scope.y( (d.P || 0) - (d.S || 0 ) ); });
 
         scope.linePF = d3.svg.line()
             //.interpolate("basis")
             .x(function(d) { return scope.x(d.time); })
-            .y(function(d) { return scope.pfy(d.L1_PF); });
+            .y(function(d) { return scope.pfy(d.L1_PF || 0); });
 
         scope.lineV = d3.svg.line()
             //.interpolate("basis")
             .x(function(d) { return scope.x(d.time); })
-            .y(function(d) { return scope.vy(d.L1_V); });
+            .y(function(d) { return scope.vy(d.L1_V || 0); });
 
         scope.svg = d3.select(el[0]).select(".graph").append("svg")
             .attr("width", scope.width + scope.margin.left + scope.margin.right)
             .attr("height", scope.height + scope.margin.top + scope.margin.bottom);
 
         scope.mouseRect = scope.svg.append('rect')
-            .attr('x', scope.x.range()[0])
-            .attr('y', 0)
-            .style('fill', 'blue')
+            .attr('class', 'mouserect')
+            .attr('x', scope.margin.left)
+            .attr('y', scope.margin.top)
+            .style('fill', 'none')
             .style('opacity', 1)
-            .attr('width', scope.x.range()[1] - scope.x.range[0])
+            .attr('width', scope.x.range()[1] - scope.x.range()[0])
             .attr('height', scope.margin.top + scope.height);
 
         scope.big = scope.svg.append("g")
@@ -151,60 +154,63 @@
 
         scope.hoverLineGroup.style("opacity", 1e-6);
 
-        /**
-         * Formats a single entry in the tooltip
-         */
-        function formatEntry(key, value) {
-            var html = '<div class="entry">';
-            html += '<span class="left">' + key + '</span>';
-            html += '<span class="right">' + value + '</span>';
-            html += "</div>";
-            return html;
-        }
-
-        /**
-         * Sets the tooltip html content with the data relative to the passed
-         * point
-         */
-        function setTooltip(point) {
-            var html = '';
-            html += formatEntry('Price', '$' + point.price.toFixed(2));
-            html += formatEntry('ROM', (point.payout / data.margin).toFixed(2) + "%");
-            html += formatEntry('Prob >', (1 - point.cdf).toFixed(2) + "%");
-            html += formatEntry('Prob <', point.cdf.toFixed(2) + "%");
-            html += formatEntry('SD', ((point.price - data.forecast) / data.sd).toFixed(2));
-            scope.tooltip.html(html);
-            scope.tooltip.transition().duration(200).style("opacity", 0.9);
-        }
-
         function mouseover() {
             scope.hoverLineGroup.style("opacity", "1");
         }
 
         function mouseout() {
+            scope.lastMouseMoveD = null;
             scope.hoverLineGroup.style("opacity", 1e-6);
-            scope.tooltip.transition()
-                .duration(200)
-                .style("opacity", 0);
+            scope.tooltip.style("opacity", 0);
         }
 
-        function mousemove(d) {
-            if (!d3.event) {
+        var lastPoint = null;
+        var findNearestPoint = _.memoize(function (time) {
+            time = time.setMilliseconds(0);
+            var point = _.find(scope.data, {time: time});
+            if (!point) {
+                point = lastPoint;
+            }
+            lastPoint = point;
+            return point;
+        });
+
+        scope.mousemove = function (d) {
+            var event = d3.mouse(this);
+            if (!event) {
                 return;
             }
-            var xPoint = d3.mouse(scope.svg.node())[0];
-            var time = scope.x.invert(xPoint);
-            //var point = findNearestPoint(price);
-            //hoverLineGroup.attr('transform', 'translate(' + (scope.x(point.price) + margin.left) + ', 0)');
-            //setTooltip(point);
+            scope.lastMouseMoveD = d;
+            var xPoint = event[0];
+            var yPoint = event[1];
+            var time = scope.x.invert(xPoint - scope.margin.left);
+            var i = bisectDate(scope.data, time, 1),
+                d0 = scope.data[i - 1],
+                d1 = scope.data[i],
+                point = time - d0.time > d1.time - time ? d1 : d0;
+            if (!point) {
+                return ;
+            }
+            var xVal = scope.x(point.time);
+            scope.lineHover
+                .attr('x1', xVal + scope.margin.left)
+                .attr('x2', xVal + scope.margin.left);
 
-            //tooltip.style("left", (d3.event.pageX + 10) + "px")
-            //.style("top", (d3.event.pageY - 28) + "px");
-        }
+            scope.tooltip.transition().duration(200).style("opacity", 0.9);
+            var tooltipY = yPoint - scope.yBegining + scope.margin.top;
+            scope.tooltip
+                .style("left", (xVal + scope.margin.left + 40) + "px")
+                .style("top", tooltipY + "px");
+            scope.$apply(function() {
+                scope.currentPoint = point;
+            });
+        };
 
-        scope.mouseRect.on('mousemove', mousemove)
-            .on('mouseover', mouseover)
-            .on('mouseout', mouseout);
+        scope.big.append('text')
+            .attr('class', 'title')
+            .attr('x', scope.x.range()[1])
+            .attr('y', scope.y.range()[0] - 2)
+            .text('kW Demand');
 
         scope.powerfactorSVG.append('text')
             .attr('class', 'title')
@@ -217,22 +223,28 @@
             .attr('x', scope.x.range()[1])
             .attr('y', scope.vy.range()[0] - 2)
             .text('Voltage');
+
+        scope.mouseRect
+            .on('mousemove', scope.mousemove)
+            .on('mouseenter', mouseover)
+            .on('mouseout', mouseout);
     }
 
     function update(scope, data, maxDemand) {
 
-        scope.start = _.min(data, 'time').time;
-        scope.end = _.max(data, 'time').time;
+        $('svg').mousemove();
+        scope.start = scope.min.time;
+        scope.end = scope.max.time;
 
         scope.x.domain([scope.start, scope.end]);
         scope.y.domain([0, maxDemand + 20]);
 
-        var minPF = _.min(data, 'L1_PF').L1_PF - 0.1;
-        var maxPF = _.max(data, 'L1_PF').L1_PF + 0.1;
+        var minPF = scope.min.L1_PF - 0.1;
+        var maxPF = scope.max.L1_PF + 0.1;
         scope.pfy.domain([minPF, maxPF]);
 
-        var minV = _.min(data, 'L1_V').L1_V - 5;
-        var maxV = _.max(data, 'L1_V').L1_V + 5;
+        var minV = scope.min.L1_V - 5;
+        var maxV = scope.max.L1_V + 5;
         scope.vy.domain([minV, maxV]);
 
         scope.lines.selectAll("path").attr("transform", null);
@@ -277,11 +289,6 @@
         powerLines.attr("d", scope.linePower);
         powerLines.data([data]).exit().remove();
 
-            // slide the line left
-            //path.transition()
-                //.attr("transform", "translate(" + x(now - (n - 1) * duration) + ")")
-                //.each("end", tick);
-
         var pflines = scope.powerFactorLines.selectAll("path.linePF");
         pflines.data([data]).enter().append("path")
             .attr("class", "linePF")
@@ -295,13 +302,46 @@
             .attr("d", scope.lineV);
         vlines.attr("d", scope.lineV);
         vlines.data([data]).exit().remove();
-
     }
 
     function controller(scope, element) {
-        scope.$watch('data', function() {
+        scope.$watch('dataupdated', function() {
             if (scope.data) {
-                var maxDemand = parseInt(scope.maxDemand) || _.max([_.max(scope.data, 'S').S, _.max(scope.data, 'P').P]);
+                scope.max = {
+                    S: Number.MIN_VALUE,
+                    P: Number.MIN_VALUE,
+                    L1_V: Number.MIN_VALUE,
+                    L1_PF: Number.MIN_VALUE,
+                    time: Number.MIN_VALUE
+                };
+                scope.min = {
+                    S: Number.MAX_VALUE,
+                    P: Number.MAX_VALUE,
+                    L1_V: Number.MAX_VALUE,
+                    L1_PF: Number.MAX_VALUE,
+                    time: Number.MAX_VALUE
+                };
+
+                // Single loop to get them all, single ring to role them all :D
+                _.filter(scope.data, function(d, i) {
+                    scope.max.S = scope.max.S < d.S ? d.S : scope.max.S; 
+                    scope.max.P = scope.max.P < d.P ? d.P : scope.max.P; 
+                    scope.max.L1_V = scope.max.L1_V < d.L1_V ? d.L1_V : scope.max.L1_V; 
+                    scope.max.L1_PF = scope.max.L1_PF < d.L1_PF ? d.L1_PF : scope.max.L1_PF; 
+                    scope.max.time = scope.max.time < d.time ? d.time : scope.max.time; 
+
+                    scope.min.S = scope.min.S > d.S ? d.S : scope.min.S; 
+                    scope.min.P = scope.min.P > d.P ? d.P : scope.min.P; 
+                    scope.min.L1_V = scope.min.L1_V > d.L1_V ? d.L1_V : scope.min.L1_V; 
+                    scope.min.L1_PF = scope.min.L1_PF > d.L1_PF ? d.L1_PF : scope.min.L1_PF; 
+                    scope.min.time = scope.min.time > d.time ? d.time : scope.min.time; 
+                    // Filter based on P & S
+                    return d.P && d.S && d.L1_V && d.L1_PF;
+                });
+
+                scope.data = _.sortBy(scope.data, 'time');
+
+                var maxDemand = parseInt(scope.maxDemand) || _.max([scope.max.S, scpoe.max.P]);
 
                 scope.tooltip = d3.select(element[0])
                     .select("div.tooltip")
@@ -310,7 +350,7 @@
                 if (scope.svg) {
                     update(scope, scope.data, maxDemand);
                 } else {
-                    scope.time = _.max(scope.data, 'time').time;
+                    scope.time = scope.max.time;
                     plot(scope, element, scope.data, maxDemand);
                 }
             }
@@ -320,11 +360,12 @@
     angular.module('insightApp')
     .directive('powergraph', function () {
         return {
-            template: '<div><div class="tooltip"></div><div class="graph" style="height: 500px"></div></div>',
+            templateUrl: 'views/directives/powergraph.html',
             replace: true,
             restrict: 'E',
             scope: {
                 data: '=',
+                dataupdated: '@',
                 maxDemand: '@',
             },
             controller: ['$scope', '$element', controller]
