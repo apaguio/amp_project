@@ -6,8 +6,12 @@ def generate():
     customer = db.Customer(name='test', email='test@example.com')
     # all datetime data are set in UTC format
     billing_periods = init_billing_periods()
+    facility_meters = init_facility_meters()
+    solar_meters = init_solar_meters()
     read_cycle = db.ReadCycle(name='V', billing_periods=billing_periods, rate_tarrif='AG-5E')
     customer.read_cycle = read_cycle
+    customer.facility = facility_meters
+    customer.solar = solar_meters
     customer.save()
 
     summer = db.Season(name='Summer', start=utc.localize(datetime(2014, 5, 1)),
@@ -18,6 +22,14 @@ def generate():
     get_winter_peak_periods(winter)
     customer.seasons = [winter, summer]
     customer.save()
+
+def init_facility_meters():
+    meter1 = db.EkmMeter(id='10054', api_key='MTAxMDoyMDIw')
+    return [meter1,]
+
+def init_solar_meters():
+    meter1 = db.EkmMeter(id='10068', api_key='MTAxMDoyMDIw')
+    return [meter1,]
 
 def get_summer_peak_periods(summer):
     onpeak_period = db.PeakPeriod(name='onpeak', start=time(12).isoformat(),

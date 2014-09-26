@@ -1,6 +1,10 @@
 from models import mongodb
 import uuid
 
+class EkmMeter(mongodb.EmbeddedDocument):
+    id = mongodb.StringField()
+    api_key = mongodb.StringField()
+
 class PeakPeriod(mongodb.EmbeddedDocument):
     name = mongodb.StringField()
     start = mongodb.StringField() # start_time in ISO format
@@ -32,3 +36,5 @@ class Customer(mongodb.Document):
     timezone = mongodb.StringField(default='PST8PDT')
     read_cycle = mongodb.EmbeddedDocumentField(ReadCycle)
     seasons = mongodb.ListField(mongodb.EmbeddedDocumentField(Season))
+    facility = mongodb.ListField(mongodb.EmbeddedDocumentField(EkmMeter))
+    solar = mongodb.ListField(mongodb.EmbeddedDocumentField(EkmMeter))
