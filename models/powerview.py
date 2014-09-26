@@ -29,7 +29,7 @@ def generate_demo_data():
     import demo_data
     demo_data.generate()
 
-def get_current_demand(meter_id):
+def get_current_demand(meter_id, solar_meter_id):
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
     # round to nearest 15-min interval, and calculate minutes difference
     number_of_miutes = utc_now.minute % 15
