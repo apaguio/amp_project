@@ -33,6 +33,6 @@ CELERYBEAT_SCHEDULE = {
     'ekm.facility.15mins.aggregator': {
         'task': 'tasks.ekm.facility.15mins.aggregator',
         'schedule': crontab(minute=[0, 15, 30, 45]),
-        'args': ('10054',)
+        'args': ('10054', '10068')
     },
 }
