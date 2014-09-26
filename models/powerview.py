@@ -22,7 +22,7 @@ def get_ekm_data(meter_id, period):
                 point_dict[query_result['columns'][i]] = value
                 result.append(point_dict)
         for point_dict in result:
-            point_dict['time'] = customer_tz.fromutc(datetime.fromtimestamp(point_dict['time'])).strftime('%Y-%m-%d %H:%M:%S')
+            point_dict['time'] = customer_tz.fromutc(datetime.utcfromtimestamp(point_dict['time'])).strftime('%Y-%m-%d %H:%M:%S')
     return result
 
 def generate_demo_data():
@@ -36,15 +36,20 @@ def get_current_demand(meter_id):
     customer_tz = timezone(get_customer_timezone(customer_name='test')) # TODO replace with current customer_id
     #utc_now.strftime('%Y-%m-%d %H:%M:%S')
     # (number_of_miutes * 60), to get the seconds precision
-    query = 'select mean(P) as current_demand from "%s" group by time(%ss) limit 1;' % (meter_id, number_of_miutes*60)
-    query_result = influxdb.query(query)
+    facility_query = 'select mean(P) as current_demand from "%s" group by time(%ss) limit 1;' % (meter_id, number_of_miutes*60)
+    facility_query_result = influxdb.query(facility_query)
     result = dict()
-    if query_result:
-        query_result = query_result[0]
-        for point in query_result['points']:
-            for i, value in enumerate(point):
-                result[query_result['columns'][i]] = value
-        result['time'] = customer_tz.fromutc(datetime.fromtimestamp(result['time'])).strftime('%Y-%m-%d %H:%M:%S')
+    if facility_query_result:
+        facility_query_result = facility_query_result[0]
+        current_demand = round(facility_query_result['points'][0][1], 2)
+        result['current_demand'] = current_demand
+        result['time'] = customer_tz.fromutc(datetime.utcfromtimestamp(facility_query_result['points'][0][0])).strftime('%Y-%m-%d %H:%M:%S')
+        solar_query = 'select mean(P) as solar_power from "%s" group by time(%ss) limit 1;' % (solar_meter_id, number_of_miutes*60)
+        solar_query_result = influxdb.query(solar_query)
+        if solar_query_result:
+            solar_query_result = solar_query_result[0]
+            net_load = current_demand - round(solar_query_result['points'][0][1], 2)
+            result['current_demand'] = net_load
     return result
 
 def get_max_demand(meter_id):
@@ -52,16 +57,16 @@ def get_max_demand(meter_id):
     tarrif_data = get_tarrif_details(customer_name='test') # TODO replace with current customer_id
     customer_tz = timezone(tarrif_data['timezone'])
     customer_tz_now = customer_tz.fromutc(utc_now)
-    number_of_days = (customer_tz_now - datetime.strptime(tarrif_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S')).days
-    query = 'select max(demand) as max_demand from "%s_15mins_%s" group by time(%sd) limit 1;' % (meter_id, tarrif_data['peak_period'], number_of_days)
+    time_diff = customer_tz_now - datetime.strptime(tarrif_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S')
+    number_of_hours = (time_diff.days * 24) + (time_diff.hours) # mroe accuracy when calculating  max demand
+    query = 'select max(demand) as max_demand from "%s_15mins_%s" group by time(%sh) limit 1;' % (meter_id, tarrif_data['peak_period'], number_of_hours)
     result = dict()
     query_result = influxdb.query(query)
     if query_result:
         query_result = query_result[0]
         max_demand = query_result['points'][0][1]
         time_point_query = 'select time from "%s_15mins_%s" where demand=%s' % (meter_id, tarrif_data['peak_period'], max_demand)
-        result['time'] = influxdb.query(time_point_query)[0]['points'][0][0]
-        result['time'] = customer_tz.fromutc(datetime.fromtimestamp(result['time'])).strftime('%Y-%m-%d %H:%M:%S')
+        result['time'] = customer_tz.fromutc(datetime.utcfromtimestamp(influxdb.query(time_point_query)[0]['points'][0][0])).strftime('%Y-%m-%d %H:%M:%S')
         result['max_demand'] = max_demand
     return result
 
