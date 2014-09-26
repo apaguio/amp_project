@@ -36,7 +36,7 @@ def get_current_demand(meter_id, solar_meter_id):
     customer_tz = timezone(get_customer_timezone(customer_name='test')) # TODO replace with current customer_id
     #utc_now.strftime('%Y-%m-%d %H:%M:%S')
     # (number_of_miutes * 60), to get the seconds precision
-    facility_query = 'select mean(P) as current_demand from "%s" group by time(%ss) limit 1;' % (meter_id, number_of_miutes*60)
+    facility_query = 'select mean(P) as current_demand from "%s" group by time(%ss) limit 1;' % (meter_id, ((number_of_miutes*60) + utc_now.second))
     facility_query_result = influxdb.query(facility_query)
     result = dict()
     if facility_query_result:
@@ -57,9 +57,8 @@ def get_max_demand(meter_id):
     tarrif_data = get_tarrif_details(customer_name='test') # TODO replace with current customer_id
     customer_tz = timezone(tarrif_data['timezone'])
     customer_tz_now = customer_tz.fromutc(utc_now)
-    time_diff = customer_tz_now - datetime.strptime(tarrif_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S')
-    number_of_hours = (time_diff.days * 24) + (time_diff.hours) # mroe accuracy when calculating  max demand
-    query = 'select max(demand) as max_demand from "%s_15mins_%s" group by time(%sh) limit 1;' % (meter_id, tarrif_data['peak_period'], number_of_hours)
+    time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tarrif_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
+    query = 'select max(demand) as max_demand from "%s_15mins_%s" group by time(%ss) limit 1;' % (meter_id, tarrif_data['peak_period'], time_diff.total_seconds())
     result = dict()
     query_result = influxdb.query(query)
     if query_result:
