@@ -207,7 +207,16 @@
             scope.tooltip.transition().duration(200).style("opacity", 0.9);
             var tooltipY = yPoint - scope.yBegining + scope.margin.top;
             scope.tooltip
-                .style("left", (xVal + scope.margin.left + 40) + "px")
+                .style("left", function(d) {
+                    xVal += scope.margin.left;
+                    if ((scope.x.range()[1] - xVal) < 150) {
+                        // subtract value should equal the tooltip width in css
+                        xVal -= 160;
+                    } else {
+                        xVal += scope.margin.left;
+                    }
+                    return xVal + "px";
+                })
                 .style("top", tooltipY + "px");
             scope.$apply(function() {
                 scope.currentPoint = point;
