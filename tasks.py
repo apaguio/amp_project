@@ -48,16 +48,23 @@ def ekm_collect(meter_id, nr_readings, key, endpoint='io.ekmpush.com', simulate_
     influxdb.write_points([data])
 
 @celery.task(name='tasks.ekm.facility.15mins.aggregator')
-def ekm_facility_aggregate(meter_id):
+def ekm_facility_aggregate(meter_id, solar_meter_id):
     utc_now = datetime.utcfromtimestamp(time.time())
     # get user information (customer_id) from session
     tarrif_data = powerview.get_tarrif_details(customer_name='test')
 
-    query = 'select mean(P) as demand from "%s" group by time(15m) limit 1;' % meter_id
-    result = influxdb.query(query)
-    demand = round(result[0]['points'][0][1], 2)
+    facility_query = 'select mean(P) as demand from "%s" group by time(15m) limit 1;' % meter_id
+    facility_result = influxdb.query(facility_query)
+    demand = round(facility_result[0]['points'][0][1], 2)
+
+    solar_power = 0
+    solar_query = 'select mean(P) as demand from "%s" group by time(15m) limit 1;' % solar_meter_id
+    solar_result = influxdb.query(solar_query)
+    if solar_result:
+        solar_power = round(solar_result[0]['points'][0][1], 2)
+    net_load = demand - solar_power
 
     utc_timestamp = int((utc_now - datetime(1970, 1, 1)).total_seconds())
     data = {'name': '%s_15mins_%s' % (meter_id, tarrif_data['peak_period']), 'columns': ['time', 'demand'], 
-            'points': [[utc_timestamp, demand]]}
+            'points': [[utc_timestamp, net_load]]}
     influxdb.write_points([data])

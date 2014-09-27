@@ -14,7 +14,6 @@ CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT=['json']
-CELERY_TIMEZONE = 'US/Pacific'
 CELERY_IMPORTS = ["tasks",]
 
 # EKM metering scheduled tasks
@@ -34,6 +33,6 @@ CELERYBEAT_SCHEDULE = {
     'ekm.facility.15mins.aggregator': {
         'task': 'tasks.ekm.facility.15mins.aggregator',
         'schedule': crontab(minute=[0, 15, 30, 45]),
-        'args': ('10054',)
+        'args': ('10054', '10068')
     },
 }
