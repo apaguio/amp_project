@@ -207,3 +207,8 @@ body {
 #powerview svg .tick line {
   stroke-width: 0;
 }
+#powerview svg .grid .tick line {
+  stroke: #dedbcb;
+  stroke-width: 1px;
+  pointer-events: none;
+}

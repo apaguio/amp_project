@@ -30,6 +30,7 @@
         scope.y.domain([0, maxDemand + 20]);
         scope.y.axis = d3.svg.axis().scale(scope.y).ticks(5).orient("left");
 
+
         // Power Factor Y
         var minPF = scope.min.L1_PF - 0.1;
         //var maxPF = _.max(data, 'L1_PF').L1_PF + 0.1;
@@ -82,6 +83,9 @@
             .attr("class", "big")
             .attr("transform", "translate(" + scope.margin.left + "," + scope.margin.top + ")");
 
+        scope.grid = scope.big.append("g")
+            .attr("class", "grid");
+
         scope.powerfactorSVG = scope.svg.append("g")
             .attr("class", "powerfactorSVG")
             .attr("transform", "translate(" + scope.margin.left + "," + (scope.margin.top + scope.bigheight + marginBetween) + ")");
@@ -106,6 +110,10 @@
         scope.yAxis = scope.big.append("g")
             .attr("class", "y axis")
             .call(scope.y.axis);
+
+        scope.gridYAxis = scope.grid.append("g")
+            .attr("class", "gridyaxis")
+            .call(scope.y.axis.tickSize(-scope.x(scope.end), 0, 0).tickFormat(""));
 
         scope.xAxis = scope.big.append("g")
             .attr("class", "x axis")
