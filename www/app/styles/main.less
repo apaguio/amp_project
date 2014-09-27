@@ -1,4 +1,11 @@
 /* Space out content a bit */
+
+@main: #B9E3E3;
+@color1: #DEDBCB;
+@darkcolor1: #918D76;
+@color2: #AB8BA2;
+@darkcolor2: #917E8C;
+
 body {
   padding-top: 0px;
   padding-bottom: 0px;
@@ -26,16 +33,12 @@ body {
 .header {
   /*border-bottom: 1px solid #e5e5e5;*/
     padding: 20px;
-    background-color: rgb(222, 219, 203);
-}
-/* Make the masthead heading the same height as the navigation */
-.header h3 {
-  margin-top: 0;
-  margin-bottom: 0;
-  line-height: 40px;
-  margin-left: 20px;
-  display: inline-block;
-  color: white;
+    /*background-color: rgb(222, 219, 203);*/
+    background-color: @color1;
+    .logo {
+        display: inline-block;
+        margin-top: 5px;
+    }
 }
 
 #main {
@@ -148,11 +151,42 @@ body {
         opacity: 0.7;
         border-radius: 4px;
         padding: 10px;
+    
+        min-width: 100px;
+        position: absolute;           
+        text-align: left;           
+        width: auto;                  
+        height: auto;                 
+        min-width: 150px;
+
+        border: 1px solid #bbbbbb;
+        color: black;
+        background-color: white;
+        position: absolute;
+        font-family: Arial, Helvetical, sans-serif;
+        padding: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        pointer-events: none;         
+        .title{
+            font-weight: bold;
+            text-align: center;
+        }
+        .body {
+            .entry{
+                .key{
+                }
+                .value {
+                    float: right;
+                    font-weight: bolder;
+                }
+            }
+        }
     }
     svg {
         font: 10px sans-serif;
         line, path {
-            stroke: #222;
+            /*stroke: #222;*/
+            stroke: @darkcolor1;
             stroke-width: 1px;
             shape-rendering: crispedges;
             fill: none;
@@ -165,10 +199,17 @@ body {
         rect.mouserect {
             pointer-events: all;
         }
+        .lineHover{
+            /*stroke: #e5e5e5;*/
+            stroke: @color1;
+            stroke-width: 1.5px;
+            pointer-events: none;         
+        }
 
-        text.title {
+        text.title, text.maxdemand {
             text-anchor: end;
-            fill: #777;
+            /*fill: #777;*/
+            fill: @darkcolor2;
         }
         line.maxdemand{
             stroke-dasharray: 5,5;
@@ -176,11 +217,12 @@ body {
         .lines {
             path {
                 &.linePower {
-                    stroke-dasharray: 10,10;
+                    stroke-dasharray: 1,1;
                 }
                 &.area {
                     stroke-width: 0;
-                    fill: yellow;
+                    /*fill: yellow;*/
+                    fill: @main;
                 }
             }
         }
@@ -189,14 +231,16 @@ body {
                 fill: none;
                 shape-rendering: crispedges;
                 stroke-width: 1px;
-                stroke: #222;
+                /*stroke: #222;*/
+                stroke: @color1;
             }
         }
+        .tick line {
+            stroke-width: 0;
+        }
+
     }
 
-    .axis path, .axis line {
-        stroke: #000;
-    }
 }
 
 

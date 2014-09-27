@@ -23,16 +23,12 @@ body {
 .header {
   /*border-bottom: 1px solid #e5e5e5;*/
   padding: 20px;
+  /*background-color: rgb(222, 219, 203);*/
   background-color: #dedbcb;
 }
-/* Make the masthead heading the same height as the navigation */
-.header h3 {
-  margin-top: 0;
-  margin-bottom: 0;
-  line-height: 40px;
-  margin-left: 20px;
+.header .logo {
   display: inline-block;
-  color: white;
+  margin-top: 5px;
 }
 #main .fadeIn-setup,
 #main .fadeOut-setup {
@@ -135,19 +131,38 @@ body {
   min-width: 100px;
 }
 #powerview div.tooltip {
-  pointer-events: none;
   border: 1px solid #222;
-  background-color: white;
   opacity: 0.7;
   border-radius: 4px;
+  min-width: 100px;
+  text-align: left;
+  width: auto;
+  height: auto;
+  min-width: 150px;
+  border: 1px solid #bbbbbb;
+  color: black;
+  background-color: white;
+  position: absolute;
+  font-family: Arial, Helvetical, sans-serif;
   padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+#powerview div.tooltip .title {
+  font-weight: bold;
+  text-align: center;
+}
+#powerview div.tooltip .body .entry .value {
+  float: right;
+  font-weight: bolder;
 }
 #powerview svg {
   font: 10px sans-serif;
 }
 #powerview svg line,
 #powerview svg path {
-  stroke: #222;
+  /*stroke: #222;*/
+  stroke: #918d76;
   stroke-width: 1px;
   shape-rendering: crispedges;
   fill: none;
@@ -158,28 +173,37 @@ body {
 #powerview svg rect.mouserect {
   pointer-events: all;
 }
-#powerview svg text.title {
+#powerview svg .lineHover {
+  /*stroke: #e5e5e5;*/
+  stroke: #dedbcb;
+  stroke-width: 1.5px;
+  pointer-events: none;
+}
+#powerview svg text.title,
+#powerview svg text.maxdemand {
   text-anchor: end;
-  fill: #777;
+  /*fill: #777;*/
+  fill: #917e8c;
 }
 #powerview svg line.maxdemand {
   stroke-dasharray: 5,5;
 }
 #powerview svg .lines path.linePower {
-  stroke-dasharray: 10,10;
+  stroke-dasharray: 1,1;
 }
 #powerview svg .lines path.area {
   stroke-width: 0;
-  fill: yellow;
+  /*fill: yellow;*/
+  fill: #b9e3e3;
 }
 #powerview svg .powerFactorLines path.linePF,
 #powerview svg .voltageLines path.linePF {
   fill: none;
   shape-rendering: crispedges;
   stroke-width: 1px;
-  stroke: #222;
+  /*stroke: #222;*/
+  stroke: #dedbcb;
 }
-#powerview .axis path,
-#powerview .axis line {
-  stroke: #000;
+#powerview svg .tick line {
+  stroke-width: 0;
 }

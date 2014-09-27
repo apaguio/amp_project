@@ -249,9 +249,12 @@
 
         scope.lines.selectAll("path").attr("transform", null);
 
-        var maxdemandLine = scope.lines.select('line.maxdemand');
+        var maxdemandLine = scope.big.select('line.maxdemand'),
+            maxdemandText = scope.big.select('text.maxdemand');
         if (maxdemandLine.empty()) {
-            maxdemandLine = scope.lines.append('line')
+            maxdemandLine = scope.big.append('line')
+                .attr("class", "maxdemand");
+            maxdemandText = scope.big.append('text')
                 .attr("class", "maxdemand");
         }
         maxdemandLine
@@ -259,6 +262,11 @@
             .attr("x2", scope.x(scope.end))
             .attr("y1", scope.y(maxDemand))
             .attr("y2", scope.y(maxDemand));
+
+        maxdemandText
+            .attr("x", scope.x(scope.end))
+            .attr("y", scope.y(maxDemand) + 10)
+            .text("Max Demand");
 
         // Add the area path.
         var area = scope.lines.select('path.area');
