@@ -3,16 +3,15 @@
 (function() {
 
     function toDate(pyTimestamp) {
-        var d = new Date();
-        d.setTime(pyTimestamp * 1000);
-        return d;
+        return moment(pyTimestamp).toDate();
     }
 
     var fifteen = 15 * 60;
 
-    function toDateRange(pyTimestamp) {
+    function toDateRange(timeformatted) {
         var d0 = new Date(),
             d1 = new Date();
+        var pyTimestamp = moment(timeformatted).unix();
         var start = Math.floor(pyTimestamp - (pyTimestamp % fifteen));
         var end = start + fifteen;
         d0.setTime(start * 1000);
