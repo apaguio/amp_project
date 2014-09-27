@@ -18,8 +18,9 @@ def get_ekm_data_range(meter_id, start, end):
         for point in query_result['points']:
             point_dict = dict()
             for i, value in enumerate(point):
-                point_dict[query_result['columns'][i]] = value
+                if query_result['columns'][i] == 'time':
+                    point_dict[query_result['columns'][i]] = customer_tz.fromutc(datetime.utcfromtimestamp(value)).strftime('%Y-%m-%d %H:%M:%S')
+                else:
+                    point_dict[query_result['columns'][i]] = value
                 result.append(point_dict)
-        for point_dict in result:
-            point_dict['time'] = customer_tz.fromutc(datetime.utcfromtimestamp(point_dict['time'])).strftime('%Y-%m-%d %H:%M:%S')
     return result
