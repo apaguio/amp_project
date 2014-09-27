@@ -1,3 +1,5 @@
+/* jshint quotmark:false */
+/* global _, moment */
 'use strict';
 
 (function() {
@@ -21,6 +23,7 @@
 
     function controller(scope, Session, http) {
         http.defaults.headers.post['CSRF-TOKEN'] = Session.csrfToken;
+        scope.timeframe = 5;
 
         function onLoad(data) {
             scope.data = data;
@@ -48,7 +51,7 @@
         }
 
         function tick() {
-            http({method: 'get', url: '/api/powerview/max_demand'}).success(function (data) {
+            http.get('/api/powerview/max_demand').success(function (data) {
                 if (!data.data.max_demand) {
                     return ;
                 }
@@ -57,13 +60,13 @@
                 scope.data.maxDemandStartDate = maxDemandRange[0];
                 scope.data.maxDemandEndDate = maxDemandRange[1];
             });
-            http({method: 'get', url: '/api/powerview/current_demand'}).success(function (data) {
+            http.get('/api/powerview/current_demand').success(function (data) {
                 scope.data.current_demand = data.data.current_demand;
                 var currentDemandRange = toDateRange(data.data.time);
                 scope.data.currentDemandStartDate = currentDemandRange[0];
                 scope.data.currentDemandEndDate = currentDemandRange[1];
             });
-            http({method: 'get', url: '/api/powerview/points'}).success(function (data) {
+            http.get('/api/powerview/points', {params : {'timeframe': scope.timeframe || 5} }).success(function (data) {
                 var c = data.data.consumption;
                 var s = data.data.solar;
                 if (!c.points || !c.points.length) {
@@ -90,9 +93,20 @@
         }
 
         // Run tick every 5 seconds
-        setInterval(tick, 5000);
+        scope.tickInterval = setInterval(tick, 5000);
 
         load(onLoad);
+
+        /** 
+         * @param timefram graph time frame in minutes
+         */
+        scope.setTimeFrame = function(timeframe) {
+            scope.timeframe = timeframe;
+            tick();
+            clearInterval(scope.tickInterval);
+            scope.tickInterval = setInterval(tick, 5000);
+
+        };
     }
 
     angular.module('insightApp')

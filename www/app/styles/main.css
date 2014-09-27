@@ -130,6 +130,9 @@ body {
 #settings .inlinecontainer label {
   min-width: 100px;
 }
+#powerview a.selected {
+  color: green;
+}
 #powerview div.tooltip {
   border: 1px solid #222;
   opacity: 0.7;
