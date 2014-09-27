@@ -377,6 +377,7 @@
                 } else {
                     scope.time = scope.max.time;
                     plot(scope, element, scope.data, maxDemand);
+                    update(scope, scope.data, maxDemand);
                 }
             }
         });

@@ -1,5 +1,5 @@
 <div>
-  <div class="tooltip">
+  <div class="tooltip" ng-show="currentPoint">
     <div class="title"> {{currentPoint.time | date:'h:mm:ss a'}} </div>
     <div class="body">
 
@@ -14,12 +14,12 @@
       </div>
 
       <div class="entry">
-        <span class="key"> Net Load </span>
+        <span class="key"> Current Demand </span>
         <span class="value"> {{currentPoint.P - currentPoint.S}} </span>
       </div>
 
       <div class="entry">
-        <span class="key"> PF </span>
+        <span class="key"> Power Factor </span>
         <span class="value"> {{currentPoint.L1_PF}} </span>
       </div>
 
