@@ -194,8 +194,11 @@
             var time = scope.x.invert(xPoint - scope.margin.left);
             var i = bisectDate(scope.data, time, 1),
                 d0 = scope.data[i - 1],
-                d1 = scope.data[i],
-                point = time - d0.time > d1.time - time ? d1 : d0;
+                d1 = scope.data[i];
+            if (!d0 || !d1) {
+                return;
+            }
+            var point = time - d0.time > d1.time - time ? d1 : d0;
             if (!point) {
                 return ;
             }
@@ -264,7 +267,7 @@
         var maxV = scope.max.L1_V + 5;
         scope.vy.domain([minV, maxV]);
 
-        scope.lines.selectAll("path").attr("transform", null);
+        //scope.lines.selectAll("path").attr("transform", null);
 
         var maxdemandLine = scope.big.select('line.maxdemand'),
             maxdemandText = scope.big.select('text.maxdemand');
@@ -289,30 +292,31 @@
         var area = scope.lines.select('path.area');
         if (area.empty()) {
             area = scope.lines.append('path')
+                .attr("clip-path", "url(#clip)")
                 .attr("class", "area");
         }
-        area.attr("clip-path", "url(#clip)")
-            .attr("d", scope.area(data));
+        area.attr("d", scope.area(data));
 
         // slide the x-axis left
         scope.xAxis.call(scope.x.axis);
         scope.powerFactorXAxis.call(scope.x.axis);
         scope.voltageXAxis.call(scope.x.axis);
 
-        //var oldTime = _.min(allData, 'time').time;
-        var solarLines = scope.lines.selectAll("path.lineSolar");
-        solarLines.data([data]).enter().append("path")
-            .attr("class", "lineSolar")
-            .attr("d", scope.lineSolar);
-        solarLines.attr("d", scope.lineSolar);
-        solarLines.data([data]).exit().remove();
+        var solarLine = scope.lines.select('path.lineSolar');
+        if (solarLine.empty()) {
+            solarLine = scope.lines.append('path')
+                .attr("clip-path", "url(#clip)")
+                .attr("class", "lineSolar");
+        }
+        solarLine.attr("d", scope.lineSolar(data));
 
-        var powerLines = scope.lines.selectAll("path.linePower");
-        powerLines.data([data]).enter().append("path")
-            .attr("class", "linePower")
-            .attr("d", scope.linePower);
-        powerLines.attr("d", scope.linePower);
-        powerLines.data([data]).exit().remove();
+        var powerLine = scope.lines.select('path.linePower');
+        if (powerLine.empty()) {
+            powerLine = scope.lines.append('path')
+                .attr("clip-path", "url(#clip)")
+                .attr("class", "linePower");
+        }
+        powerLine.attr("d", scope.linePower(data));
 
         var pflines = scope.powerFactorLines.selectAll("path.linePF");
         pflines.data([data]).enter().append("path")
@@ -348,7 +352,7 @@
                 };
 
                 // Single loop to get them all, single ring to role them all :D
-                _.filter(scope.data, function(d, i) {
+                _.each(scope.data, function(d, i) {
                     scope.max.S = scope.max.S < d.S ? d.S : scope.max.S; 
                     scope.max.P = scope.max.P < d.P ? d.P : scope.max.P; 
                     scope.max.L1_V = scope.max.L1_V < d.L1_V ? d.L1_V : scope.max.L1_V; 
@@ -364,9 +368,9 @@
                     return d.P && d.S && d.L1_V && d.L1_PF;
                 });
 
-                scope.data = _.sortBy(scope.data, 'time');
+                //scope.data = _.sortBy(scope.data, 'time');
 
-                var maxDemand = parseInt(scope.maxDemand) || _.max([scope.max.S, scpoe.max.P]);
+                var maxDemand = parseInt(scope.maxDemand) || _.max([scope.max.S, scope.max.P]);
 
                 scope.tooltip = d3.select(element[0])
                     .select("div.tooltip")

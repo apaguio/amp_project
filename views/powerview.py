@@ -4,6 +4,7 @@ from socketio.namespace import BaseNamespace
 from socketio.mixins import RoomsMixin, BroadcastMixin
 from servers import r, pubsub
 from models import powerview
+import time
 
 powerview_app = Blueprint('powerview', __name__)
 
@@ -18,11 +19,22 @@ def powerview_points():
     params = request.args
     solar_meter_id = 10068
     consumption_meter_id = 10054
-    duration = '%sm' % params.get("timeframe", 5);
-    result = dict()
-    result['consumption'] = powerview.get_ekm_data(consumption_meter_id, duration)
-    result['solar'] = powerview.get_ekm_data(solar_meter_id, duration)
-    return r.success(result)
+    duration = params.get("timeframe", '5m')
+    time1 = time.time()
+    consumption = powerview.get_ekm_data(consumption_meter_id, duration)
+    time2 = time.time()
+    solar = powerview.get_ekm_data(solar_meter_id, duration)
+    time3 = time.time()
+    solarLen = len(solar)
+    for i, d in enumerate(consumption):
+        if i < solarLen:
+            d['S'] = solar[i].get('P', 0)
+    time4 = time.time()
+    print 'Consumption %0.3f ms, Solar %0.3f ms, Loop %0.3f ms, All %0.3f ms' % ((time2-time1)*1000, (time3-time2)*1000, (time4-time3)*1000, (time4-time1)*1000)
+    # Return consumption after updating with solar
+    # NOTE: assumption that S has the same timestamp as P
+    consumption = sorted(consumption, key=lambda k: k['time'])
+    return r.success(consumption)
 
 @powerview_app.route("/powerview/current_demand", methods=["GET"])
 def get_current_demand():
