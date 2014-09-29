@@ -20,10 +20,9 @@
     }
 
     function controller(scope, Session, http, timeout, $q) {
-        scope.loading = true;
         scope.nodata = false;
         http.defaults.headers.post['CSRF-TOKEN'] = Session.csrfToken;
-        scope.timeframe = '5m';
+        scope.timeframe = '10m';
 
         function onLoad(data) {
 
@@ -41,7 +40,7 @@
                 scope.tickInterval = $q.defer();
                 tick(scope.tickInterval);
                 scope.tickInterval.promise.then(intervalTick, intervalTick);
-            }, 1000);
+            }, 5000);
             intervalTick();
         }
 
@@ -74,7 +73,7 @@
                 scope.data.currentDemandStartDate = currentDemandRange[0];
                 scope.data.currentDemandEndDate = currentDemandRange[1];
             });
-            http.get('/api/powerview/points', {params : {'timeframe': scope.timeframe || '5m', 'resolution': scope.resolution} }).success(function (data) {
+            http.get('/api/powerview/points', {params : {'timeframe': scope.timeframe, 'resolution':scope.resolution}}).success(function (data) {
                 var points = _.map(data.data, function(d) {
                     d.time = new Date(d.time);
                     return d;
@@ -90,6 +89,7 @@
                 scope.dataUpdated = ++scope.dataUpdated || 0;
                 scope.nodata = false;
                 deferred.resolve(true);
+                scope.loading = false;
             }).error(function(err) {
                 console.log(err);
                 console.log("Error, Connection issue.");
@@ -105,11 +105,20 @@
         scope.setTimeFrame = function(timeframe) {
             scope.timeframe = timeframe;
             scope.loading = true;
+            if (timeframe === '24h') {
+                return scope.setResolution('1m');
+            }
+            if (timeframe === '3h') {
+                return scope.setResolution('10s');
+            }
+            return scope.setResolution('1s');
         };
 
         scope.setResolution = function(resolution) {
             scope.resolution = resolution;
         };
+        scope.setTimeFrame('10m');
+        scope.setResolution('1s');
     }
 
     angular.module('insightApp')

@@ -17,6 +17,7 @@ def get_ekm_data(meter_id, period, resolution=None):
     else:
         query = '''select median(P) as P, median(L1_PF) as L1_PF, median(L1_V) as L1_V
                    from "%s" where time > now() - %s group by time(%s);''' % (meter_id, period, resolution)
+    print query
     query_result = influxdb.query(query)
     result = list()
     if query_result:

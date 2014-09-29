@@ -19,7 +19,7 @@ def powerview_points():
     params = request.args
     solar_meter_id = 10068
     consumption_meter_id = 10054
-    duration = params.get('timeframe', '5m')
+    duration = params.get('timeframe', '10m')
     resolution = params.get('resolution', None)
     time1 = time.time()
     consumption = powerview.get_ekm_data(consumption_meter_id, duration, resolution)
