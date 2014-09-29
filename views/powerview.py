@@ -19,11 +19,12 @@ def powerview_points():
     params = request.args
     solar_meter_id = 10068
     consumption_meter_id = 10054
-    duration = params.get("timeframe", '5m')
+    duration = params.get('timeframe', '5m')
+    resolution = params.get('resolution', None)
     time1 = time.time()
-    consumption = powerview.get_ekm_data(consumption_meter_id, duration)
+    consumption = powerview.get_ekm_data(consumption_meter_id, duration, resolution)
     time2 = time.time()
-    solar = powerview.get_ekm_data(solar_meter_id, duration)
+    solar = powerview.get_ekm_data(solar_meter_id, duration, resolution)
     time3 = time.time()
     solarLen = len(solar)
     for i, d in enumerate(consumption):

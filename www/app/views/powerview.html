@@ -37,9 +37,9 @@
         ng-class="{'selected': timeframe=='5m'}"> 5 min </a> |
       <a href="javascript:;" ng-click="setTimeFrame('30m')"
         ng-class="{'selected': timeframe=='30m'}"> 30 min </a> |
-      <a href="javascript:;" ng-click="setTimeFrame('3h')"
+      <a href="javascript:;" ng-click="setTimeFrame('3h'); setResolution('1m');"
         ng-class="{'selected': timeframe=='3h'}"> 3 hours </a> |
-      <a href="javascript:;" ng-click="setTimeFrame('24h')"
+      <a href="javascript:;" ng-click="setTimeFrame('24h'); setResolution('5m');"
         ng-class="{'selected': timeframe=='24h'}"> 24 hours </a>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 largewidget">
