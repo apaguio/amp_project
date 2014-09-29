@@ -74,8 +74,7 @@
                 scope.data.currentDemandStartDate = currentDemandRange[0];
                 scope.data.currentDemandEndDate = currentDemandRange[1];
             });
-            http.get('/api/powerview/points', {params : {'timeframe': scope.timeframe || '5m'} }).success(function (data) {
-                scope.loading = false;
+            http.get('/api/powerview/points', {params : {'timeframe': scope.timeframe || '5m', 'resolution': scope.resolution} }).success(function (data) {
                 var points = _.map(data.data, function(d) {
                     d.time = new Date(d.time);
                     return d;
@@ -106,6 +105,10 @@
         scope.setTimeFrame = function(timeframe) {
             scope.timeframe = timeframe;
             scope.loading = true;
+        };
+
+        scope.setResolution = function(resolution) {
+            scope.resolution = resolution;
         };
     }
 
