@@ -40,7 +40,7 @@
                 scope.tickInterval = $q.defer();
                 tick(scope.tickInterval);
                 scope.tickInterval.promise.then(intervalTick, intervalTick);
-            }, 5000);
+            }, scope.reloadTime);
             intervalTick();
         }
 
@@ -106,12 +106,19 @@
             scope.timeframe = timeframe;
             scope.loading = true;
             if (timeframe === '24h') {
+                scope.setReloadTime(60000)
                 return scope.setResolution('1m');
             }
             if (timeframe === '3h') {
+                scope.setReloadTime(10000)
                 return scope.setResolution('10s');
             }
+            scope.setReloadTime(1000)
             return scope.setResolution('1s');
+        };
+
+        scope.setReloadTime = function(reloadTime) {
+            scope.reloadTime = reloadTime;
         };
 
         scope.setResolution = function(resolution) {
@@ -119,6 +126,7 @@
         };
         scope.setTimeFrame('10m');
         scope.setResolution('1s');
+        scope.setReloadTime(1000);
     }
 
     angular.module('insightApp')
