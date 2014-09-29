@@ -1,6 +1,7 @@
 flask
 flask-jsonpify
 flask-mongoengine
+flask-compress
 celery[redis]
 redis
 influxdb

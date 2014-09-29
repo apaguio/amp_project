@@ -20,6 +20,8 @@
     }
 
     function controller(scope, Session, http, timeout, $q) {
+        scope.loading = true;
+        scope.nodata = false;
         http.defaults.headers.post['CSRF-TOKEN'] = Session.csrfToken;
         scope.timeframe = '5m';
 
@@ -35,11 +37,12 @@
             scope.data.peakStart = moment(today + data.peak_period_start).format(format);
             scope.data.peakEnd = moment(today + data.peak_period_end).format(format);
 
-            (function intervalTick() {
+            var intervalTick = _.throttle(function() {
                 scope.tickInterval = $q.defer();
                 tick(scope.tickInterval);
                 scope.tickInterval.promise.then(intervalTick, intervalTick);
-            })();
+            }, 1000);
+            intervalTick();
         }
 
         function load(onLoad) {
@@ -72,15 +75,21 @@
                 scope.data.currentDemandEndDate = currentDemandRange[1];
             });
             http.get('/api/powerview/points', {params : {'timeframe': scope.timeframe || '5m'} }).success(function (data) {
+                scope.loading = false;
                 var points = _.map(data.data, function(d) {
                     d.time = new Date(d.time);
                     return d;
                 });
                 var lastPoint = _.last(points);
+                if (!lastPoint) {
+                    scope.nodata = true;
+                    return deferred.reject("Last point is undefined");
+                }
                 scope.data.power_factor = lastPoint.L1_PF;
                 scope.data.voltage = lastPoint.L1_V;
                 scope.graphdata = points;
                 scope.dataUpdated = ++scope.dataUpdated || 0;
+                scope.nodata = false;
                 deferred.resolve(true);
             }).error(function(err) {
                 console.log(err);
@@ -96,6 +105,7 @@
          */
         scope.setTimeFrame = function(timeframe) {
             scope.timeframe = timeframe;
+            scope.loading = true;
         };
     }
 
