@@ -23,7 +23,7 @@
                     }
                 }, function(err) {
                     console.log(err);
-                    alert(err);
+                    alert("Server Down, Connection Error.");
                 });
             return deferred.promise;
         };

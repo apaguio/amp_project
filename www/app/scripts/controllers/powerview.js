@@ -22,7 +22,7 @@
     function controller(scope, Session, http, timeout, $q) {
         scope.nodata = false;
         http.defaults.headers.post['CSRF-TOKEN'] = Session.csrfToken;
-        scope.timeframe = '10m';
+        scope.lastTime = null;
 
         function onLoad(data) {
 
@@ -83,6 +83,7 @@
                     scope.nodata = true;
                     return deferred.reject("Last point is undefined");
                 }
+                scope.lastTime = lastPoint.time;
                 scope.data.power_factor = lastPoint.L1_PF;
                 scope.data.voltage = lastPoint.L1_V;
                 scope.graphdata = points;
