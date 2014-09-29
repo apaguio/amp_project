@@ -4,13 +4,19 @@ from models import db
 from models import influxdb
 from pytz import timezone
 
-def get_ekm_data(meter_id, period):
+def get_ekm_data(meter_id, period, resolution=None):
     """
     Gets EKM Data
-    @parm meter_id  currently ( 10068 - consumption, 10054 - solar )
-    @parm period    time window in appended by time letter ( s - seconds, m - minutes, h - hours, d - days)
+    @parm meter_id   currently ( 10068 - consumption, 10054 - solar )
+    @parm period     time window in appended by time letter ( s - seconds, m - minutes, h - hours, d - days)
+    @parm resolution data resolution, i.e aggregation interval, same format as period, like: 1m, 5m, etc
+          leave it None (default) to get 1s resolution, i.e all data available (large data sets)
     """
-    query = 'select * from "%s" where time > now() - %s;' % (meter_id, period)
+    if not resolution:
+        query = 'select * from "%s" where time > now() - %s;' % (meter_id, period)
+    else:
+        query = '''select median(P) as P, median(L1_PF) as L1_PF, median(L1_V) as L1_V
+                   from "%s" where time > now() - %s group by time(%s);''' % (meter_id, period, resolution)
     query_result = influxdb.query(query)
     result = list()
     if query_result:
