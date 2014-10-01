@@ -3,16 +3,12 @@
 (function() {
 
     function toDate(pyTimestamp) {
-        var d = new Date();
-        d.setTime(pyTimestamp * 1000);
-        return d;
+        return moment(pyTimestamp).toDate();
     }
-
-    //TODO: Update this with real data
-    var api = 'http://www.highcharts.com/samples/data/jsonp.php?filename=range.json&callback=?';
 
     function controller(scope, Session, http) {
         http.defaults.headers.post['CSRF-TOKEN'] = Session.csrfToken;
+        scope.dataUpdated = 0;
 
         function onLoad(data) {
             scope.data = data;
@@ -23,8 +19,7 @@
         }
 
         function load(onLoad) {
-            http
-                .post('/api/performance', {})
+            http.get('/api/performance')
                 .then(function (res) {
                     var d = res.data;
                     if (d.status === "error") {
@@ -33,16 +28,19 @@
                         onLoad(d.data);
                     }
                 });
+            http.get('/api/performance/graph')
+                .then(function (res) {
+                    var d = res.data;
+                    if (d.status === "error") {
+                        alert(d.message);
+                    } else {
+                        scope.graphdata = d.data;
+                        scope.dataUpdated ++;
+                    }
+                });
         }
 
         load(onLoad);
-        //$.getJSON(api, function (data) {
-            //scope.$apply(function() {
-                //scope.graphdata = data;
-            //});
-        //});
-        scope.graphdata = {};
-
     }
 
     angular.module('insightApp')

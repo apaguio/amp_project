@@ -336,53 +336,8 @@
     function controller(scope, element) {
         scope.$watch('dataupdated', function() {
             if (scope.data) {
-                scope.max = {
-                    S: Number.MIN_VALUE,
-                    P: Number.MIN_VALUE,
-                    L1_V: Number.MIN_VALUE,
-                    L1_PF: Number.MIN_VALUE,
-                    time: Number.MIN_VALUE
-                };
-                scope.min = {
-                    S: Number.MAX_VALUE,
-                    P: Number.MAX_VALUE,
-                    L1_V: Number.MAX_VALUE,
-                    L1_PF: Number.MAX_VALUE,
-                    time: Number.MAX_VALUE
-                };
-
-                // Single loop to get them all, single ring to role them all :D
-                _.each(scope.data, function(d, i) {
-                    scope.max.S = scope.max.S < d.S ? d.S : scope.max.S; 
-                    scope.max.P = scope.max.P < d.P ? d.P : scope.max.P; 
-                    scope.max.L1_V = scope.max.L1_V < d.L1_V ? d.L1_V : scope.max.L1_V; 
-                    scope.max.L1_PF = scope.max.L1_PF < d.L1_PF ? d.L1_PF : scope.max.L1_PF; 
-                    scope.max.time = scope.max.time < d.time ? d.time : scope.max.time; 
-
-                    scope.min.S = scope.min.S > d.S ? d.S : scope.min.S; 
-                    scope.min.P = scope.min.P > d.P ? d.P : scope.min.P; 
-                    scope.min.L1_V = scope.min.L1_V > d.L1_V ? d.L1_V : scope.min.L1_V; 
-                    scope.min.L1_PF = scope.min.L1_PF > d.L1_PF ? d.L1_PF : scope.min.L1_PF; 
-                    scope.min.time = scope.min.time > d.time ? d.time : scope.min.time; 
-                    // Filter based on P & S
-                    return d.P && d.S && d.L1_V && d.L1_PF;
-                });
-
-                //scope.data = _.sortBy(scope.data, 'time');
-
-                var maxDemand = parseInt(scope.maxDemand) || _.max([scope.max.S, scope.max.P]);
-
-                scope.tooltip = d3.select(element[0])
-                    .select("div.tooltip")
-                    .style("opacity", 0);
-
-                if (scope.svg) {
-                    update(scope, scope.data, maxDemand);
-                } else {
-                    scope.time = scope.max.time;
-                    plot(scope, element, scope.data, maxDemand);
-                    update(scope, scope.data, maxDemand);
-                }
+                debugger; 
+                plot(scope, element, scope.data);
             }
         });
     }
