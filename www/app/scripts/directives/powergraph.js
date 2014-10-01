@@ -27,7 +27,8 @@
         scope.x.domain([scope.start, scope.end]);
 
         scope.y = d3.scale.linear().range([scope.bigheight, 0]);
-        scope.y.domain([0, maxDemand + 20]);
+        var minY = _.min([scope.min.S, scope.min.P, scope.min.L1_V, scope.min.L1_PF]);
+        scope.y.domain([minY, maxDemand + 20]);
         scope.y.axis = d3.svg.axis().scale(scope.y).ticks(5).orient("left");
 
 
