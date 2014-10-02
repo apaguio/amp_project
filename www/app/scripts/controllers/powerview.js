@@ -110,9 +110,13 @@
                 scope.setReloadTime(60000)
                 return scope.setResolution('1m');
             }
-            if (timeframe === '3h') {
+            if (timeframe === '8h') {
+                scope.setReloadTime(30000)
+                return scope.setResolution('1m');
+            }
+            if (timeframe === '2h') {
                 scope.setReloadTime(10000)
-                return scope.setResolution('10s');
+                return scope.setResolution('1m');
             }
             scope.setReloadTime(5000)
             return scope.setResolution('1s');
@@ -125,7 +129,7 @@
         scope.setResolution = function(resolution) {
             scope.resolution = resolution;
         };
-        scope.setTimeFrame('10m');
+        scope.setTimeFrame('30m');
         scope.setResolution('1s');
         scope.setReloadTime(5000);
     }
