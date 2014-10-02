@@ -90,9 +90,15 @@
             .attr("class", "powerfactorSVG")
             .attr("transform", "translate(" + scope.margin.left + "," + (scope.margin.top + scope.bigheight + marginBetween) + ")");
 
+        scope.pfgrid = scope.powerfactorSVG.append("g")
+            .attr("class", "pfgrid");
+
         scope.voltageSVG = scope.svg.append("g")
             .attr("class", "voltageSVG")
             .attr("transform", "translate(" + scope.margin.left + "," + (scope.margin.top + scope.bigheight + scope.smallheight + (2 * marginBetween) ) + ")");
+
+        scope.voltageGrid = scope.voltageSVG.append("g")
+            .attr("class", "vgrid");
 
         scope.svg.append("defs").append("clipPath")
             .attr("id", "clip")

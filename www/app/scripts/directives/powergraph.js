@@ -85,9 +85,6 @@
             .attr("class", "big")
             .attr("transform", "translate(" + scope.margin.left + "," + scope.margin.top + ")");
 
-        scope.grid = scope.big.append("g")
-            .attr("class", "grid");
-
         scope.powerfactorSVG = scope.svg.append("g")
             .attr("class", "powerfactorSVG")
             .attr("transform", "translate(" + scope.margin.left + "," + (scope.margin.top + scope.bigheight + marginBetween) + ")");
@@ -95,6 +92,15 @@
         scope.voltageSVG = scope.svg.append("g")
             .attr("class", "voltageSVG")
             .attr("transform", "translate(" + scope.margin.left + "," + (scope.margin.top + scope.bigheight + scope.smallheight + (2 * marginBetween) ) + ")");
+
+        scope.grid = scope.big.append("g")
+            .attr("class", "grid");
+
+        scope.pfgrid = scope.powerfactorSVG.append("g")
+            .attr("class", "pfgrid");
+
+        scope.vgrid = scope.voltageSVG.append("g")
+            .attr("class", "vgrid");
 
         scope.svg.append("defs").append("clipPath")
             .attr("id", "clip")
@@ -116,6 +122,14 @@
         scope.gridYAxis = scope.grid.append("g")
             .attr("class", "gridyaxis")
             .call(scope.y.axis.tickSize(-scope.x(scope.end), 0, 0).tickFormat(""));
+
+        scope.gridVYAxis = scope.vgrid.append("g")
+            .attr("class", "gridvyaxis")
+            .call(scope.vy.axis.tickSize(-scope.x(scope.end), 0, 0));
+
+        scope.gridPFYAxis = scope.pfgrid.append("g")
+            .attr("class", "gridpfyaxis")
+            .call(scope.pfy.axis.tickSize(-scope.x(scope.end), 0, 0));
 
         scope.xAxis = scope.big.append("g")
             .attr("class", "x axis")
@@ -237,7 +251,7 @@
         scope.powerfactorSVG.append('text')
             .attr('class', 'title')
             .attr('x', scope.x.range()[1])
-            .attr('y', scope.pfy.range()[0] - 2)
+            .attr('y', scope.pfy.range()[0]- 2)
             .text('Power Factor');
 
         scope.voltageSVG.append('text')
@@ -262,7 +276,8 @@
         scope.y.domain([0, maxDemand + 20]);
 
         var minPF = scope.min.L1_PF - 0.1;
-        var maxPF = scope.max.L1_PF + 0.1;
+        //var maxPF = scope.max.L1_PF + 0.1;
+        var maxPF = 1;
         scope.pfy.domain([minPF, maxPF]);
 
         var minV = scope.min.L1_V - 5;

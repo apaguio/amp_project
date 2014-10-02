@@ -242,9 +242,9 @@ body {
         .tick line {
             stroke-width: 0;
         }
-        .grid {
+        .grid, .vgrid, .pfgrid {
             .tick line {
-                stroke: @color1;
+                stroke: lighten(@color1, 10%);
                 stroke-width: 1px;
                 pointer-events: none;         
             }
