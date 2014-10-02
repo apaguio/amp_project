@@ -1,31 +1,31 @@
 <div>
-  <div class="tooltip" ng-show="currentPoint">
-    <div class="title"> {{currentPoint.time | date:'h:mm:ss a'}} </div>
+  <div class="tooltip" ng-show="lastPoint">
+    <div class="title"> {{lastPoint.time | date:'h:mm:ss a'}} </div>
     <div class="body">
 
       <div class="entry">
         <span class="key"> Facility </span>
-        <span class="value"> {{currentPoint.P}} </span>
+        <span class="value"> {{lastPoint.P}} </span>
       </div>
 
       <div class="entry">
         <span class="key"> Solar </span>
-        <span class="value"> {{currentPoint.S}} </span>
+        <span class="value"> {{lastPoint.S}} </span>
       </div>
 
       <div class="entry">
         <span class="key"> Current Demand </span>
-        <span class="value"> {{currentPoint.P - currentPoint.S}} </span>
+        <span class="value"> {{lastPoint.P - lastPoint.S}} </span>
       </div>
 
       <div class="entry">
         <span class="key"> Power Factor </span>
-        <span class="value"> {{currentPoint.L1_PF}} </span>
+        <span class="value"> {{lastPoint.L1_PF}} </span>
       </div>
 
       <div class="entry">
         <span class="key"> Voltage </span>
-        <span class="value"> {{currentPoint.L1_V}} </span>
+        <span class="value"> {{lastPoint.L1_V}} </span>
       </div>
 
     </div>

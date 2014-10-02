@@ -156,16 +156,17 @@
             .attr("y1", 0)
             .attr("y2", scope.height );
 
-        scope.hoverLineGroup.style("opacity", 1e-6);
+        scope.hoverLineGroup.style("opacity", scope.hoverLineOpacity || 1e-6);
 
         function mouseover() {
+            scope.hoverLineOpacity = 0.9;
             scope.hoverLineGroup.style("opacity", "1");
         }
 
         function mouseout() {
-            scope.lastMouseMoveD = null;
             scope.hoverLineGroup.style("opacity", 1e-6);
             scope.tooltip.style("opacity", 0);
+            scope.hoverLineOpacity = 0;
         }
 
         var lastPoint = null;
@@ -179,30 +180,35 @@
             return point;
         });
 
-        scope.mousemove = function (d) {
-            var event = d3.mouse(this);
-            if (!event) {
-                return;
+        scope.mousemove = function (lastPoint) {
+            if (!lastPoint) {
+                var event = d3.mouse(this);
+                if (!event) {
+                    return;
+                }
+                var xPoint = event[0];
+                var yPoint = event[1];
+                var time = scope.x.invert(xPoint - scope.margin.left);
+                var i = bisectDate(scope.data, time, 1),
+                    d0 = scope.data[i - 1],
+                    d1 = scope.data[i];
+                if (!d0 || !d1) {
+                    return;
+                }
+                var point = time - d0.time > d1.time - time ? d1 : d0;
+                if (!point) {
+                    return ;
+                }
+                scope.$apply(function() {
+                    scope.lastPoint = point;
+                });
             }
-            scope.lastMouseMoveD = d;
-            var xPoint = event[0];
-            var yPoint = event[1];
-            var time = scope.x.invert(xPoint - scope.margin.left);
-            var i = bisectDate(scope.data, time, 1),
-                d0 = scope.data[i - 1],
-                d1 = scope.data[i];
-            if (!d0 || !d1) {
-                return;
-            }
-            var point = time - d0.time > d1.time - time ? d1 : d0;
-            if (!point) {
-                return ;
-            }
-            var xVal = scope.x(point.time);
+            var xVal = scope.x(scope.lastPoint.time);
             scope.lineHover
                 .attr('x1', xVal + scope.margin.left)
                 .attr('x2', xVal + scope.margin.left);
 
+            scope.hoverLineOpacity = 0.9;
             scope.tooltip.transition().duration(200).style("opacity", 0.9);
             var tooltipY = yPoint - scope.yBegining + scope.margin.top;
             scope.tooltip
@@ -217,9 +223,6 @@
                     return xVal + "px";
                 })
                 .style("top", tooltipY + "px");
-            scope.$apply(function() {
-                scope.currentPoint = point;
-            });
         };
 
         scope.big.append('text')
@@ -247,8 +250,7 @@
     }
 
     function update(scope, data, maxDemand) {
-
-        $('svg').mousemove();
+        scope.hoverLineGroup.style("opacity", scope.hoverLineOpacity || 1e-6);
         scope.start = scope.min.time;
         scope.end = scope.max.time;
 
@@ -376,10 +378,12 @@
 
                 scope.tooltip = d3.select(element[0])
                     .select("div.tooltip")
-                    .style("opacity", 0);
+                    .style("opacity", scope.hoverLineOpacity || 1e-6);
+
 
                 if (scope.svg) {
                     update(scope, scope.data, maxDemand);
+                    scope.mousemove(scope.lastPoint);
                 } else {
                     scope.time = scope.max.time;
                     plot(scope, element, scope.data, maxDemand);
