@@ -28,7 +28,8 @@
 
         scope.y = d3.scale.linear().range([scope.bigheight, 0]);
         var minY = _.min([scope.min.S, scope.min.P, scope.min.L1_V, scope.min.L1_PF]);
-        scope.y.domain([minY, maxDemand + 20]);
+        var maxY = _.min([scope.max.S, scope.max.P, scope.max.L1_V, scope.max.L1_PF]);
+        scope.y.domain([minY, Math.max(maxDemand, maxY) + 20]);
         scope.y.axis = d3.svg.axis().scale(scope.y).ticks(5).orient("left");
 
 
