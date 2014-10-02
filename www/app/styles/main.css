@@ -70,7 +70,7 @@ body {
 .smallwidget .title,
 .largewidget .title {
   margin: 5px auto;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: normal;
   color: #7e7e7e;
 }
@@ -78,7 +78,7 @@ body {
 .smallwidget .maincontent,
 .largewidget .maincontent {
   margin: 5px auto;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
   font-family: "Open Sans", sans-serif;
 }
@@ -87,7 +87,7 @@ body {
 .largewidget .time {
   color: #7e7e7e;
   margin: 5px auto;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: normal;
 }
 .largewidget {
