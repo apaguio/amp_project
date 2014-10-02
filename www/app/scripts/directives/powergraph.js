@@ -28,7 +28,7 @@
 
         scope.y = d3.scale.linear().range([scope.bigheight, 0]);
         var minY = _.min([scope.min.S, scope.min.P, scope.min.L1_V, scope.min.L1_PF]);
-        var maxY = _.min([scope.max.S, scope.max.P, scope.max.L1_V, scope.max.L1_PF]);
+        var maxY = _.max([scope.max.S, scope.max.P, scope.max.L1_V, scope.max.L1_PF]);
         scope.y.domain([minY, Math.max(maxDemand, maxY) + 20]);
         scope.y.axis = d3.svg.axis().scale(scope.y).ticks(5).orient("left");
 
@@ -273,7 +273,9 @@
         scope.end = scope.max.time;
 
         scope.x.domain([scope.start, scope.end]);
-        scope.y.domain([0, maxDemand + 20]);
+        var minY = _.min([scope.min.S, scope.min.P, scope.min.L1_V, scope.min.L1_PF]);
+        var maxY = _.max([scope.max.S, scope.max.P, scope.max.L1_V, scope.max.L1_PF]);
+        scope.y.domain([minY, Math.max(maxDemand, maxY) + 20]);
 
         var minPF = scope.min.L1_PF - 0.1;
         //var maxPF = scope.max.L1_PF + 0.1;
