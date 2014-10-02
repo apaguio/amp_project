@@ -114,7 +114,7 @@
                 scope.setReloadTime(10000)
                 return scope.setResolution('10s');
             }
-            scope.setReloadTime(1000)
+            scope.setReloadTime(5000)
             return scope.setResolution('1s');
         };
 
@@ -127,7 +127,7 @@
         };
         scope.setTimeFrame('10m');
         scope.setResolution('1s');
-        scope.setReloadTime(1000);
+        scope.setReloadTime(5000);
     }
 
     angular.module('insightApp')

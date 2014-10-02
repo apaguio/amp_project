@@ -27,18 +27,17 @@
         scope.x.domain([scope.start, scope.end]);
 
         scope.y = d3.scale.linear().range([scope.bigheight, 0]);
-        var minY = _.min([scope.min.S, scope.min.P, scope.min.L1_V, scope.min.L1_PF]);
-        var maxY = _.max([scope.max.S, scope.max.P, scope.max.L1_V, scope.max.L1_PF]);
+        var minY = _.min([scope.min.P - scope.min.S, 0]);
+        var maxY = _.max([scope.max.P]);
         scope.y.domain([minY, Math.max(maxDemand, maxY) + 20]);
         scope.y.axis = d3.svg.axis().scale(scope.y).ticks(5).orient("left");
 
 
         // Power Factor Y
-        var minPF = scope.min.L1_PF - 0.1;
-        //var maxPF = _.max(data, 'L1_PF').L1_PF + 0.1;
+        var minPF = scope.min.L1_PF;
         var maxPF = 1;
-        var minV = scope.min.L1_V - 5;
-        var maxV = scope.max.L1_V + 5;
+        var minV = scope.min.L1_V;
+        var maxV = scope.max.L1_V;
 
         scope.pfy = d3.scale.linear().range([scope.smallheight, 0]);
         scope.pfy.domain([minPF, maxPF]);
@@ -93,15 +92,6 @@
             .attr("class", "voltageSVG")
             .attr("transform", "translate(" + scope.margin.left + "," + (scope.margin.top + scope.bigheight + scope.smallheight + (2 * marginBetween) ) + ")");
 
-        scope.grid = scope.big.append("g")
-            .attr("class", "grid");
-
-        scope.pfgrid = scope.powerfactorSVG.append("g")
-            .attr("class", "pfgrid");
-
-        scope.vgrid = scope.voltageSVG.append("g")
-            .attr("class", "vgrid");
-
         scope.svg.append("defs").append("clipPath")
             .attr("id", "clip")
         .append("rect")
@@ -115,21 +105,11 @@
             .y0(function(d) { return scope.y((d.P || 0) - (d.S || 0)); })
             .y1(function(d) { return scope.y(d.P || 0); });
 
+        var xEnd = -scope.x(scope.end);
+
         scope.yAxis = scope.big.append("g")
             .attr("class", "y axis")
-            .call(scope.y.axis);
-
-        scope.gridYAxis = scope.grid.append("g")
-            .attr("class", "gridyaxis")
-            .call(scope.y.axis.tickSize(-scope.x(scope.end), 0, 0).tickFormat(""));
-
-        scope.gridVYAxis = scope.vgrid.append("g")
-            .attr("class", "gridvyaxis")
-            .call(scope.vy.axis.tickSize(-scope.x(scope.end), 0, 0));
-
-        scope.gridPFYAxis = scope.pfgrid.append("g")
-            .attr("class", "gridpfyaxis")
-            .call(scope.pfy.axis.tickSize(-scope.x(scope.end), 0, 0));
+            .call(scope.y.axis.tickSize(xEnd, 0, 0));
 
         scope.xAxis = scope.big.append("g")
             .attr("class", "x axis")
@@ -141,18 +121,18 @@
             .attr("transform", "translate(0," + scope.smallheight + ")")
             .call(scope.x.axis);
 
+        scope.powerFactorYAxis = scope.powerfactorSVG.append("g")
+            .attr("class", "y axis powerfactor")
+            .call(scope.pfy.axis.tickSize(xEnd, 0, 0));
+
         scope.voltageXAxis = scope.voltageSVG.append("g")
             .attr("class", "x axis voltage")
             .attr("transform", "translate(0," + scope.smallheight + ")")
             .call(scope.x.axis);
 
-        scope.powerFactorYAxis = scope.powerfactorSVG.append("g")
-            .attr("class", "y axis powerfactor")
-            .call(scope.pfy.axis);
-
         scope.voltageYAxis = scope.voltageSVG.append("g")
             .attr("class", "y axis voltage")
-            .call(scope.vy.axis);
+            .call(scope.vy.axis.tickSize(xEnd, 0, 0));
 
         scope.lines = scope.big.append("g")
             .attr("clip-path", "url(#clip)")
@@ -273,17 +253,17 @@
         scope.end = scope.max.time;
 
         scope.x.domain([scope.start, scope.end]);
-        var minY = _.min([scope.min.S, scope.min.P, scope.min.L1_V, scope.min.L1_PF]);
-        var maxY = _.max([scope.max.S, scope.max.P, scope.max.L1_V, scope.max.L1_PF]);
+
+        var minY = _.min([scope.min.P - scope.min.S, 0]);
+        var maxY = _.max([scope.max.P]);
         scope.y.domain([minY, Math.max(maxDemand, maxY) + 20]);
 
-        var minPF = scope.min.L1_PF - 0.1;
-        //var maxPF = scope.max.L1_PF + 0.1;
+        var minPF = scope.min.L1_PF;
         var maxPF = 1;
         scope.pfy.domain([minPF, maxPF]);
 
-        var minV = scope.min.L1_V - 5;
-        var maxV = scope.max.L1_V + 5;
+        var minV = scope.min.L1_V;
+        var maxV = scope.max.L1_V;
         scope.vy.domain([minV, maxV]);
 
         //scope.lines.selectAll("path").attr("transform", null);
@@ -317,9 +297,12 @@
         area.attr("d", scope.area(data));
 
         // slide the x-axis left
-        scope.xAxis.call(scope.x.axis);
+        scope.xAxis.call(scope.x.axis.scale(scope.x));
+        scope.yAxis.call(scope.y.axis.scale(scope.y));
         scope.powerFactorXAxis.call(scope.x.axis);
+        scope.powerFactorYAxis.call(scope.pfy.axis.scale(scope.pfy));
         scope.voltageXAxis.call(scope.x.axis);
+        scope.voltageYAxis.call(scope.vy.axis.scale(scope.vy));
 
         var solarLine = scope.lines.select('path.lineSolar');
         if (solarLine.empty()) {

@@ -211,9 +211,7 @@ body {
 #powerview svg .tick line {
   stroke-width: 0;
 }
-#powerview svg .grid .tick line,
-#powerview svg .vgrid .tick line,
-#powerview svg .pfgrid .tick line {
+#powerview svg .y.axis .tick line {
   stroke: #f2f1ea;
   stroke-width: 1px;
   pointer-events: none;
