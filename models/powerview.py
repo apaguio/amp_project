@@ -12,7 +12,8 @@ def get_ekm_data(meter_id, period, resolution=None):
     @parm resolution data resolution, i.e aggregation interval, same format as period, like: 1m, 5m, etc
           leave it None (default) to get 1s resolution, i.e all data available (large data sets)
     """
-    if not resolution:
+    print resolution
+    if not resolution or resolution == '1s':
         query = 'select * from "%s" where time > now() - %s;' % (meter_id, period)
     else:
         query = '''select median(P) as P, median(L1_PF) as L1_PF, median(L1_V) as L1_V
@@ -73,7 +74,9 @@ def get_max_demand(meter_id):
         query_result = query_result[0]
         max_demand = query_result['points'][0][1]
         time_point_query = 'select time from "%s_15mins_%s" where demand=%s' % (meter_id, tarrif_data['peak_period'], max_demand)
-        result['time'] = customer_tz.fromutc(datetime.utcfromtimestamp(influxdb.query(time_point_query)[0]['points'][0][0])).strftime('%Y-%m-%d %H:%M:%S')
+        time_point_query_result = influxdb.query(time_point_query)
+        if time_point_query_result:
+            result['time'] = customer_tz.fromutc(datetime.utcfromtimestamp(time_point_query_result[0]['points'][0][0])).strftime('%Y-%m-%d %H:%M:%S')
         result['max_demand'] = max_demand
     return result
 
