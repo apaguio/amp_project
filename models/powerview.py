@@ -12,13 +12,11 @@ def get_ekm_data(meter_id, period, resolution=None):
     @parm resolution data resolution, i.e aggregation interval, same format as period, like: 1m, 5m, etc
           leave it None (default) to get 1s resolution, i.e all data available (large data sets)
     """
-    print resolution
     if not resolution or resolution == '1s':
         query = 'select * from "%s" where time > now() - %s;' % (meter_id, period)
     else:
         query = '''select median(P) as P, median(L1_PF) as L1_PF, median(L1_V) as L1_V
                    from "%s" where time > now() - %s group by time(%s);''' % (meter_id, period, resolution)
-    print query
     query_result = influxdb.query(query)
     result = list()
     if query_result:
