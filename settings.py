@@ -35,4 +35,14 @@ CELERYBEAT_SCHEDULE = {
         'schedule': crontab(minute=[0, 15, 30, 45]),
         'args': ('10054', '10068')
     },
+    'facility.energy.usage.aggregator': {
+        'task': 'tasks.energy.1h.aggregator',
+        'schedule': crontab(minute=0),
+        'args': ('10054',)
+    },
+    'solar.energy.production.aggregator': {
+        'task': 'tasks.energy.1h.aggregator',
+        'schedule': crontab(minute=0),
+        'args': ('10068',)
+    },
 }

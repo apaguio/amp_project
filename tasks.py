@@ -54,12 +54,12 @@ def ekm_facility_aggregate(meter_id, solar_meter_id):
     # get user information (customer_id) from session
     tarrif_data = powerview.get_tarrif_details(customer_name='test')
 
-    facility_query = 'select mean(P) as demand from "%s" group by time(15m) limit 1;' % meter_id
+    facility_query = 'select mean(P) as demand from "%s" where time > now() - 15m;' % meter_id
     facility_result = influxdb.query(facility_query)
     demand = round(facility_result[0]['points'][0][1], 2)
 
     solar_power = 0
-    solar_query = 'select mean(P) as demand from "%s" group by time(15m) limit 1;' % solar_meter_id
+    solar_query = 'select mean(P) as demand from "%s" where time > now() - 15m;' % solar_meter_id
     solar_result = influxdb.query(solar_query)
     if solar_result:
         solar_power = round(solar_result[0]['points'][0][1], 2)
@@ -68,4 +68,19 @@ def ekm_facility_aggregate(meter_id, solar_meter_id):
     utc_timestamp = int((utc_now - datetime(1970, 1, 1)).total_seconds())
     data = {'name': '%s_15mins_%s' % (meter_id, tarrif_data['peak_period']), 'columns': ['time', 'demand'], 
             'points': [[utc_timestamp, net_load]]}
+    influxdb.write_points([data])
+
+@celery.task(name='tasks.energy.1h.aggregator')
+def energy_1h_aggregate(meter_id):
+    utc_now = datetime.utcfromtimestamp(time.time())
+    # get user information (customer_id) from session
+    tarrif_data = powerview.get_tarrif_details(customer_name='test')
+
+    energy_query = 'select mean(P) from "%s" where time > now() - 1h;' % meter_id
+    energy_query_result = influxdb.query(energy_query)
+    energy = round(energy_query_result[0]['points'][0][1], 2)
+
+    utc_timestamp = int((utc_now - datetime(1970, 1, 1)).total_seconds())
+    data = {'name': '%s_energy_1h_%s' % (meter_id, tarrif_data['peak_period']), 'columns': ['time', 'energy_kwh'], 
+            'points': [[utc_timestamp, energy]]}
     influxdb.write_points([data])
