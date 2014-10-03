@@ -52,7 +52,7 @@ def get_current_demand(meter_id, solar_meter_id):
         current_demand = round(facility_query_result['points'][0][1], 2)
         result['current_demand'] = current_demand
         result['time'] = customer_tz.fromutc(datetime.utcfromtimestamp(facility_query_result['points'][0][0])).strftime('%Y-%m-%d %H:%M:%S')
-        solar_query = 'select mean(P) as solar_power from "%s" group by time(%ss) limit 1;' % (solar_meter_id, number_of_miutes*60)
+        solar_query = 'select mean(P) as solar_power from "%s" group by time(%ss) limit 1;' % (solar_meter_id, ((number_of_miutes*60) + utc_now.second))
         solar_query_result = influxdb.query(solar_query)
         if solar_query_result:
             solar_query_result = solar_query_result[0]
