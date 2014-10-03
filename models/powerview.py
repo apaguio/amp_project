@@ -15,7 +15,7 @@ def get_ekm_data(meter_id, period, resolution=None):
     if not resolution or resolution == '1s':
         query = 'select * from "%s" where time > now() - %s;' % (meter_id, period)
     else:
-        query = '''select median(P) as P, median(L1_PF) as L1_PF, median(L1_V) as L1_V
+        query = '''select mean(P) as P, mean(L1_PF) as L1_PF, mean(L1_V) as L1_V
                    from "%s" where time > now() - %s group by time(%s);''' % (meter_id, period, resolution)
     query_result = influxdb.query(query)
     result = list()
@@ -43,7 +43,7 @@ def get_current_demand(meter_id, solar_meter_id):
     customer_tz = timezone(get_customer_timezone(customer_name='test')) # TODO replace with current customer_id
     #utc_now.strftime('%Y-%m-%d %H:%M:%S')
     # (number_of_miutes * 60), to get the seconds precision
-    facility_query = 'select mean(P) as current_demand from "%s" group by time(%ss) limit 1;' % (meter_id, ((number_of_miutes*60) + utc_now.second))
+    facility_query = 'select mean(P) as current_demand from "%s" where time > now() - %ss;' % (meter_id, ((number_of_miutes*60) + utc_now.second))
     facility_query_result = influxdb.query(facility_query)
     result = dict()
     if facility_query_result:
@@ -51,7 +51,7 @@ def get_current_demand(meter_id, solar_meter_id):
         current_demand = round(facility_query_result['points'][0][1], 2)
         result['current_demand'] = current_demand
         result['time'] = customer_tz.fromutc(datetime.utcfromtimestamp(facility_query_result['points'][0][0])).strftime('%Y-%m-%d %H:%M:%S')
-        solar_query = 'select mean(P) as solar_power from "%s" group by time(%ss) limit 1;' % (solar_meter_id, ((number_of_miutes*60) + utc_now.second))
+        solar_query = 'select mean(P) as solar_power from "%s" where time > now() - %ss;' % (solar_meter_id, ((number_of_miutes*60) + utc_now.second))
         solar_query_result = influxdb.query(solar_query)
         if solar_query_result:
             solar_query_result = solar_query_result[0]
@@ -65,7 +65,7 @@ def get_max_demand(meter_id):
     customer_tz = timezone(tarrif_data['timezone'])
     customer_tz_now = customer_tz.fromutc(utc_now)
     time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tarrif_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
-    query = 'select max(demand) as max_demand from "%s_15mins_%s" group by time(%ss) limit 1;' % (meter_id, tarrif_data['peak_period'], time_diff.total_seconds())
+    query = 'select max(demand) as max_demand from "%s_15mins_%s" where time > now() - %ss;' % (meter_id, tarrif_data['peak_period'], time_diff.total_seconds())
     result = dict()
     query_result = influxdb.query(query)
     if query_result:
@@ -126,4 +126,3 @@ def get_tarrif_details(customer_name='test'):
                 result['number_of_days'] = billing_period.number_of_days
                 break
     return result
-
