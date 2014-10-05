@@ -65,13 +65,15 @@ def get_max_demand(meter_id):
     customer_tz = timezone(tarrif_data['timezone'])
     customer_tz_now = customer_tz.fromutc(utc_now)
     time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tarrif_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
-    query = 'select max(demand) as max_demand from "%s_15mins_%s" where time > now() - %ss;' % (meter_id, tarrif_data['peak_period'], time_diff.total_seconds())
+    query = 'select max(demand) as max_demand from "%s_15mins_%s_%s" where time > now() - %ss;' %
+             (meter_id, tarrif_data['season'], tarrif_data['peak_period'], time_diff.total_seconds())
     result = dict()
     query_result = influxdb.query(query)
     if query_result:
         query_result = query_result[0]
         max_demand = query_result['points'][0][1]
-        time_point_query = 'select time from "%s_15mins_%s" where demand=%s' % (meter_id, tarrif_data['peak_period'], max_demand)
+        time_point_query = 'select time from "%s_15mins_%s_%s" where demand=%s' %
+                            (meter_id, tarrif_data['season'], tarrif_data['peak_period'], max_demand)
         time_point_query_result = influxdb.query(time_point_query)
         if time_point_query_result:
             result['time'] = customer_tz.fromutc(datetime.utcfromtimestamp(time_point_query_result[0]['points'][0][0])).strftime('%Y-%m-%d %H:%M:%S')
