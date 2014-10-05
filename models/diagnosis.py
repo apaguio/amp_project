@@ -27,6 +27,6 @@ def get_ekm_data_range(meter_id, start, end, resolution=None):
                 if query_result['columns'][i] == 'time':
                     point_dict[query_result['columns'][i]] = customer_tz.fromutc(datetime.utcfromtimestamp(value)).strftime('%Y-%m-%d %H:%M:%S')
                 else:
-                    point_dict[query_result['columns'][i]] = value
+                    point_dict[query_result['columns'][i]] = round(value, 2)
                 result.append(point_dict)
     return result
