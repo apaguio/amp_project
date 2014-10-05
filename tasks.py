@@ -81,6 +81,6 @@ def energy_1h_aggregate(meter_id):
     energy = round(energy_query_result[0]['points'][0][1], 2)
 
     utc_timestamp = int((utc_now - datetime(1970, 1, 1)).total_seconds())
-    data = {'name': '%s_energy_1h_%s' % (meter_id, tarrif_data['peak_period']), 'columns': ['time', 'energy_kwh'], 
+    data = {'name': '%s_energy_1h_%s_%s' % (meter_id, tarrif_data['season'], tarrif_data['peak_period']), 'columns': ['time', 'energy_kwh'], 
             'points': [[utc_timestamp, energy]]}
     influxdb.write_points([data])
