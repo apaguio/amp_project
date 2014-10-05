@@ -95,12 +95,37 @@ def calculate_energy_charges(meter_id):
     customer = db.Customer.objects(name='test').first()
     energy_charges = 0.0
     for res in energy_query_result:
-        season = res['name'].split('_')[3]
-        peakperiod = res['name'].split('_')[4]
+        name_parts = res['name'].split('_')
+        season = name_parts[3]
+        peakperiod = name_parts[4]
         for sn in customer['seasons']:
             if sn['name'] == season:
-                for pp in season['peak_periods']:
+                for pp in sn['peak_periods']:
                     if pp['name'] == peakperiod:
                         energy_charges += pp['energy_charge'] * res['points'][0][1]
                         break
     return energy_charges
+
+def calculate_demand_charges(meter_id):
+    utc_now = datetime.utcfromtimestamp(time.time()) # current request time
+    tarrif_data = get_tarrif_details(customer_name='test') # TODO replace with current customer_id
+    customer_tz = timezone(tarrif_data['timezone'])
+    customer_tz_now = customer_tz.fromutc(utc_now)
+    time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tarrif_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
+
+    demand_query = 'select max(demand) from /^%s_15mins_\.*/ where time > now() - %ss;' %
+                    (meter_id, time_diff.total_seconds())
+    demand_query_result = influxdb.query(demand_query)
+    customer = db.Customer.objects(name='test').first()
+    demand_charges = 0.0
+    for res in demand_query_result:
+        name_parts = res['name'].split('_')
+        season = name_parts[2]
+        peakperiod = name_parts[3]
+        for sn in customer['seasons']:
+            if sn['name'] == season:
+                for pp in sn['peak_periods']:
+                    if pp['name'] == peakperiod:
+                        demand_charges += pp['demand_charge'] * res['points'][0][1]
+                        break
+    return demand_charges
