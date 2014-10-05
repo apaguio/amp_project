@@ -14,7 +14,7 @@ def get_ekm_data_range(meter_id, start, end, resolution=None):
     if not resolution:
         query = 'select * from "%s" where time > %ss and time < %ss;' % (meter_id, start, end)
     else:
-        query = '''select median(P) as P, median(L1_PF) as L1_PF, median(L1_V) as L1_V
+        query = '''select mean(P) as P, mean(L1_PF) as L1_PF, mean(L1_V) as L1_V
                    from "%s" where time > %ss and time < %ss group by time(%s);''' % (meter_id, start, end, resolution)
     query_result = influxdb.query(query)
     result = list()
