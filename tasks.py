@@ -66,7 +66,7 @@ def ekm_facility_aggregate(meter_id, solar_meter_id):
     net_load = demand - solar_power
 
     utc_timestamp = int((utc_now - datetime(1970, 1, 1)).total_seconds())
-    data = {'name': '%s_15mins_%s' % (meter_id, tarrif_data['peak_period']), 'columns': ['time', 'demand'], 
+    data = {'name': '%s_15mins_%s_%s' % (meter_id, tarrif_data['season'], tarrif_data['peak_period']), 'columns': ['time', 'demand'], 
             'points': [[utc_timestamp, net_load]]}
     influxdb.write_points([data])
 
