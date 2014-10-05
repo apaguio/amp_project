@@ -81,8 +81,8 @@ def get_demand_data(meter_id):
 
     return result
 
-def calculate_charges(meter_id, solar_meter_id):
-    result = dict()
+def calculate_energy_charges(meter_id):
+    #can be used for both consumption and production
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
     tarrif_data = get_tarrif_details(customer_name='test') # TODO replace with current customer_id
     customer_tz = timezone(tarrif_data['timezone'])
@@ -103,4 +103,4 @@ def calculate_charges(meter_id, solar_meter_id):
                     if pp['name'] == peakperiod:
                         energy_charges += pp['energy_charge'] * res['points'][0][1]
                         break
-    result['energy_charges'] = energy_charges
+    return energy_charges
