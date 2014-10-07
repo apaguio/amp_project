@@ -34,7 +34,7 @@
                     if (d.status === "error") {
                         alert(d.message);
                     } else {
-                        scope.graphdata = d.data;
+                        scope.graphData = d.data;
                         scope.dataUpdated ++;
                     }
                 });
