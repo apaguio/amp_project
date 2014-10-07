@@ -11,27 +11,17 @@ def performance_graph():
     energy_consumption_kwh = performance.get_energy_data(consumption_meter_id)
     solar_production_kwh = performance.get_energy_data(solar_meter_id)
     demand = performance.get_demand_data(consumption_meter_id)
-    return r.success({
-        "energy": {
-            "this_month" : 23000,
-            "last_month" : 12000,
-            "last_year" : 240000
-        },
-        "demand": {
-            "this_month" : 23000,
-            "last_month" : 12000,
-            "last_year" : 240000
-        },
-        "solar": {
-            "this_month" : 12000,
-            "last_month" : 23000,
-            "last_year" : 0
-        }
-    })
+    res = {
+        "energy": energy_consumption_kwh,
+        "demand": demand,
+        "solar": solar_production_kwh
+    }
+    print res
+    return r.success(res)
 
 
 @performance_app.route("/performance", methods=["GET"])
-def performance():
+def performance_data():
     return r.success({
         "billing_period": "september",
         "billing_period_startdate": 1410380825,

@@ -19,7 +19,7 @@
         return [d0, d1];
     }
 
-    function controller(scope, Session, http, timeout, $q) {
+    function controller(scope, Session, http, timeout, $q, location) {
         scope.nodata = false;
         http.defaults.headers.post['CSRF-TOKEN'] = Session.csrfToken;
         scope.lastTime = null;
@@ -36,12 +36,15 @@
             scope.data.peakStart = moment(today + data.peak_period_start).format(format);
             scope.data.peakEnd = moment(today + data.peak_period_end).format(format);
 
-            var intervalTick = _.throttle(function() {
+            var intervalTick = _.throttle(function(cont) {
+                if (!cont) {
+                    return;
+                }
                 scope.tickInterval = $q.defer();
                 tick(scope.tickInterval);
                 scope.tickInterval.promise.then(intervalTick, intervalTick);
             }, scope.reloadTime);
-            intervalTick();
+            intervalTick(true);
         }
 
         function load(onLoad) {
@@ -58,6 +61,9 @@
         }
 
         function tick(deferred) {
+            if (location.path() !== '/powerview') {
+                return deferred.reject(false);
+            }
             http.get('/api/powerview/max_demand').success(function (data) {
                 if (!data.data.max_demand) {
                     return ;
@@ -135,6 +141,6 @@
     }
 
     angular.module('insightApp')
-    .controller('PowerviewCtrl', ['$scope', 'Session', '$http', '$timeout', '$q', controller]);
+    .controller('PowerviewCtrl', ['$scope', 'Session', '$http', '$timeout', '$q', '$location', controller]);
 
 }).call(null);
