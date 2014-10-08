@@ -126,14 +126,25 @@ def calculate_demand_charges(meter_id):
     demand_query_result = influxdb.query(demand_query)
     customer = db.Customer.objects(name='test').first()
     demand_charges = 0.0
+    demand_data = dict()
     for res in demand_query_result:
         name_parts = res['name'].split('_')
         season = name_parts[2]
         peakperiod = name_parts[3]
         for sn in customer['seasons']:
             if sn['name'] == season:
+                if season not in demand_data:
+                    demand_data[season] = list()
+                demand_data[season].append(res['points'][0][1])
                 for pp in sn['peak_periods']:
                     if pp['name'] == peakperiod:
-                        demand_charges += pp['demand_charge'] * res['points'][0][1]
+                        if peakperiod == 'onpeak':
+                            demand_charges += pp['demand_charge'] * res['points'][0][1]
+                        else:
+                            if pp['demand_charge'] not in demand_data[season]:
+                                demand_data[season].append(pp['demand_charge'])
                         break
+    for season, demand_values in demand_data.iteritems():
+        max_demand_anytime = max(demand_values[:-1])
+        demand_charges += max_demand_anytime * demand_values[-1]
     return demand_charges
