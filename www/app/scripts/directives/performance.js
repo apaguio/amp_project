@@ -34,7 +34,7 @@
         data.total = total;
 
         scope.yBegining = el[0].getBoundingClientRect().top;
-        scope.margin = {top: 20, right: 0, bottom: 20, left: 40, between: 30};
+        scope.margin = {top: 100, right: 0, bottom: 20, left: 40, between: 30};
         scope.width = el.width() - scope.margin.right - scope.margin.left;
         scope.height = el.height() - scope.margin.top - scope.margin.bottom;
         scope.bigheight = scope.height * 2 / 3;
@@ -53,7 +53,6 @@
         scope.svg = d3.select(el[0]).select(".graph").append("svg")
             .attr("width", scope.width + scope.margin.left + scope.margin.right)
             .attr("height", scope.height + scope.margin.top + scope.margin.bottom);
-
 
         var gradient = scope.svg.append("svg:defs")
             .append("svg:linearGradient")
@@ -139,11 +138,42 @@
                 .text(_.str.humanize);
 
             // Bar group label
-            small.append("text")
+            chart.append("text")
+                .attr("class", "title")
                 .attr("x", scope.x.rangeBand() / 2)
-                .attr("y", 10)
+                .attr("y", 10 - scope.margin.top)
                 .attr("dy", ".75em")
                 .text(_.str.humanize(barsGroupName));
+
+            var title2 = 'usage';
+            if (barsGroupName === 'solar') {
+                title2 = 'production';
+            } else if (barsGroupName === 'total') {
+                title2 = 'bill';
+            }
+
+            // Bar group label
+            chart.append("text")
+                .attr("class", "title")
+                .attr("x", scope.x.rangeBand() / 2)
+                .attr("y", 30 - scope.margin.top)
+                .attr("dy", ".75em")
+                .text(title2);
+
+            var units = 'kWh / day';
+            if (barsGroupName === 'demand') {
+                units = 'kW Demand';
+            } else if (barsGroupName === 'total') {
+                units = '';
+            }
+
+            // Bar group label
+            chart.append("text")
+                .attr("class", "units")
+                .attr("x", scope.x.rangeBand() / 2)
+                .attr("y", 60 - scope.margin.top)
+                .attr("dy", ".75em")
+                .text(units);
 
         });
 

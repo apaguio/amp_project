@@ -265,3 +265,9 @@ body {
 #performance svg g text {
   text-anchor: middle;
 }
+#performance svg g text.title {
+  font-size: 18px;
+}
+#performance svg g text.units {
+  font-size: 14px;
+}
