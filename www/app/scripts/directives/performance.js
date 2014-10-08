@@ -13,20 +13,40 @@
             return;
         }
 
+        var total = {
+            last_year: 0,
+            last_month: 0,
+            this_month: 0
+        };
+
+        _.each(data, function(v, k) {
+            if (k !== 'solar') {
+                total.last_year += v.last_year;
+                total.last_month += v.last_month;
+                total.this_month += v.this_month;
+            } else {
+                total.last_year -= v.last_year;
+                total.last_month -= v.last_month;
+                total.this_month -= v.this_month;
+            }
+        });
+
+        data.total = total;
+
         scope.yBegining = el[0].getBoundingClientRect().top;
-        scope.margin = {top: 6, right: 0, bottom: 20, left: 40, between: 30};
+        scope.margin = {top: 20, right: 0, bottom: 20, left: 40, between: 30};
         scope.width = el.width() - scope.margin.right - scope.margin.left;
         scope.height = el.height() - scope.margin.top - scope.margin.bottom;
         scope.bigheight = scope.height * 2 / 3;
         scope.smallheight = (scope.height / 3) - scope.margin.between;
 
-        scope.x = d3.scale.ordinal().rangeRoundBands([0, scope.width - scope.margin.left - scope.margin.right], .1);
-        scope.x.domain(_.keys(data));
-
         var maxValue = _(data).values().map(function(d) {
             return _.values(d);
         }).flatten().max().value();
         
+        scope.x = d3.scale.ordinal().rangeRoundBands([0, scope.width - scope.margin.left - scope.margin.right], .1);
+        scope.x.domain(_.keys(data));
+
         scope.y = d3.scale.linear().range([scope.bigheight, 0]);
         scope.y.domain([0, maxValue + 20]);
 
@@ -34,7 +54,31 @@
             .attr("width", scope.width + scope.margin.left + scope.margin.right)
             .attr("height", scope.height + scope.margin.top + scope.margin.bottom);
 
-        var miniChart = scope.svg.selectAll("g") 
+
+        var gradient = scope.svg.append("svg:defs")
+            .append("svg:linearGradient")
+            .attr("id", "gradient")
+            .attr("x1", "0")
+            .attr("y1", "0")
+            .attr("x2", "0")
+            .attr("y2", "1")
+            .attr("spreadMethod", "pad");
+
+        gradient.append("svg:stop")
+            .attr("offset", "0%")
+            .attr("stop-color", d3.rgb(179, 204, 253)) // Light blue
+            .attr("stop-opacity", 1);
+
+        gradient.append("svg:stop")
+            .attr("offset", "100%")
+            .attr("stop-color", d3.rgb(106, 149, 212)) // dark blue
+            .attr("stop-opacity", 1);
+
+        var mainChart = scope.svg.append("g")
+            .attr("class", "mainChart")
+            .attr("transform", "translate(" + scope.margin.left + "," + scope.margin.top + ")");
+
+        var miniChart = mainChart.selectAll("g") 
             .data(_.keys(data))
             .enter()
             .append("g")
@@ -43,9 +87,9 @@
 
         var miniX = d3.scale.ordinal().rangeRoundBands([0, scope.x.rangeBand()], .1);
 
-        miniChart.each(function(d) {
+        miniChart.each(function(barsGroupName) {
 
-            var chartData = data[d];
+            var chartData = data[barsGroupName];
             miniX.domain(_.keys(chartData));
 
             var chart = d3.select(this);
@@ -77,13 +121,29 @@
             bar.append("rect")
                 .attr("y", function(d) { return scope.y(chartData[d]); })
                 .attr("height", function(d) { return scope.bigheight - scope.y(chartData[d]); })
-                .attr("width", miniX.rangeBand());
+                .attr("width", miniX.rangeBand())
+                .style("fill", "url(#gradient)");
 
+            // Bar value
             bar.append("text")
                 .attr("x", miniX.rangeBand() / 2)
-                .attr("y", function(d) { return scope.y(chartData[d]) + 3; })
+                .attr("y", function(d) { return scope.y(chartData[d]) - 15; })
                 .attr("dy", ".75em")
-                .text(function(d) { return chartData[d]; });
+                .text(function(d) { return (chartData[d] || 0).toFixed(3); });
+
+            // Bar Label
+            bar.append("text")
+                .attr("x", miniX.rangeBand() / 2)
+                .attr("y", function(d) { return scope.y(0) + 10; })
+                .attr("dy", ".75em")
+                .text(_.str.humanize);
+
+            // Bar group label
+            small.append("text")
+                .attr("x", scope.x.rangeBand() / 2)
+                .attr("y", 10)
+                .attr("dy", ".75em")
+                .text(_.str.humanize(barsGroupName));
 
         });
 

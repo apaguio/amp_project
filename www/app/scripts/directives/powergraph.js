@@ -181,8 +181,15 @@
         });
 
         scope.mousemove = function (lastPoint) {
+            
             if (!lastPoint) {
+
+                if (!this) {
+                    return;
+                }
+
                 var event = d3.mouse(this);
+
                 if (!event) {
                     return;
                 }

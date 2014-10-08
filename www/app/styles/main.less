@@ -6,6 +6,8 @@
 @darkcolor1: #918D76;
 @color2: #AB8BA2;
 @darkcolor2: #917E8C;
+@lightBlue: rgb(179, 204, 253);
+@darkBlue: rgb(106, 149, 212);
 
 body {
   padding-top: 0px;
@@ -247,6 +249,75 @@ body {
                 stroke: lighten(@color1, 10%);
                 stroke-width: 1px;
                 pointer-events: none;         
+            }
+        }
+
+    }
+
+}
+
+#performance {
+    a.selected {
+        color: green;
+    }
+    div.tooltip {
+        pointer-events: none;
+        border: 1px solid #222;
+        background-color: white;
+        opacity: 0.7;
+        border-radius: 4px;
+        padding: 10px;
+    
+        min-width: 100px;
+        position: absolute;           
+        text-align: left;           
+        width: auto;                  
+        height: auto;                 
+        min-width: 150px;
+
+        border: 1px solid #bbbbbb;
+        color: black;
+        background-color: white;
+        position: absolute;
+        font-family: Arial, Helvetical, sans-serif;
+        padding: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        pointer-events: none;         
+        .title{
+            font-weight: bold;
+            text-align: center;
+        }
+        .body {
+            .entry{
+                .key{
+                }
+                .value {
+                    float: right;
+                    font-weight: bolder;
+                }
+            }
+        }
+    }
+    svg {
+        font: 10px sans-serif;
+        line, path {
+            /*stroke: #222;*/
+            stroke: @darkcolor1;
+            stroke-width: 1px;
+            shape-rendering: crispedges;
+            fill: none;
+        }
+
+        * {
+            pointer-events: none;
+        }
+
+        g  {
+            rect {
+                stroke: #008000;
+            }
+            text {
+                text-anchor: middle;
             }
         }
 
