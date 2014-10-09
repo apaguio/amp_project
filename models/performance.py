@@ -148,3 +148,6 @@ def calculate_demand_charges(meter_id):
         max_demand_anytime = max(demand_values[:-1])
         demand_charges += max_demand_anytime * demand_values[-1]
     return demand_charges
+
+def get_tarrif_details(customer_name='test'):
+    return get_tarrif_details(customer_name=customer_name)
