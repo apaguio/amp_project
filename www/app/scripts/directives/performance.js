@@ -111,15 +111,17 @@
                 .attr("class", "small")
                 .attr("transform", "translate(0, " + ( scope.bigheight + scope.margin.between) + ")");
 
-            var bar = chart.selectAll("g")
+            var bar = chart.selectAll("g.barGroup")
                 .data(_.keys(chartData)).enter()
                 .append("g")
-                .attr("class", function(d) { return d; })
+                .attr("class", function(d) { return "barGroup " + d; })
                 .attr("transform", function(d) { return "translate(" + miniX(d) + ",0)"; });
 
             bar.append("rect")
-                .attr("y", function(d) { return scope.y(chartData[d]); })
-                .attr("height", function(d) { return scope.bigheight - scope.y(chartData[d]); })
+                .attr("y", function(d) { return scope.y(chartData[d] || 0); })
+                .attr("height", function(d) {
+                    return scope.bigheight - scope.y(chartData[d] || 0);
+                })
                 .attr("width", miniX.rangeBand())
                 .style("fill", "url(#gradient)");
 
