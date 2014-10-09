@@ -116,6 +116,7 @@ def get_tarrif_details(customer_name='test'):
                         result['peak_period_end'] = peak_period.end
                         result['energy_charge'] = peak_period.energy_charge
                         result['demand_charge'] = peak_period.demand_charge
+                        result['peak_demand_charge'] = peak_period.peak_demand_charge
                         break
                 break
         for billing_period in customer.read_cycle.billing_periods:

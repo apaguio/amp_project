@@ -33,7 +33,7 @@ def init_solar_meters():
 
 def get_summer_peak_periods(summer):
     onpeak_period = db.PeakPeriod(name='onpeak', start=time(12).isoformat(),
-                                end=time(17, 59, 59).isoformat(), energy_charge=0.19, demand_charge=21.46)
+                                end=time(17, 59, 59).isoformat(), energy_charge=0.19, demand_charge=8.72, peak_demand_charge=21.46)
     offpeak_period = db.PeakPeriod(name='offpeak', start=time(18).isoformat(),
                                 end=time(11, 59, 59).isoformat(), energy_charge=0.08, demand_charge=12.74)
     summer.peak_periods = [onpeak_period, offpeak_period]

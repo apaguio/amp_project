@@ -11,6 +11,7 @@ class PeakPeriod(mongodb.EmbeddedDocument):
     end = mongodb.StringField() # end_time in ISO format
     energy_charge = mongodb.FloatField()
     demand_charge = mongodb.FloatField()
+    peak_demand_charge = mongodb.FloatField()
 
 class Season(mongodb.EmbeddedDocument):
     name = mongodb.StringField()
