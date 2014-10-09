@@ -143,7 +143,7 @@
                 .attr("x", miniX.rangeBand() / 2)
                 .attr("y", function(d) { return scope.y(chartData[d]) - 15; })
                 .attr("dy", ".75em")
-                .text(function(d) { return (chartData[d] || 0).toFixed(3); });
+                .text(function(d) { return (chartData[d] || 0).toFixed(0); });
 
             // Bar Label
             bar.append("text")
@@ -216,7 +216,6 @@
                 .attr("cx", scope.x.rangeBand() - analysisMargin)
                 .attr("cy", line1y)
                 .attr("r", r);
-
 
             var line2y = line1y * 2;
             var monthArrow = arrowUp(monthAnalysis, "red");
