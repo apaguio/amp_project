@@ -37,10 +37,6 @@
                 total.last_year += v.last_year;
                 total.last_month += v.last_month;
                 total.this_month += v.this_month;
-            } else {
-                total.last_year -= v.last_year;
-                total.last_month -= v.last_month;
-                total.this_month -= v.this_month;
             }
         });
 
@@ -56,6 +52,8 @@
         var maxValue = _(data).values().map(function(d) {
             return _.values(d);
         }).flatten().max().value();
+
+        maxValue += _.max(_.values(data.solar));
         
         scope.x = d3.scale.ordinal().rangeRoundBands([0, scope.width - scope.margin.left - scope.margin.right], .1);
         scope.x.domain(_.keys(data));
@@ -130,13 +128,48 @@
                 .attr("class", function(d) { return "barGroup " + d; })
                 .attr("transform", function(d) { return "translate(" + miniX(d) + ",0)"; });
 
-            bar.append("rect")
-                .attr("y", function(d) { return scope.y(chartData[d] || 0); })
-                .attr("height", function(d) {
-                    return scope.bigheight - scope.y(chartData[d] || 0);
-                })
-                .attr("width", miniX.rangeBand());
-                //.style("fill", "url(#gradient)");
+            if (barsGroupName === 'total') {
+                var solar = data.solar;
+                var demand = data.demand;
+                var energy = data.energy;
+
+                bar.append("rect")
+                    .attr("class", "demand")
+                    .attr("y", function(d) {
+                        return scope.y(data.demand[d] || 0);
+                    })
+                    .attr("height", function(d) {
+                        return scope.bigheight - scope.y(data.demand[d] || 0);
+                    })
+                    .attr("width", miniX.rangeBand());
+
+                bar.append("rect")
+                    .attr("class", "energy")
+                    .attr("y", function(d) {
+                        return scope.y(data.energy[d] || 0) - (scope.bigheight - scope.y(data.demand[d] || 0));
+                    })
+                    .attr("height", function(d) {
+                        return scope.bigheight - scope.y(data.energy[d] || 0);
+                    })
+                    .attr("width", miniX.rangeBand());
+
+                bar.append("rect")
+                    .attr("class", "solar")
+                    .attr("y", function(d) {
+                        return scope.y(data.solar[d] || 0) - (scope.bigheihgt - scope.y(data.total[d] || 0));
+                    })
+                    .attr("height", function(d) {
+                        return scope.bigheight - scope.y(data.solar[d] || 0);
+                    })
+                    .attr("width", miniX.rangeBand());
+            } else {
+                bar.append("rect")
+                    .attr("y", function(d) { return scope.y(chartData[d] || 0); })
+                    .attr("height", function(d) {
+                        return scope.bigheight - scope.y(chartData[d] || 0);
+                    })
+                    .attr("width", miniX.rangeBand());
+            }
 
             // Bar value
             bar.append("text")
@@ -217,6 +250,19 @@
                 .attr("cy", line1y)
                 .attr("r", r);
 
+            var yearXshift = scope.x.rangeBand()/2;
+
+            yearAnalysis.append("text")
+                .attr("class", "percent")
+                .text("0%")
+                .attr("transform", "translate(" + yearXshift +  ", " + 15 + ")");
+
+            yearAnalysis.append("text")
+                .attr("class", "value")
+                .text("$ 135 / day")
+                .attr("transform", "translate(" + yearXshift +  ", " + 30 + ")");
+
+
             var line2y = line1y * 2;
             var monthArrow = arrowUp(monthAnalysis, "red");
             monthArrow.attr("transform", "translate(" + miniX.rangeBand() +  ", " + (line1y + 5) + "), scale(0.35)");
@@ -235,6 +281,18 @@
                 .attr("cx", scope.x.rangeBand() - analysisMargin)
                 .attr("cy", line2y)
                 .attr("r", r);
+
+            var monthXshift = miniX.rangeBand() + ((scope.x.rangeBand() - miniX.rangeBand())/2);
+
+            monthAnalysis.append("text")
+                .attr("class", "percent")
+                .text("0%")
+                .attr("transform", "translate(" + monthXshift +  ", " + (line1y + 15) + ")");
+
+            monthAnalysis.append("text")
+                .attr("class", "value")
+                .text("$ 135 / day")
+                .attr("transform", "translate(" + monthXshift +  ", " + (line1y + 30) + ")");
 
         });
 

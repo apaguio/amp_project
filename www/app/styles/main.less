@@ -9,7 +9,7 @@
 @yellow: #F7FF00;
 @main: @yellow;
 
-@darkYellow : darken(@yellow, 10%);
+@darkYellow : @yellow;
 @lightYellow : lighten(@yellow, 10%);
 
 @lightGreen: #56E800;
@@ -336,8 +336,23 @@ body {
             }
             &.solar {
                 rect {
-                    fill: @lightYellow;
-                    stroke: darken(@lightYellow, 5%);
+                    fill: @darkYellow;
+                    stroke: darken(@darkYellow, 5%);
+                }
+            }
+            &.total {
+                /*sub rectangles*/
+                rect.solar {
+                    fill: @darkYellow;
+                    stroke: darken(@darkYellow, 5%);
+                }
+                rect.energy {
+                    fill: @darkGreen;
+                    stroke: darken(@darkGreen, 5%);
+                }
+                rect.demand {
+                    fill: @darkBlue;
+                    stroke: darken(@darkBlue, 5%);
                 }
             }
             text {
@@ -362,7 +377,7 @@ body {
 
             }
 
-            .monthAnalysis {
+            .monthAnalysis, .yearAnalysis {
                 fill: @darkBlue;
                 stroke: @darkBlue;
             }

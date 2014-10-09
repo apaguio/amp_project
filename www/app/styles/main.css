@@ -269,8 +269,23 @@ body {
   stroke: #0dd090;
 }
 #performance svg g.solar rect {
-  fill: #f9ff33;
-  stroke: #f8ff19;
+  fill: #f7ff00;
+  stroke: #dee600;
+}
+#performance svg g.total {
+  /*sub rectangles*/
+}
+#performance svg g.total rect.solar {
+  fill: #f7ff00;
+  stroke: #dee600;
+}
+#performance svg g.total rect.energy {
+  fill: #0ee8a1;
+  stroke: #0dd090;
+}
+#performance svg g.total rect.demand {
+  fill: #05b3d1;
+  stroke: #049eb8;
 }
 #performance svg g text {
   text-anchor: middle;
@@ -291,7 +306,8 @@ body {
 #performance svg g .arrow.red {
   fill: #800000;
 }
-#performance svg g .monthAnalysis {
+#performance svg g .monthAnalysis,
+#performance svg g .yearAnalysis {
   fill: #05b3d1;
   stroke: #05b3d1;
 }

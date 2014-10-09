@@ -19,6 +19,7 @@
         }
 
         function load(onLoad) {
+            scope.loading = true;
             http.get('/api/performance')
                 .then(function (res) {
                     var d = res.data;
@@ -36,6 +37,7 @@
                     } else {
                         scope.graphData = d.data;
                         scope.dataUpdated ++;
+                        scope.loading = false;
                     }
                 });
         }
