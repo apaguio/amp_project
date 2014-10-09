@@ -1,13 +1,22 @@
 /* Space out content a bit */
 
 /*@main: #B9E3E3;*/
-@main: yellow;
 @color1: #DEDBCB;
 @darkcolor1: #918D76;
 @color2: #AB8BA2;
 @darkcolor2: #917E8C;
-@lightBlue: rgb(179, 204, 253);
-@darkBlue: rgb(106, 149, 212);
+
+@yellow: #F7FF00;
+@main: @yellow;
+
+@darkYellow : darken(@yellow, 10%);
+@lightYellow : lighten(@yellow, 10%);
+
+@lightGreen: #56E800;
+@darkGreen: #0EE8A1;
+/*@lightBlue: rgb(179, 204, 253);*/
+@lightBlue: #06DAFF;
+@darkBlue: #05B3D1;
 
 body {
   padding-top: 0px;
@@ -313,8 +322,23 @@ body {
         }
 
         g  {
-            rect {
-                stroke: #008000;
+            &.demand {
+                rect {
+                    fill: @darkBlue;
+                    stroke: darken(@darkBlue, 5%);
+                }
+            }
+            &.energy {
+                rect {
+                    fill: @darkGreen;
+                    stroke: darken(@darkGreen, 5%);
+                }
+            }
+            &.solar {
+                rect {
+                    fill: @lightYellow;
+                    stroke: darken(@lightYellow, 5%);
+                }
             }
             text {
                 text-anchor: middle;

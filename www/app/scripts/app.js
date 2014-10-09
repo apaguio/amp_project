@@ -76,6 +76,8 @@
                     console.log("Not logged in");
                     $rootScope.$broadcast(AuthEvents.notAuthenticated);
                 }
+            } else {
+                localStorage.setItem("lastPage", next.originalPath);
             }
         });
 

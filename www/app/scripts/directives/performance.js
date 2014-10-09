@@ -67,24 +67,24 @@
             .attr("width", scope.width + scope.margin.left + scope.margin.right)
             .attr("height", scope.height + scope.margin.top + scope.margin.bottom);
 
-        var gradient = scope.svg.append("svg:defs")
-            .append("svg:linearGradient")
-            .attr("id", "gradient")
-            .attr("x1", "0")
-            .attr("y1", "0")
-            .attr("x2", "0")
-            .attr("y2", "1")
-            .attr("spreadMethod", "pad");
+        //var gradient = scope.svg.append("svg:defs")
+            //.append("svg:linearGradient")
+            //.attr("id", "gradient")
+            //.attr("x1", "0")
+            //.attr("y1", "0")
+            //.attr("x2", "0")
+            //.attr("y2", "1")
+            //.attr("spreadMethod", "pad");
 
-        gradient.append("svg:stop")
-            .attr("offset", "0%")
-            .attr("stop-color", d3.rgb(179, 204, 253)) // Light blue
-            .attr("stop-opacity", 1);
+        //gradient.append("svg:stop")
+            //.attr("offset", "0%")
+            //.attr("stop-color", d3.rgb(179, 204, 253)) // Light blue
+            //.attr("stop-opacity", 1);
 
-        gradient.append("svg:stop")
-            .attr("offset", "100%")
-            .attr("stop-color", d3.rgb(106, 149, 212)) // dark blue
-            .attr("stop-opacity", 1);
+        //gradient.append("svg:stop")
+            //.attr("offset", "100%")
+            //.attr("stop-color", d3.rgb(106, 149, 212)) // dark blue
+            //.attr("stop-opacity", 1);
 
         var mainChart = scope.svg.append("g")
             .attr("class", "mainChart")
@@ -135,8 +135,8 @@
                 .attr("height", function(d) {
                     return scope.bigheight - scope.y(chartData[d] || 0);
                 })
-                .attr("width", miniX.rangeBand())
-                .style("fill", "url(#gradient)");
+                .attr("width", miniX.rangeBand());
+                //.style("fill", "url(#gradient)");
 
             // Bar value
             bar.append("text")

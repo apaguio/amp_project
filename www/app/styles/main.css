@@ -1,5 +1,6 @@
 /* Space out content a bit */
 /*@main: #B9E3E3;*/
+/*@lightBlue: rgb(179, 204, 253);*/
 body {
   padding-top: 0px;
   padding-bottom: 0px;
@@ -198,7 +199,7 @@ body {
 #powerview svg .lines path.area {
   stroke-width: 0;
   /*fill: yellow;*/
-  fill: #ffff00;
+  fill: #f7ff00;
 }
 #powerview svg .powerFactorLines path.linePF,
 #powerview svg .voltageLines path.linePF {
@@ -259,8 +260,17 @@ body {
 #performance svg * {
   pointer-events: none;
 }
-#performance svg g rect {
-  stroke: #008000;
+#performance svg g.demand rect {
+  fill: #05b3d1;
+  stroke: #049eb8;
+}
+#performance svg g.energy rect {
+  fill: #0ee8a1;
+  stroke: #0dd090;
+}
+#performance svg g.solar rect {
+  fill: #f9ff33;
+  stroke: #f8ff19;
 }
 #performance svg g text {
   text-anchor: middle;
@@ -282,6 +292,6 @@ body {
   fill: #800000;
 }
 #performance svg g .monthAnalysis {
-  fill: #6a95d4;
-  stroke: #6a95d4;
+  fill: #05b3d1;
+  stroke: #05b3d1;
 }
