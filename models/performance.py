@@ -149,5 +149,5 @@ def calculate_demand_charges(meter_id):
         demand_charges += max_demand_anytime * demand_values[-1]
     return demand_charges
 
-def get_tarrif_details(customer_name='test'):
+def get_tarrif_data(customer_name='test'):
     return get_tarrif_details(customer_name=customer_name)
