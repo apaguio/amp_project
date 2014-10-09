@@ -271,3 +271,17 @@ body {
 #performance svg g text.units {
   font-size: 14px;
 }
+#performance svg g .arrow {
+  stroke: none;
+  stroke-width: 0;
+}
+#performance svg g .arrow.green {
+  fill: #008000;
+}
+#performance svg g .arrow.red {
+  fill: #800000;
+}
+#performance svg g .monthAnalysis {
+  fill: #6a95d4;
+  stroke: #6a95d4;
+}
