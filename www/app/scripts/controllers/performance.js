@@ -28,17 +28,17 @@
                     } else {
                         onLoad(d.data);
                     }
-                });
-            http.get('/api/performance/graph')
-                .then(function (res) {
-                    var d = res.data;
-                    if (d.status === "error") {
-                        alert(d.message);
-                    } else {
-                        scope.graphData = d.data;
-                        scope.dataUpdated ++;
-                        scope.loading = false;
-                    }
+                    http.get('/api/performance/graph')
+                        .then(function (res) {
+                            var d = res.data;
+                            if (d.status === "error") {
+                                alert(d.message);
+                            } else {
+                                scope.graphData = d.data;
+                                scope.dataUpdated ++;
+                                scope.loading = false;
+                            }
+                        });
                 });
         }
 
