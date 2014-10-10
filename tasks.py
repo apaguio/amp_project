@@ -52,7 +52,7 @@ def ekm_collect(meter_id, nr_readings, key, endpoint='io.ekmpush.com', simulate_
 def ekm_facility_aggregate(meter_id, solar_meter_id):
     utc_now = datetime.utcfromtimestamp(time.time())
     # get user information (customer_id) from session
-    tarrif_data = powerview.get_tarrif_details(customer_name='test')
+    tariff_data = powerview.get_tariff_details(customer_name='test')
 
     facility_query = 'select mean(P) as demand from "%s" where time > now() - 15m;' % meter_id
     facility_result = influxdb.query(facility_query)
@@ -66,7 +66,7 @@ def ekm_facility_aggregate(meter_id, solar_meter_id):
     net_load = demand - solar_power
 
     utc_timestamp = int((utc_now - datetime(1970, 1, 1)).total_seconds())
-    data = {'name': '%s_15mins_%s_%s' % (meter_id, tarrif_data['season'], tarrif_data['peak_period']), 'columns': ['time', 'demand'], 
+    data = {'name': '%s_15mins_%s_%s' % (meter_id, tariff_data['season'], tariff_data['peak_period']), 'columns': ['time', 'demand'],
             'points': [[utc_timestamp, net_load]]}
     influxdb.write_points([data])
 
@@ -74,13 +74,13 @@ def ekm_facility_aggregate(meter_id, solar_meter_id):
 def energy_1h_aggregate(meter_id):
     utc_now = datetime.utcfromtimestamp(time.time())
     # get user information (customer_id) from session
-    tarrif_data = powerview.get_tarrif_details(customer_name='test')
+    tariff_data = powerview.get_tariff_details(customer_name='test')
 
     energy_query = 'select mean(P) from "%s" where time > now() - 1h;' % meter_id
     energy_query_result = influxdb.query(energy_query)
     energy = round(energy_query_result[0]['points'][0][1], 2)
 
     utc_timestamp = int((utc_now - datetime(1970, 1, 1)).total_seconds())
-    data = {'name': '%s_energy_1h_%s_%s' % (meter_id, tarrif_data['season'], tarrif_data['peak_period']), 'columns': ['time', 'energy_kwh'], 
+    data = {'name': '%s_energy_1h_%s_%s' % (meter_id, tariff_data['season'], tariff_data['peak_period']), 'columns': ['time', 'energy_kwh'],
             'points': [[utc_timestamp, energy]]}
     influxdb.write_points([data])

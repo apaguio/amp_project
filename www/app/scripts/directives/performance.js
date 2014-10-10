@@ -20,11 +20,25 @@
             .attr("class", "arrow down " + cls);
     }
 
+    function fakeData(originalData) {
+        _.each(originalData, function(data, k) {
+            data.last_year = data.this_month + ( data.this_month / 10);
+            data.last_month = data.this_month - ( data.this_month / 10);
+            if (k === 'solar') {
+                data.last_year = 0;
+                data.last_month = data.this_month + ( data.this_month / 10);
+            }
+        });
+        return originalData;
+    }
+
     function plot(scope, el, data) {
 
         if (!data) {
             return;
         }
+
+        data = fakeData(data);
 
         var total = {
             last_year: 0,
@@ -55,8 +69,11 @@
 
         maxValue += _.max(_.values(data.solar));
         
+        var miniChartDomain = ['energy', 'demand', 'solar', 'total'];
+        //var miniChartDomain = _.keys(data);
         scope.x = d3.scale.ordinal().rangeRoundBands([0, scope.width - scope.margin.left - scope.margin.right], .1);
-        scope.x.domain(_.keys(data));
+        // To preserve the order
+        scope.x.domain(miniChartDomain);
 
         scope.y = d3.scale.linear().range([scope.bigheight, 0]);
         scope.y.domain([0, maxValue + 20]);
@@ -65,31 +82,13 @@
             .attr("width", scope.width + scope.margin.left + scope.margin.right)
             .attr("height", scope.height + scope.margin.top + scope.margin.bottom);
 
-        //var gradient = scope.svg.append("svg:defs")
-            //.append("svg:linearGradient")
-            //.attr("id", "gradient")
-            //.attr("x1", "0")
-            //.attr("y1", "0")
-            //.attr("x2", "0")
-            //.attr("y2", "1")
-            //.attr("spreadMethod", "pad");
-
-        //gradient.append("svg:stop")
-            //.attr("offset", "0%")
-            //.attr("stop-color", d3.rgb(179, 204, 253)) // Light blue
-            //.attr("stop-opacity", 1);
-
-        //gradient.append("svg:stop")
-            //.attr("offset", "100%")
-            //.attr("stop-color", d3.rgb(106, 149, 212)) // dark blue
-            //.attr("stop-opacity", 1);
-
         var mainChart = scope.svg.append("g")
             .attr("class", "mainChart")
             .attr("transform", "translate(" + scope.margin.left + "," + scope.margin.top + ")");
 
         var miniChart = mainChart.selectAll("g") 
-            .data(_.keys(data))
+            // To preserve the order
+            .data(miniChartDomain)
             .enter()
             .append("g")
             .attr("class", function(d) { return d; })
@@ -100,7 +99,9 @@
         miniChart.each(function(barsGroupName) {
 
             var chartData = data[barsGroupName];
-            miniX.domain(_.keys(chartData));
+            //var barsDomain = _.keys(chartData);
+            var barsDomain = ['last_year', 'last_month', 'this_month'];
+            miniX.domain(barsDomain);
 
             var chart = d3.select(this);
 
@@ -123,7 +124,7 @@
                 .attr("transform", "translate(0, " + ( scope.bigheight + scope.margin.between) + ")");
 
             var bar = chart.selectAll("g.barGroup")
-                .data(_.keys(chartData)).enter()
+                .data(barsDomain).enter()
                 .append("g")
                 .attr("class", function(d) { return "barGroup " + d; })
                 .attr("transform", function(d) { return "translate(" + miniX(d) + ",0)"; });
@@ -156,7 +157,7 @@
                 bar.append("rect")
                     .attr("class", "solar")
                     .attr("y", function(d) {
-                        return scope.y(data.solar[d] || 0) - (scope.bigheihgt - scope.y(data.total[d] || 0));
+                        return scope.y(data.solar[d] || 0) - (scope.bigheight - scope.y(data.total[d] || 0));
                     })
                     .attr("height", function(d) {
                         return scope.bigheight - scope.y(data.solar[d] || 0);
@@ -176,7 +177,15 @@
                 .attr("x", miniX.rangeBand() / 2)
                 .attr("y", function(d) { return scope.y(chartData[d]) - 15; })
                 .attr("dy", ".75em")
-                .text(function(d) { return (chartData[d] || 0).toFixed(0); });
+                .text(function(d) {
+                    if (barsGroupName === 'total') {
+                        //TODO ADD scope.tariff.peak_demand_charge
+                        var val = data.demand[d] * scope.tariff.demand_charge +
+                                  data.energy[d] * scope.tariff.energy_charge;
+                        return '$ ' + Math.floor(val).toLocaleString();
+                    }
+                    return Math.round(chartData[d] || 0).toLocaleString();
+                });
 
             // Bar Label
             bar.append("text")
@@ -314,7 +323,8 @@
             restrict: 'E',
             scope: {
                 data: '=',
-                dataupdated: '@'
+                dataupdated: '@',
+                tariff: '='
             },
             controller: ['$scope', '$element', controller]
         };

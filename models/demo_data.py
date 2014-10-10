@@ -8,7 +8,7 @@ def generate():
     billing_periods = init_billing_periods()
     facility_meters = init_facility_meters()
     solar_meters = init_solar_meters()
-    read_cycle = db.ReadCycle(name='V', billing_periods=billing_periods, rate_tarrif='AG-5E')
+    read_cycle = db.ReadCycle(name='V', billing_periods=billing_periods, rate_tariff='AG-5E')
     customer.read_cycle = read_cycle
     customer.facility = facility_meters
     customer.solar = solar_meters

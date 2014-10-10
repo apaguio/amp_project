@@ -1,7 +1,7 @@
 import time
 from datetime import datetime
 from models import db
-from models.powerview import get_customer_timezone, get_tarrif_details
+from models.powerview import get_customer_timezone, get_tariff_details
 from models import influxdb
 from pytz import timezone
 
@@ -9,10 +9,10 @@ def get_energy_data(meter_id):
     #used for both consumption and production
     result = dict()
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
-    tarrif_data = get_tarrif_details(customer_name='test')
-    customer_tz = timezone(tarrif_data['timezone'])
+    tariff_data = get_tariff_details(customer_name='test')
+    customer_tz = timezone(tariff_data['timezone'])
     customer_tz_now = customer_tz.fromutc(utc_now)
-    time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tarrif_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
+    time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tariff_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
 
     #current billing period query
     billing_period_query = 'select mean(energy_kwh) from /^%s_energy_1h_\.*/ where time > now() - %ss;' % (meter_id, time_diff.total_seconds())
@@ -54,10 +54,10 @@ def get_energy_data(meter_id):
 def get_demand_data(meter_id):
     result = dict()
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
-    tarrif_data = get_tarrif_details(customer_name='test') # TODO replace with current customer_id
-    customer_tz = timezone(tarrif_data['timezone'])
+    tariff_data = get_tariff_details(customer_name='test') # TODO replace with current customer_id
+    customer_tz = timezone(tariff_data['timezone'])
     customer_tz_now = customer_tz.fromutc(utc_now)
-    time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tarrif_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
+    time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tariff_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
 
     #current billing period query
     billing_period_query = 'select max(demand) from /^%s_15mins_\.*/ where time > now() - %ss;' % (meter_id, time_diff.total_seconds())
@@ -94,10 +94,10 @@ def get_demand_data(meter_id):
 def calculate_energy_charges(meter_id):
     #can be used for both consumption and production
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
-    tarrif_data = get_tarrif_details(customer_name='test') # TODO replace with current customer_id
-    customer_tz = timezone(tarrif_data['timezone'])
+    tariff_data = get_tariff_details(customer_name='test') # TODO replace with current customer_id
+    customer_tz = timezone(tariff_data['timezone'])
     customer_tz_now = customer_tz.fromutc(utc_now)
-    time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tarrif_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
+    time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tariff_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
 
     energy_query = 'select sum(energy_kwh) from /^%s_energy_1h_\.*/ where time > now() - %ss;' % (meter_id, time_diff.total_seconds())
     energy_query_result = influxdb.query(energy_query)
@@ -117,10 +117,10 @@ def calculate_energy_charges(meter_id):
 
 def calculate_demand_charges(meter_id):
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
-    tarrif_data = get_tarrif_details(customer_name='test') # TODO replace with current customer_id
-    customer_tz = timezone(tarrif_data['timezone'])
+    tariff_data = get_tariff_details(customer_name='test') # TODO replace with current customer_id
+    customer_tz = timezone(tariff_data['timezone'])
     customer_tz_now = customer_tz.fromutc(utc_now)
-    time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tarrif_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
+    time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tariff_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
 
     demand_query = 'select max(demand) from /^%s_15mins_\.*/ where time > now() - %ss;' % (meter_id, time_diff.total_seconds())
     demand_query_result = influxdb.query(demand_query)
@@ -149,5 +149,5 @@ def calculate_demand_charges(meter_id):
         demand_charges += max_demand_anytime * demand_values[-1]
     return demand_charges
 
-def get_tarrif_data(customer_name='test'):
-    return get_tarrif_details(customer_name=customer_name)
+def get_tariff_data(customer_name='test'):
+    return get_tariff_details(customer_name=customer_name)

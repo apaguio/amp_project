@@ -61,17 +61,17 @@ def get_current_demand(meter_id, solar_meter_id):
 
 def get_max_demand(meter_id):
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
-    tarrif_data = get_tarrif_details(customer_name='test') # TODO replace with current customer_id
-    customer_tz = timezone(tarrif_data['timezone'])
+    tariff_data = get_tariff_details(customer_name='test') # TODO replace with current customer_id
+    customer_tz = timezone(tariff_data['timezone'])
     customer_tz_now = customer_tz.fromutc(utc_now)
-    time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tarrif_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
-    query = 'select max(demand) as max_demand from "%s_15mins_%s_%s" where time > now() - %ss;' % (meter_id, tarrif_data['season'], tarrif_data['peak_period'], time_diff.total_seconds())
+    time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tariff_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
+    query = 'select max(demand) as max_demand from "%s_15mins_%s_%s" where time > now() - %ss;' % (meter_id, tariff_data['season'], tariff_data['peak_period'], time_diff.total_seconds())
     result = dict()
     query_result = influxdb.query(query)
     if query_result:
         query_result = query_result[0]
         max_demand = query_result['points'][0][1]
-        time_point_query = 'select time from "%s_15mins_%s_%s" where demand>%s and demand<%s;' % (meter_id, tarrif_data['season'], tarrif_data['peak_period'], max_demand-1, max_demand+1)
+        time_point_query = 'select time from "%s_15mins_%s_%s" where demand>%s and demand<%s;' % (meter_id, tariff_data['season'], tariff_data['peak_period'], max_demand-1, max_demand+1)
         time_point_query_result = influxdb.query(time_point_query)
         if time_point_query_result:
             result['time'] = customer_tz.fromutc(datetime.utcfromtimestamp(time_point_query_result[0]['points'][0][0])).strftime('%Y-%m-%d %H:%M:%S')
@@ -90,9 +90,9 @@ def get_customer_timezone(customer_name='test'):
     if customer:
         return customer.timezone
 
-def get_tarrif_details(customer_name='test'):
+def get_tariff_details(customer_name='test'):
     """
-    Gets the Tarrif Details
+    Gets the tariff Details
     """
     #TODO use customer_id instead of name
     result = dict()
@@ -102,7 +102,7 @@ def get_tarrif_details(customer_name='test'):
     customer_tz_now = customer_tz.fromutc(utc_now)
     if customer:
         result['timezone'] = customer.timezone
-        result['rate_tarrif'] = customer.read_cycle.rate_tarrif
+        result['rate_tariff'] = customer.read_cycle.rate_tariff
         result['read_cycle'] = customer.read_cycle.name
         for season in customer.seasons:
             if customer_tz.localize(season.start) <= customer_tz_now and customer_tz.localize(season.end) >= customer_tz_now:

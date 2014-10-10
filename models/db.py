@@ -27,7 +27,7 @@ class BillingPeriod(mongodb.EmbeddedDocument):
 
 class ReadCycle(mongodb.EmbeddedDocument):
     name = mongodb.StringField()
-    rate_tarrif = mongodb.StringField()
+    rate_tariff = mongodb.StringField()
     billing_periods = mongodb.ListField(mongodb.EmbeddedDocumentField(BillingPeriod))
 
 class Customer(mongodb.Document):

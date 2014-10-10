@@ -22,5 +22,5 @@ def performance_graph():
 
 @performance_app.route("/performance", methods=["GET"])
 def performance_data():
-    return r.success(performance.get_tarrif_data())
+    return r.success(performance.get_tariff_data())
 
