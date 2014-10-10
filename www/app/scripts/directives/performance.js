@@ -332,7 +332,7 @@
             }
 
             yearAnalysis.append("text")
-                .attr("class", "percent")
+                .attr("class", "percent " + classOfChange(barsGroupName, percentVal))
                 .text(percentText)
                 .attr("transform", "translate(" + yearXshift +  ", " + 15 + ")");
 
@@ -357,7 +357,7 @@
             }
 
             yearAnalysis.append("text")
-                .attr("class", "value")
+                .attr("class", "value " + classOfChange(barsGroupName, changeVal))
                 .text(changeText)
                 .attr("transform", "translate(" + yearXshift +  ", " + 30 + ")");
 

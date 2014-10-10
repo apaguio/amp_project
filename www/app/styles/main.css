@@ -265,23 +265,23 @@ body {
   stroke: #049eb8;
 }
 #performance svg g.energy rect {
-  fill: #0ee8a1;
-  stroke: #0dd090;
+  fill: #008000;
+  stroke: #006700;
 }
 #performance svg g.solar rect {
-  fill: #f7ff00;
-  stroke: #dee600;
+  fill: #edf500;
+  stroke: #d4db00;
 }
 #performance svg g.total {
   /*sub rectangles*/
 }
 #performance svg g.total rect.solar {
-  fill: #f7ff00;
-  stroke: #dee600;
+  fill: #edf500;
+  stroke: #d4db00;
 }
 #performance svg g.total rect.energy {
-  fill: #0ee8a1;
-  stroke: #0dd090;
+  fill: #008000;
+  stroke: #006700;
 }
 #performance svg g.total rect.demand {
   fill: #05b3d1;
@@ -296,15 +296,25 @@ body {
 #performance svg g text.units {
   font-size: 14px;
 }
+#performance svg g .red {
+  stroke: #800000;
+  fill: none;
+}
+#performance svg g .green {
+  stroke: #008000;
+  fill: none;
+}
 #performance svg g .arrow {
   stroke: none;
-  stroke-width: 0;
+  stroke-width: 1px;
 }
 #performance svg g .arrow.green {
   fill: #008000;
+  stroke: #009a00;
 }
 #performance svg g .arrow.red {
   fill: #800000;
+  stroke: #9a0000;
 }
 #performance svg g .monthAnalysis,
 #performance svg g .yearAnalysis {

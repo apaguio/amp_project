@@ -9,11 +9,14 @@
 @yellow: #F7FF00;
 @main: @yellow;
 
-@darkYellow : @yellow;
+@darkYellow : darken(@yellow, 2%);
 @lightYellow : lighten(@yellow, 10%);
 
+@lightRed: #E85600;
+@darkRed: #800000;
+
 @lightGreen: #56E800;
-@darkGreen: #0EE8A1;
+@darkGreen: #008000;
 /*@lightBlue: rgb(179, 204, 253);*/
 @lightBlue: #06DAFF;
 @darkBlue: #05B3D1;
@@ -365,14 +368,24 @@ body {
                 }
             }
 
+            .red {
+                stroke: @darkRed;
+                fill: none;
+            }
+            .green {
+                stroke: @darkGreen;
+                fill: none;
+            }
             .arrow {
                 stroke: none;
-                stroke-width: 0;
+                stroke-width: 1px;
                 &.green {
-                    fill: #008000;
+                    fill: @darkGreen;
+                    stroke: lighten(@darkGreen, 5%);
                 }
                 &.red {
-                    fill: #800000;
+                    fill: @darkRed;
+                    stroke: lighten(@darkRed, 5%);
                 }
 
             }
