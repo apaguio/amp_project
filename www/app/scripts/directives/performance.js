@@ -179,7 +179,7 @@
                 var energy = data.energy;
 
                 bar.append("rect")
-                    .attr("class", "demand")
+                    .attr("class", "energy")
                     .attr("y", scope.bigheight)
                     .attr("height", 0)
                     .attr("width", miniX.rangeBand())
@@ -187,7 +187,54 @@
                     .duration(duration)
                     .attr("y", function(d) {
                         var m = d + '_money';
-                        var position = scope.yTotal(data.demand[m] || 0);
+                        var energy = scope.yTotal(data.energy[m] || 0);
+                        return energy;
+                    })
+                    .attr("height", function(d) {
+                        var m = d + '_money';
+                        var energy = scope.yTotal(data.energy[m] || 0);
+                        return scope.bigheight - energy;
+                    });
+
+                bar.append("text")
+                    .attr("class", "energy_val")
+                    .attr("x", miniX.rangeBand()/2)
+                    .attr("y", scope.bigheight)
+                    //.attr("height", function(d) { return scope.bigheight - scope.y(data.energy[d] || 0); })
+                    .attr("height", 0)
+                    .attr("width", miniX.rangeBand())
+                    .transition()
+                    .duration(duration)
+                    .attr("y", function(d) {
+                        var m = d + '_money';
+                        var energy = scope.yTotal(data.energy[m] || 0);
+                        return energy + 15;
+                    })
+                    .text(function(d) { 
+                        var val = Math.round(data.energy[d + '_money']);
+                        if (!val) {
+                            return '';
+                        }
+                        return val;
+                    });
+
+                bar.append("rect")
+                    .attr("class", "demand")
+                    .attr("y",  function(d) {
+                        var m = d + '_money';
+                        var energy = scope.yTotal(data.energy[m] || 0);
+                        return energy;
+                    })
+                    .attr("height", 0)
+                    .attr("width", miniX.rangeBand())
+                    .transition()
+                    .delay(duration)
+                    .duration(duration)
+                    .attr("y", function(d) {
+                        var m = d + '_money';
+                        var energy = scope.bigheight - scope.yTotal(data.energy[m] || 0);
+                        var demand = scope.yTotal(data.demand[m] || 0);
+                        var position = demand - energy;
                         return position;
                     })
                     .attr("height", function(d) {
@@ -199,13 +246,20 @@
                 bar.append("text")
                     .attr("class", "demand_val")
                     .attr("x", miniX.rangeBand()/2)
-                    .attr("y", scope.bigheight)
+                    .attr("y",  function(d) {
+                        var m = d + '_money';
+                        var energy = scope.yTotal(data.energy[m] || 0);
+                        return energy + 15;
+                    })
                     .attr("width", miniX.rangeBand())
                     .transition()
+                    .delay(duration)
                     .duration(duration)
                     .attr("y", function(d) {
                         var m = d + '_money';
-                        var position = scope.yTotal(data.demand[m] || 0);
+                        var energy = scope.bigheight - scope.yTotal(data.energy[m] || 0);
+                        var demand = scope.yTotal(data.demand[m] || 0);
+                        var position = demand - energy;
                         return position + 15;
                     })
                     .text(function(d) {
@@ -216,60 +270,6 @@
                         return val;
                     });
 
-                bar.append("rect")
-                    .attr("class", "energy")
-                    .attr("y", function(d) {
-                        var m = d + '_money';
-                        var demand = scope.yTotal(data.demand[m] || 0);
-                        return demand;
-                    })
-                    //.attr("height", function(d) { return scope.bigheight - scope.y(data.energy[d] || 0); })
-                    .attr("height", 0)
-                    .attr("width", miniX.rangeBand())
-                    .transition()
-                    .delay(duration)
-                    .duration(duration)
-                    .attr("y", function(d) {
-                        var m = d + '_money';
-                        var demand = scope.bigheight - scope.yTotal(data.demand[m] || 0);
-                        var energy = scope.yTotal(data.energy[m] || 0);
-                        var position = energy - demand;
-                        return position;
-                    })
-                    .attr("height", function(d) {
-                        var m = d + '_money';
-                        var energy = scope.yTotal(data.energy[m] || 0);
-                        return scope.bigheight - energy;
-                    });
-
-                bar.append("text")
-                    .attr("class", "energy_val")
-                    .attr("x", miniX.rangeBand()/2)
-                    .attr("y", function(d) {
-                        var m = d + '_money';
-                        var demand = scope.yTotal(data.demand[m] || 0);
-                        return demand;
-                    })
-                    //.attr("height", function(d) { return scope.bigheight - scope.y(data.energy[d] || 0); })
-                    .attr("height", 0)
-                    .attr("width", miniX.rangeBand())
-                    .transition()
-                    .delay(duration)
-                    .duration(duration)
-                    .attr("y", function(d) {
-                        var m = d + '_money';
-                        var demand = scope.bigheight - scope.yTotal(data.demand[m] || 0);
-                        var energy = scope.yTotal(data.energy[m] || 0);
-                        var position = energy - demand;
-                        return position + 15;
-                    })
-                    .text(function(d) { 
-                        var val = Math.round(data.energy[d + '_money']);
-                        if (!val) {
-                            return '';
-                        }
-                        return val;
-                    });
 
                 bar.append("rect")
                     .attr("class", "solar")
