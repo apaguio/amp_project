@@ -5,10 +5,14 @@ class EkmMeter(mongodb.EmbeddedDocument):
     id = mongodb.StringField()
     api_key = mongodb.StringField()
 
-class PeakPeriod(mongodb.EmbeddedDocument):
-    name = mongodb.StringField()
+class PeakPeriodSchedule(mongodb.EmbeddedDocument):
+    day_of_week = mongodb.IntField()
     start = mongodb.StringField() # start_time in ISO format
     end = mongodb.StringField() # end_time in ISO format
+
+class PeakPeriod(mongodb.EmbeddedDocument):
+    name = mongodb.StringField()
+    schedule = mongodb.ListField(mongodb.EmbeddedDocumentField(PeakPeriodSchedule))
     energy_charge = mongodb.FloatField()
     demand_charge = mongodb.FloatField()
     peak_demand_charge = mongodb.FloatField()
@@ -39,3 +43,4 @@ class Customer(mongodb.Document):
     seasons = mongodb.ListField(mongodb.EmbeddedDocumentField(Season))
     facility = mongodb.ListField(mongodb.EmbeddedDocumentField(EkmMeter))
     solar = mongodb.ListField(mongodb.EmbeddedDocumentField(EkmMeter))
+    holidays = mongodb.ListField(mongodb.DateTimeField())

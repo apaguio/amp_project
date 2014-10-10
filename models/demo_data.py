@@ -4,6 +4,9 @@ from pytz import timezone, utc
 
 def generate():
     customer = db.Customer(name='test', email='test@example.com')
+    customer.holidays = [utc.localize(datetime(2014, 11, 11)),
+                         utc.localize(datetime(2014, 11, 27)),
+                         utc.localize(datetime(2014, 12, 25))]
     # all datetime data are set in UTC format
     billing_periods = init_billing_periods()
     facility_meters = init_facility_meters()
@@ -32,17 +35,39 @@ def init_solar_meters():
     return [meter1,]
 
 def get_summer_peak_periods(summer):
-    onpeak_period = db.PeakPeriod(name='onpeak', start=time(12).isoformat(),
-                                end=time(17, 59, 59).isoformat(), energy_charge=0.19, demand_charge=8.72, peak_demand_charge=21.46)
-    offpeak_period = db.PeakPeriod(name='offpeak', start=time(18).isoformat(),
-                                end=time(11, 59, 59).isoformat(), energy_charge=0.08, demand_charge=12.74)
+    onpeak_schedule = [db.PeakPeriodSchedule(day_of_week=0, start=time(12).isoformat(), end=time(17, 59, 59).isoformat()),
+                       db.PeakPeriodSchedule(day_of_week=1, start=time(12).isoformat(), end=time(17, 59, 59).isoformat()),
+                       db.PeakPeriodSchedule(day_of_week=2, start=time(12).isoformat(), end=time(17, 59, 59).isoformat()),
+                       db.PeakPeriodSchedule(day_of_week=3, start=time(12).isoformat(), end=time(17, 59, 59).isoformat()),
+                       db.PeakPeriodSchedule(day_of_week=4, start=time(12).isoformat(), end=time(17, 59, 59).isoformat())]
+    onpeak_period = db.PeakPeriod(name='onpeak', schedule=onpeak_schedule, energy_charge=0.19, demand_charge=8.72, peak_demand_charge=21.46)
+
+    offpeak_schedule = [db.PeakPeriodSchedule(day_of_week=0, start=time(18).isoformat(), end=time(11, 59, 59).isoformat()),
+                       db.PeakPeriodSchedule(day_of_week=1, start=time(18).isoformat(), end=time(11, 59, 59).isoformat()),
+                       db.PeakPeriodSchedule(day_of_week=2, start=time(18).isoformat(), end=time(11, 59, 59).isoformat()),
+                       db.PeakPeriodSchedule(day_of_week=3, start=time(18).isoformat(), end=time(11, 59, 59).isoformat()),
+                       db.PeakPeriodSchedule(day_of_week=4, start=time(18).isoformat(), end=time(11, 59, 59).isoformat()),
+                       db.PeakPeriodSchedule(day_of_week=5, start=time(0).isoformat(), end=time(23, 59, 59).isoformat()),
+                       db.PeakPeriodSchedule(day_of_week=6, start=time(0).isoformat(), end=time(23, 59, 59).isoformat())]
+    offpeak_period = db.PeakPeriod(name='offpeak', schedule=offpeak_schedule, energy_charge=0.08, demand_charge=12.74)
     summer.peak_periods = [onpeak_period, offpeak_period]
 
 def get_winter_peak_periods(winter):
-    partpeak_period = db.PeakPeriod(name='partpeak', start=time(8, 30).isoformat(),
-                                end=time(21, 29, 59).isoformat(), energy_charge=0.1, demand_charge=4.58)
-    offpeak_period = db.PeakPeriod(name='offpeak', start=time(21, 30).isoformat(),
-                                end=time(8, 29, 59).isoformat(), energy_charge=0.07, demand_charge=4.58)
+    partpeak_schedule = [db.PeakPeriodSchedule(day_of_week=0, start=time(8, 30).isoformat(), end=time(21, 29, 59).isoformat()),
+                         db.PeakPeriodSchedule(day_of_week=1, start=time(8, 30).isoformat(), end=time(21, 29, 59).isoformat()),
+                         db.PeakPeriodSchedule(day_of_week=2, start=time(8, 30).isoformat(), end=time(21, 29, 59).isoformat()),
+                         db.PeakPeriodSchedule(day_of_week=3, start=time(8, 30).isoformat(), end=time(21, 29, 59).isoformat()),
+                         db.PeakPeriodSchedule(day_of_week=4, start=time(8, 30).isoformat(), end=time(21, 29, 59).isoformat())]
+    partpeak_period = db.PeakPeriod(name='partpeak', schedule=partpeak_schedule, energy_charge=0.1, demand_charge=4.58)
+
+    offpeak_schedule = [db.PeakPeriodSchedule(day_of_week=0, start=time(21, 30).isoformat(), end=time(8, 29, 59).isoformat()),
+                       db.PeakPeriodSchedule(day_of_week=1, start=time(21, 30).isoformat(), end=time(8, 29, 59).isoformat()),
+                       db.PeakPeriodSchedule(day_of_week=2, start=time(21, 30).isoformat(), end=time(8, 29, 59).isoformat()),
+                       db.PeakPeriodSchedule(day_of_week=3, start=time(21, 30).isoformat(), end=time(8, 29, 59).isoformat()),
+                       db.PeakPeriodSchedule(day_of_week=4, start=time(21, 30).isoformat(), end=time(8, 29, 59).isoformat()),
+                       db.PeakPeriodSchedule(day_of_week=5, start=time(0).isoformat(), end=time(23, 59, 59).isoformat()),
+                       db.PeakPeriodSchedule(day_of_week=6, start=time(0).isoformat(), end=time(23, 59, 59).isoformat())]
+    offpeak_period = db.PeakPeriod(name='offpeak', schedule=offpeak_schedule, energy_charge=0.07, demand_charge=4.58)
     winter.peak_periods = [partpeak_period, offpeak_period]
 
 def init_billing_periods():
