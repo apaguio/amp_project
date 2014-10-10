@@ -12,7 +12,7 @@ MONGODB_PORT = 27017
 MONGODB_DB = 'cenergy_insights'
 
 # influxdb settings
-INFLUXDB_HOST = 'eam.im'
+INFLUXDB_HOST = 'localhost'
 INFLUXDB_PORT = 8086
 INFLUXDB_DB = 'cenergy_insights'
 
