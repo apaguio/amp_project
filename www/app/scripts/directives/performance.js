@@ -34,11 +34,13 @@
 
     function fakeData(originalData) {
         _.each(originalData, function(data, k) {
-            data.last_year = data.this_month + ( data.this_month / 10);
-            data.last_month = data.this_month - ( data.this_month / 10);
+            data.last_year = data.this_month + ( data.this_month / 20);
+            data.last_month = data.this_month + ( data.this_month / 10);
+            //data.this_month = data.this_month + ( data.this_month / 5);
             if (k === 'solar') {
                 data.last_year = 0;
-                data.last_month = data.this_month + ( data.this_month / 10);
+                data.last_month = data.this_month - ( data.this_month / 10);
+                //data.this_month = data.this_month + ( data.this_month / 5);
             }
         });
         return originalData;
@@ -83,7 +85,7 @@
         
         var miniChartDomain = ['energy', 'demand', 'solar', 'total'];
         //var miniChartDomain = _.keys(data);
-        scope.x = d3.scale.ordinal().rangeRoundBands([0, scope.width - scope.margin.left - scope.margin.right], .2);
+        scope.x = d3.scale.ordinal().rangeRoundBands([0, scope.width - scope.margin.left - scope.margin.right], .1);
         // To preserve the order
         scope.x.domain(miniChartDomain);
 
@@ -106,7 +108,7 @@
             .attr("class", function(d) { return d; })
             .attr("transform", function(d) { return "translate(" + scope.x(d) + ",0)"; });
 
-        var miniX = d3.scale.ordinal().rangeRoundBands([0, scope.x.rangeBand()], .2);
+        var miniX = d3.scale.ordinal().rangeRoundBands([0, scope.x.rangeBand()], .3);
 
         miniChart.each(function(barsGroupName) {
 
@@ -234,8 +236,10 @@
                 .text(function(d) {
                     if (barsGroupName === 'total') {
                         //TODO ADD scope.tariff.peak_demand_charge
-                        var val = data.demand[d] * scope.tariff.demand_charge +
-                                  data.energy[d] * scope.tariff.energy_charge;
+                        // var val = data.demand[d] * scope.tariff.demand_charge +
+                                  //data.energy[d] * scope.tariff.energy_charge;
+                        var val = data.demand[d] * 21.42 / 30 +
+                                  data.energy[d] * 24 * 0.13;
                         return '$ ' + Math.floor(val).toLocaleString();
                     }
                     if (barsGroupName === 'demand') {
@@ -344,14 +348,15 @@
             if (chartData.last_year) {
                 if (barsGroupName === 'demand') {
                     changeVal = chartData.this_month - chartData.last_year;
-                    changeVal *= scope.tariff.demand_charge;
+                    //changeVal *= scope.tariff.demand_charge;
+                    changeVal *= 21.42 / 30;
                 } else if (barsGroupName === 'total') {
-                    var energyChange = (data.energy.this_month - data.energy.last_year) * scope.tariff.energy_charge;
-                    var demandChange = (data.demand.this_month - data.demand.last_year) * scope.tariff.demand_charge;
+                    var energyChange = (data.energy.this_month - data.energy.last_year) * 0.13 * 24;
+                    var demandChange = (data.demand.this_month - data.demand.last_year) * 21.42 / 30;
                     changeVal = energyChange + demandChange;
                 } else {
                     changeVal = chartData.this_month - chartData.last_year;
-                    changeVal *= scope.tariff.energy_charge;
+                    changeVal *= 0.13 * 24;
                 }
             }
 
@@ -408,14 +413,14 @@
             if (chartData.last_month) {
                 if (barsGroupName === 'demand') {
                     changeVal = chartData.this_month - chartData.last_month;
-                    changeVal *= scope.tariff.demand_charge;
+                    changeVal *= 21.42 / 30;
                 } else if (barsGroupName === 'total') {
-                    var energyChange = (data.energy.this_month - data.energy.last_month) * scope.tariff.energy_charge;
-                    var demandChange = (data.demand.this_month - data.demand.last_month) * scope.tariff.demand_charge;
+                    var energyChange = (data.energy.this_month - data.energy.last_month) * 0.13 * 24;
+                    var demandChange = (data.demand.this_month - data.demand.last_month) * 21.42 / 30;
                     changeVal = energyChange + demandChange;
                 } else {
                     changeVal = chartData.this_month - chartData.last_month;
-                    changeVal *= scope.tariff.energy_charge;
+                    changeVal *= 0.13 * 24;
                 }
             }
 
