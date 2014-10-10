@@ -263,6 +263,9 @@ body {
 #performance svg * {
   pointer-events: none;
 }
+#performance svg g text {
+  text-anchor: middle;
+}
 #performance svg g.demand rect {
   fill: #05b3d1;
   stroke: #049eb8;

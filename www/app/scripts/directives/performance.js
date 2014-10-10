@@ -196,6 +196,26 @@
                         return scope.bigheight - demand;
                     });
 
+                bar.append("text")
+                    .attr("class", "demand_val")
+                    .attr("x", miniX.rangeBand()/2)
+                    .attr("y", scope.bigheight)
+                    .attr("width", miniX.rangeBand())
+                    .transition()
+                    .duration(duration)
+                    .attr("y", function(d) {
+                        var m = d + '_money';
+                        var position = scope.yTotal(data.demand[m] || 0);
+                        return position + 15;
+                    })
+                    .text(function(d) {
+                        var val =  Math.round(data.demand[d + '_money']);
+                        if (!val) {
+                            return '';
+                        }
+                        return val;
+                    });
+
                 bar.append("rect")
                     .attr("class", "energy")
                     .attr("y", function(d) {
@@ -222,6 +242,35 @@
                         return scope.bigheight - energy;
                     });
 
+                bar.append("text")
+                    .attr("class", "energy_val")
+                    .attr("x", miniX.rangeBand()/2)
+                    .attr("y", function(d) {
+                        var m = d + '_money';
+                        var demand = scope.yTotal(data.demand[m] || 0);
+                        return demand;
+                    })
+                    //.attr("height", function(d) { return scope.bigheight - scope.y(data.energy[d] || 0); })
+                    .attr("height", 0)
+                    .attr("width", miniX.rangeBand())
+                    .transition()
+                    .delay(duration)
+                    .duration(duration)
+                    .attr("y", function(d) {
+                        var m = d + '_money';
+                        var demand = scope.bigheight - scope.yTotal(data.demand[m] || 0);
+                        var energy = scope.yTotal(data.energy[m] || 0);
+                        var position = energy - demand;
+                        return position + 15;
+                    })
+                    .text(function(d) { 
+                        var val = Math.round(data.energy[d + '_money']);
+                        if (!val) {
+                            return '';
+                        }
+                        return val;
+                    });
+
                 bar.append("rect")
                     .attr("class", "solar")
                     .attr("y", function(d) {
@@ -246,6 +295,36 @@
                         return position;
                     })
                     .attr("height", function(d) { return scope.bigheight - scope.yTotal(data.solar[d + '_money'] || 0); });
+
+                bar.append("text")
+                    .attr("class", "solar_val")
+                    .attr("x", miniX.rangeBand()/2)
+                    .attr("y", function(d) {
+                        var m = d + '_money';
+                        var demand = scope.bigheight - scope.yTotal(data.demand[m] || 0);
+                        var energy = scope.yTotal(data.energy[m] || 0);
+                        var position = energy - demand;
+                        return position;
+                    })
+                    .attr("width", miniX.rangeBand())
+                    .transition()
+                    .delay(2 * duration)
+                    .duration(duration)
+                    .attr("y", function(d) {
+                        var m = d + '_money';
+                        var solar = scope.bigheight - scope.yTotal(data.solar[m] || 0);
+                        var demand = scope.bigheight - scope.yTotal(data.demand[m] || 0);
+                        var energy = scope.bigheight - scope.yTotal(data.energy[m] || 0);
+                        var position = scope.bigheight - solar - energy - demand;
+                        return position + 15;
+                    })
+                    .text(function(d) {
+                        var val =  Math.round(data.solar[d + '_money']);
+                        if (!val) {
+                            return '';
+                        }
+                        return "(" + val + ")";
+                    });
 
             } else {
                 bar.append("rect")
@@ -284,6 +363,10 @@
                 .duration(duration)
                 .attr("y", function(d) {
                     var position =  scope.y(chartData[d]) - 15;
+                    if (barsGroupName === 'total') {
+                        var m = d + '_money';
+                        position = scope.yTotal(chartData[m] + data.solar[m]) - 15;
+                    }
                     return position;
                 });
 
