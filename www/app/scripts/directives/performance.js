@@ -6,7 +6,14 @@
 
     var duration = 4900;
     var bisectDate = d3.bisector(function(d) { return d.time; }).left;
+    var duration = 1000;
 
+    function classOfChange(group, value) {
+        if (group === "solar") {
+            return value < 0 ? "red" : "green";
+        }
+        return value > 0 ? "red" : "green";
+    }
 
     function arrowUp(g, cls) {
         return g.append("path")
@@ -18,6 +25,10 @@
         return g.append("path")
             .attr("d", "M44,12v62.344L22.543,52.888c-1.561-1.562-4.094-1.562-5.656-0.001c-1.562,1.562-1.562,4.096,0,5.658l28.284,28.283l0,0  c0.186,0.186,0.391,0.352,0.609,0.498c0.101,0.067,0.21,0.114,0.315,0.172c0.124,0.066,0.242,0.142,0.373,0.195  c0.135,0.057,0.275,0.089,0.415,0.129c0.111,0.033,0.216,0.076,0.331,0.099C47.474,87.973,47.737,88,48,88l0,0  c0.003,0,0.006-0.001,0.009-0.001c0.259-0.001,0.519-0.027,0.774-0.078c0.12-0.024,0.231-0.069,0.348-0.104  c0.133-0.039,0.268-0.069,0.397-0.123c0.139-0.058,0.265-0.136,0.396-0.208c0.098-0.054,0.198-0.097,0.292-0.159  c0.221-0.146,0.427-0.314,0.614-0.501l28.281-28.282c1.562-1.562,1.562-4.095,0.001-5.657c-1.562-1.562-4.095-1.562-5.657,0  L52,74.343V12c0-2.209-1.791-4-4-4S44,9.791,44,12z")
             .attr("class", "arrow down " + cls);
+    }
+
+    function arrowOf(svg, group, value) {
+        return (value < 0 ? arrowDown : arrowUp)(svg, classOfChange(group, value));
     }
 
     function fakeData(originalData) {
@@ -71,7 +82,7 @@
         
         var miniChartDomain = ['energy', 'demand', 'solar', 'total'];
         //var miniChartDomain = _.keys(data);
-        scope.x = d3.scale.ordinal().rangeRoundBands([0, scope.width - scope.margin.left - scope.margin.right], .1);
+        scope.x = d3.scale.ordinal().rangeRoundBands([0, scope.width - scope.margin.left - scope.margin.right], .2);
         // To preserve the order
         scope.x.domain(miniChartDomain);
 
@@ -94,7 +105,7 @@
             .attr("class", function(d) { return d; })
             .attr("transform", function(d) { return "translate(" + scope.x(d) + ",0)"; });
 
-        var miniX = d3.scale.ordinal().rangeRoundBands([0, scope.x.rangeBand()], .1);
+        var miniX = d3.scale.ordinal().rangeRoundBands([0, scope.x.rangeBand()], .2);
 
         miniChart.each(function(barsGroupName) {
 
@@ -137,45 +148,87 @@
                 bar.append("rect")
                     .attr("class", "demand")
                     .attr("y", function(d) {
-                        return scope.y(data.demand[d] || 0);
+                        var height = scope.bigheight - scope.y(data.demand[d] || 0);
+                        var position = scope.y(data.demand[d] || 0);
+                        return height + position;
+                    })
+                    //.attr("height", function(d) { return scope.bigheight - scope.y(data.demand[d] || 0); })
+                    .attr("height", 0)
+                    .attr("width", miniX.rangeBand())
+                    .transition()
+                    .duration(duration)
+                    .attr("y", function(d) {
+                        var position = scope.y(data.demand[d] || 0);
+                        return position;
                     })
                     .attr("height", function(d) {
                         return scope.bigheight - scope.y(data.demand[d] || 0);
-                    })
-                    .attr("width", miniX.rangeBand());
+                    });
 
                 bar.append("rect")
                     .attr("class", "energy")
                     .attr("y", function(d) {
-                        return scope.y(data.energy[d] || 0) - (scope.bigheight - scope.y(data.demand[d] || 0));
+                        var height = scope.bigheight - scope.y(data.energy[d] || 0);
+                        var position = scope.y(data.energy[d] || 0) - (scope.bigheight - scope.y(data.demand[d] || 0));
+                        return position + height;
+                    })
+                    //.attr("height", function(d) { return scope.bigheight - scope.y(data.energy[d] || 0); })
+                    .attr("height", 0)
+                    .attr("width", miniX.rangeBand())
+                    .transition()
+                    .delay(duration)
+                    .duration(duration)
+                    .attr("y", function(d) {
+                        var position = scope.y(data.energy[d] || 0) - (scope.bigheight - scope.y(data.demand[d] || 0));
+                        return position;
                     })
                     .attr("height", function(d) {
                         return scope.bigheight - scope.y(data.energy[d] || 0);
-                    })
-                    .attr("width", miniX.rangeBand());
+                    });
 
                 bar.append("rect")
                     .attr("class", "solar")
                     .attr("y", function(d) {
-                        return scope.y(data.solar[d] || 0) - (scope.bigheight - scope.y(data.total[d] || 0));
+                        var height =  scope.bigheight - scope.y(data.solar[d] || 0);
+                        var position = scope.y(data.solar[d] || 0) - (scope.bigheight - scope.y(data.total[d] || 0));
+                        return position + height;
                     })
-                    .attr("height", function(d) {
-                        return scope.bigheight - scope.y(data.solar[d] || 0);
+                    //.attr("height", function(d) { return scope.bigheight - scope.y(data.solar[d] || 0); })
+                    .attr("height", 0)
+                    .attr("width", miniX.rangeBand())
+                    .transition()
+                    .delay(2 * duration)
+                    .duration(duration)
+                    .attr("y", function(d) {
+                        var position = scope.y(data.solar[d] || 0) - (scope.bigheight - scope.y(data.total[d] || 0));
+                        return position;
                     })
-                    .attr("width", miniX.rangeBand());
+                    .attr("height", function(d) { return scope.bigheight - scope.y(data.solar[d] || 0); });
+
             } else {
                 bar.append("rect")
-                    .attr("y", function(d) { return scope.y(chartData[d] || 0); })
+                    .attr("y", function(d) {
+                        var height = scope.bigheight - scope.y(chartData[d] || 0);
+                        var position = scope.y(chartData[d] || 0);
+                        return height + position;
+                    })
+                    .attr("height", 0)
+                    .attr("width", miniX.rangeBand())
+                    .transition()
+                    .duration(duration)
+                    .attr("y", function(d) {
+                        var position = scope.y(chartData[d] || 0);
+                        return position;
+                    })
                     .attr("height", function(d) {
                         return scope.bigheight - scope.y(chartData[d] || 0);
-                    })
-                    .attr("width", miniX.rangeBand());
+                    });
             }
 
             // Bar value
             bar.append("text")
                 .attr("x", miniX.rangeBand() / 2)
-                .attr("y", function(d) { return scope.y(chartData[d]) - 15; })
+                .attr("y", function(d) { return scope.bigheight - 15; })
                 .attr("dy", ".75em")
                 .text(function(d) {
                     if (barsGroupName === 'total') {
@@ -185,6 +238,12 @@
                         return '$ ' + Math.floor(val).toLocaleString();
                     }
                     return Math.round(chartData[d] || 0).toLocaleString();
+                })
+                .transition()
+                .duration(duration)
+                .attr("y", function(d) {
+                    var position =  scope.y(chartData[d]) - 15;
+                    return position;
                 });
 
             // Bar Label
@@ -200,13 +259,15 @@
                 .attr("x", scope.x.rangeBand() / 2)
                 .attr("y", 10 - scope.margin.top)
                 .attr("dy", ".75em")
-                .text(_.str.humanize(barsGroupName));
+                .text(barsGroupName === 'demand' ? 'Max' : _.str.humanize(barsGroupName));
 
             var title2 = 'usage';
             if (barsGroupName === 'solar') {
                 title2 = 'production';
             } else if (barsGroupName === 'total') {
                 title2 = 'bill';
+            } else if (barsGroupName === 'demand') {
+                title2 = 'demand';
             }
 
             // Bar group label
@@ -241,8 +302,6 @@
             var line1y = 40;
             var r = 2;
             var analysisMargin = 40;
-            var yearArrow = arrowDown(yearAnalysis, "green");
-            yearArrow.attr("transform", "translate(" + 0 +  ", " + 5 + "), scale(0.35)");
             yearAnalysis.append("line")
                 .attr("x1", analysisMargin)
                 .attr("x2", scope.x.rangeBand() - analysisMargin)
@@ -261,20 +320,53 @@
 
             var yearXshift = scope.x.rangeBand()/2;
 
+
+            var percentVal;
+            if (chartData.last_year) {
+                percentVal = 100 * (chartData.this_month - chartData.last_year) / chartData.last_year;
+            }
+
+            var percentText = 'N / A';
+            if (!_.isUndefined(percentVal)) {
+                percentText = Math.round(Math.abs(percentVal)) + '%';
+            }
+
             yearAnalysis.append("text")
                 .attr("class", "percent")
-                .text("0%")
+                .text(percentText)
                 .attr("transform", "translate(" + yearXshift +  ", " + 15 + ")");
+
+            var changeVal;
+            if (chartData.last_year) {
+                if (barsGroupName === 'demand') {
+                    changeVal = chartData.this_month - chartData.last_year;
+                    changeVal *= scope.tariff.demand_charge;
+                } else if (barsGroupName === 'total') {
+                    var energyChange = (data.energy.this_month - data.energy.last_year) * scope.tariff.energy_charge;
+                    var demandChange = (data.demand.this_month - data.demand.last_year) * scope.tariff.demand_charge;
+                    changeVal = energyChange + demandChange;
+                } else {
+                    changeVal = chartData.this_month - chartData.last_year;
+                    changeVal *= scope.tariff.energy_charge;
+                }
+            }
+
+            var changeText = 'N / A';
+            if (!_.isUndefined(changeVal)) {
+                changeText = '$ ' + Math.round(Math.abs(changeVal)) + " / day";
+            }
 
             yearAnalysis.append("text")
                 .attr("class", "value")
-                .text("$ 135 / day")
+                .text(changeText)
                 .attr("transform", "translate(" + yearXshift +  ", " + 30 + ")");
 
+            if (changeVal) {
+                var yearArrow = arrowOf(yearAnalysis, barsGroupName, changeVal);
+                yearArrow.attr("transform", "translate(" + 0 +  ", " + 5 + "), scale(0.35)");
+            }
 
             var line2y = line1y * 2;
-            var monthArrow = arrowUp(monthAnalysis, "red");
-            monthArrow.attr("transform", "translate(" + miniX.rangeBand() +  ", " + (line1y + 5) + "), scale(0.35)");
             monthAnalysis.append("line")
                 .attr("x1", miniX.rangeBand() + analysisMargin)
                 .attr("x2", scope.x.rangeBand() - analysisMargin)
@@ -293,15 +385,50 @@
 
             var monthXshift = miniX.rangeBand() + ((scope.x.rangeBand() - miniX.rangeBand())/2);
 
-            monthAnalysis.append("text")
-                .attr("class", "percent")
-                .text("0%")
-                .attr("transform", "translate(" + monthXshift +  ", " + (line1y + 15) + ")");
+            var percentVal;
+            if (chartData.last_month) {
+                percentVal = 100 * (chartData.this_month - chartData.last_month) / chartData.last_month;
+            }
+
+            var percentText = 'N / A';
+            if (!_.isUndefined(percentVal)) {
+                percentText = Math.round(Math.abs(percentVal)) + '%';
+            }
 
             monthAnalysis.append("text")
-                .attr("class", "value")
-                .text("$ 135 / day")
+                .attr("class", "percent " + classOfChange(barsGroupName, percentVal))
+                .text(percentText)
+                .attr("transform", "translate(" + monthXshift +  ", " + (line1y + 15) + ")");
+
+            var changeVal;
+            if (chartData.last_month) {
+                if (barsGroupName === 'demand') {
+                    changeVal = chartData.this_month - chartData.last_month;
+                    changeVal *= scope.tariff.demand_charge;
+                } else if (barsGroupName === 'total') {
+                    var energyChange = (data.energy.this_month - data.energy.last_month) * scope.tariff.energy_charge;
+                    var demandChange = (data.demand.this_month - data.demand.last_month) * scope.tariff.demand_charge;
+                    changeVal = energyChange + demandChange;
+                } else {
+                    changeVal = chartData.this_month - chartData.last_month;
+                    changeVal *= scope.tariff.energy_charge;
+                }
+            }
+
+            var changeText = 'N / A';
+            if (!_.isUndefined(changeVal)) {
+                changeText = '$ ' + Math.round(Math.abs(changeVal)) + " / day";
+            }
+
+            monthAnalysis.append("text")
+                .attr("class", "value " + classOfChange(barsGroupName, changeVal))
+                .text(changeText)
                 .attr("transform", "translate(" + monthXshift +  ", " + (line1y + 30) + ")");
+
+            if (changeVal) {
+                var monthArrow = arrowOf(monthAnalysis, barsGroupName, changeVal);
+                monthArrow.attr("transform", "translate(" + miniX.rangeBand() +  ", " + (line1y + 5) + "), scale(0.35)");
+            }
 
         });
 

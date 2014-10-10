@@ -3,7 +3,7 @@
   <div class="col-xs-12 col-sm-5 col-md-4 col-lg-3 leftwidgets">
     <div class="mediumwidget col-xs-12">
       <h4 class="title">Current Billing Period</h4>
-      <h3 class="maincontent capitalize">{{data.billing_period}}</h3>
+      <h3 class="maincontent capitalize">{{data.billing_period | fullmonth}}</h3>
       <h4 class="time">{{data.billingPeriodStartDate | date:'MMM d'}} -
         {{data.billingPeriodEndDate | date:'MMM d, yyyy'}}</h4>
     </div>
