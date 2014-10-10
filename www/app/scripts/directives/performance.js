@@ -9,6 +9,7 @@
     var duration = 1000;
 
     function classOfChange(group, value) {
+        console.log("Value : " + value);
         if (group === "solar") {
             return value < 0 ? "red" : "green";
         }
@@ -248,9 +249,9 @@
 
             // Bar Label
             bar.append("text")
+                .attr("class", "barLabel")
                 .attr("x", miniX.rangeBand() / 2)
-                .attr("y", function(d) { return scope.y(0) + 10; })
-                .attr("dy", ".75em")
+                .attr("y", scope.y(0) + 10)
                 .text(_.str.humanize);
 
             // Bar group label
