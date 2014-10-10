@@ -238,6 +238,9 @@
                                   data.energy[d] * scope.tariff.energy_charge;
                         return '$ ' + Math.floor(val).toLocaleString();
                     }
+                    if (barsGroupName === 'demand') {
+                        return Math.round(chartData[d] || 0).toLocaleString();
+                    }
                     return Math.round(24 * (chartData[d] || 0)).toLocaleString();
                 })
                 .transition()

@@ -368,14 +368,6 @@ body {
                 }
             }
 
-            .red {
-                stroke: @darkRed;
-                fill: none;
-            }
-            .green {
-                stroke: @darkGreen;
-                fill: none;
-            }
             .arrow {
                 stroke: none;
                 stroke-width: 1px;
@@ -391,8 +383,17 @@ body {
             }
 
             .monthAnalysis, .yearAnalysis {
+                font-size: 10px;
                 fill: @darkBlue;
                 stroke: @darkBlue;
+                .percent.red, .value.red {
+                    stroke: @darkRed;
+                    fill: none;
+                }
+                .percent.green, .value.green {
+                    stroke: @darkGreen;
+                    fill: none;
+                }
             }
         }
         /*.barLabel {*/

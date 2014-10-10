@@ -299,14 +299,6 @@ body {
 #performance svg g text.units {
   font-size: 14px;
 }
-#performance svg g .red {
-  stroke: #800000;
-  fill: none;
-}
-#performance svg g .green {
-  stroke: #008000;
-  fill: none;
-}
 #performance svg g .arrow {
   stroke: none;
   stroke-width: 1px;
@@ -321,6 +313,21 @@ body {
 }
 #performance svg g .monthAnalysis,
 #performance svg g .yearAnalysis {
+  font-size: 10px;
   fill: #05b3d1;
   stroke: #05b3d1;
+}
+#performance svg g .monthAnalysis .percent.red,
+#performance svg g .yearAnalysis .percent.red,
+#performance svg g .monthAnalysis .value.red,
+#performance svg g .yearAnalysis .value.red {
+  stroke: #800000;
+  fill: none;
+}
+#performance svg g .monthAnalysis .percent.green,
+#performance svg g .yearAnalysis .percent.green,
+#performance svg g .monthAnalysis .value.green,
+#performance svg g .yearAnalysis .value.green {
+  stroke: #008000;
+  fill: none;
 }
