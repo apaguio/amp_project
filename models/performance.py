@@ -29,26 +29,31 @@ def get_energy_data(meter_id):
 
     #last month query
     last_month_query = 'select mean(energy_kwh) from /^%s_energy_1h_\.*/ where time < now() - %sd and time > now() - %sd;' % (meter_id, time_diff.days, time_diff.days + 30)
-    last_month_query_result = influxdb.query(last_month_query)
-    energy_kwh_avgs = list()
-    for res in last_month_query_result:
-        energy_kwh_avgs.append(res['points'][0][1])
-    if not energy_kwh_avgs:
+    try:
+        last_month_query_result = influxdb.query(last_month_query)
+        energy_kwh_avgs = list()
+        for res in last_month_query_result:
+            energy_kwh_avgs.append(res['points'][0][1])
+        if not energy_kwh_avgs:
+            result['last_month'] = 0
+        else:
+            result['last_month'] = float(sum(energy_kwh_avgs))/len(energy_kwh_avgs) if len(energy_kwh_avgs) > 0 else float('nan')
+    except:
         result['last_month'] = 0
-    else:
-        result['last_month'] = float(sum(energy_kwh_avgs))/len(energy_kwh_avgs) if len(energy_kwh_avgs) > 0 else float('nan')
 
     #last year query
-    last_year_query = 'select mean(energy_kwh) from /^%s_energy_1h_\.*/ where time < now() - %sd and time > now() - %sd;' % (meter_id, time_diff.days, time_diff.days + 365)
-    last_year_query_result = influxdb.query(last_year_query)
-    energy_kwh_avgs = list()
-    for res in last_year_query_result:
-        energy_kwh_avgs.append(res['points'][0][1])
-    if not energy_kwh_avgs:
+    last_year_query = 'select mean(energy_kwh) from /^%s_energy_1h_\.*/ where time < now() - %sd and time > now() - %sd;' % (meter_id, time_diff.days + 365, time_diff.days + 365 + 30)
+    try:
+        last_year_query_result = influxdb.query(last_year_query)
+        energy_kwh_avgs = list()
+        for res in last_year_query_result:
+            energy_kwh_avgs.append(res['points'][0][1])
+        if not energy_kwh_avgs:
+            result['last_year'] = 0
+        else:
+            result['last_year'] = float(sum(energy_kwh_avgs))/len(energy_kwh_avgs) if len(energy_kwh_avgs) > 0 else float('nan')
+    except:
         result['last_year'] = 0
-    else:
-        result['last_year'] = float(sum(energy_kwh_avgs))/len(energy_kwh_avgs) if len(energy_kwh_avgs) > 0 else float('nan')
-
     return result
 
 def get_demand_data(meter_id):
@@ -69,17 +74,20 @@ def get_demand_data(meter_id):
 
     #last month query
     last_month_query = 'select max(demand) from /^%s_15mins_\.*/ where time < now() - %sd and time > now() - %sd;' % (meter_id, time_diff.days, time_diff.days + 30)
-    last_month_query_result = influxdb.query(last_month_query)
-    demand_maxs = list()
-    for res in last_month_query_result:
-        demand_maxs.append(res['points'][0][1])
-    if not demand_maxs:
+    try:
+        last_month_query_result = influxdb.query(last_month_query)
+        demand_maxs = list()
+        for res in last_month_query_result:
+            demand_maxs.append(res['points'][0][1])
+        if not demand_maxs:
+            result['last_month'] = 0
+        else:
+            result['last_month'] = max(demand_maxs)
+    except:
         result['last_month'] = 0
-    else:
-        result['last_month'] = max(demand_maxs)
 
     #last year query
-    last_year_query = 'select max(demand) from /^%s_15mins_\.*/ where time < now() - %sd and time > now() - %sd;' % (meter_id, time_diff.days, time_diff.days + 365)
+    last_year_query = 'select max(demand) from /^%s_15mins_\.*/ where time < now() - %sd and time > now() - %sd;' % (meter_id, time_diff.days + 365, time_diff.days + 365 + 30)
     last_year_query_result = influxdb.query(last_year_query)
     demand_maxs = list()
     for res in last_year_query_result:
