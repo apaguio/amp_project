@@ -36,26 +36,16 @@
         _.each(originalData, function(data, k) {
             data.last_year = data.this_month + ( data.this_month / 20);
             data.last_month = data.this_month + ( data.this_month / 10);
-            //data.this_month = data.this_month + ( data.this_month / 5);
             if (k === 'solar') {
                 data.last_year = 0;
                 data.last_month = data.this_month - ( data.this_month / 10);
-                //data.this_month = data.this_month + ( data.this_month / 5);
             }
             if (k === 'demand') {
-                data.this_month_money = data.this_month * 21.42 / 30;
-                data.last_month_money = data.last_month * 21.42 / 30;
-                data.last_year_money = data.last_year * 21.42 / 30;
             } else {
                 data.this_month *= 24;
                 data.last_month *= 24;
                 data.last_year *= 24;
-                data.this_month_money = data.this_month * 0.13;
-                data.last_month_money = data.last_month * 0.13;
-                data.last_year_money = data.last_year * 0.13;
             }
-            data.yearChange = data.this_month - data.last_year;
-            data.monthChange = data.this_month - data.last_year;
         });
         return originalData;
     }
@@ -74,9 +64,7 @@
             this_month: 0,
             this_month_money: 0,
             last_month_money: 0,
-            last_year_money: 0,
-            yearChange: 0,
-            monthChange: 0
+            last_year_money: 0
         };
 
         _.each(data, function(v, k) {
@@ -87,8 +75,6 @@
                 total.last_year_money += v.last_year_money;
                 total.last_month_money += v.last_month_money;
                 total.this_month_money += v.this_month_money;
-                total.yearChange_money += v.yearChange;
-                total.monthChange += v.monthChange;
             }
         });
 
@@ -554,8 +540,7 @@
             restrict: 'E',
             scope: {
                 data: '=',
-                dataupdated: '@',
-                tariff: '='
+                dataupdated: '@'
             },
             controller: ['$scope', '$element', controller]
         };
