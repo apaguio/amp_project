@@ -88,15 +88,17 @@ def get_demand_data(meter_id):
 
     #last year query
     last_year_query = 'select max(demand) from /^%s_15mins_\.*/ where time < now() - %sd and time > now() - %sd;' % (meter_id, time_diff.days + 365, time_diff.days + 365 + 30)
-    last_year_query_result = influxdb.query(last_year_query)
-    demand_maxs = list()
-    for res in last_year_query_result:
-        demand_maxs.append(res['points'][0][1])
-    if not demand_maxs:
+    try:
+        last_year_query_result = influxdb.query(last_year_query)
+        demand_maxs = list()
+        for res in last_year_query_result:
+            demand_maxs.append(res['points'][0][1])
+        if not demand_maxs:
+            result['last_year'] = 0
+        else:
+            result['last_year'] = max(demand_maxs)
+    except:
         result['last_year'] = 0
-    else:
-        result['last_year'] = max(demand_maxs)
-
     return result
 
 def calculate_energy_charges(meter_id):
