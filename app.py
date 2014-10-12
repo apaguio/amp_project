@@ -5,7 +5,6 @@ from celery import Celery
 
 app = Flask(__name__)
 app.config.from_object('settings')
-# Building the Response instance that is used to form the json structure
 
 def make_celery(app):
     celery = Celery(app.import_name, broker=app.config['CELERY_BROKER_URL'])
@@ -22,7 +21,6 @@ def make_celery(app):
 celery = make_celery(app)
 
 monkey.patch_all()
-
 
 @app.errorhandler(404)
 def page_not_found(error):
