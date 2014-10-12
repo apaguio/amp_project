@@ -1,7 +1,7 @@
 from celery.schedules import crontab
 
 DEBUG = True
-SECRET_KEY = 'somesecretkey77'
+SECRET_KEY = 'L\x87V\x84\xc6\x82r\x7f\x91WXj\xfe\x19\xa67\xc9ik>.\x9b\x1aE'
 SERVER_NAME = 'localhost:5000'
 HOST = '0.0.0.0'
 POST = 5000
