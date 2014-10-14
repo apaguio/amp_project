@@ -151,7 +151,6 @@ def _calculate_demand_charges_helper(demand_query_result):
     customer = db.Customer.objects(name='test').first()
     demand_charges = 0.0
     demand_data = dict()
-    import rpdb2; rpdb2.start_embedded_debugger('diaa');
     for res in demand_query_result:
         maxDemand = res['points'][0][1]
         name_parts = res['name'].split('_')
