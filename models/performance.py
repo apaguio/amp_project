@@ -149,31 +149,31 @@ def calculate_energy_charges(meter_id):
 
 def _calculate_demand_charges_helper(demand_query_result):
     customer = db.Customer.objects(name='test').first()
-    demand_charges = 0.0
+    total_demand_charges = 0.0
     demand_data = dict()
+    demand_charges = dict()
     for res in demand_query_result:
-        maxDemand = res['points'][0][1]
+        max_demand = res['points'][0][1]
         name_parts = res['name'].split('_')
         peakperiod = name_parts[3]
         season = name_parts[2]
         if season not in demand_data:
             demand_data[season] = list()
         for sn in customer['seasons']:
-            if sn['name'] != season: continue
-            demand_data[season].append(maxDemand)
+            if sn['name'] != season:
+                continue
+            demand_data[season].append(max_demand)
             for pp in sn['peak_periods']:
-                if pp['name'] != peakperiod: continue
-                charges = pp['demand_charge']
+                if pp['name'] != peakperiod:
+                    continue
                 if peakperiod == 'onpeak':
-                    demand_charges += charges * maxDemand
+                    total_demand_charges += pp['demand_charge'] * max_demand
                 else:
-                    if charges not in demand_data[season]:
-                        demand_data[season].append(charges)
-                break
+                    demand_charges[season] = pp['demand_charge']
     for season, demand_values in demand_data.iteritems():
-        max_demand_anytime = max(demand_values[:-1])
-        demand_charges += max_demand_anytime * demand_values[-1]
-    return demand_charges
+        max_demand_anytime = max(demand_values)
+        total_demand_charges += max_demand_anytime * demand_charges[season]
+    return total_demand_charges
 
 def calculate_demand_charges(meter_id):
     result = dict()
