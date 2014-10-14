@@ -2,20 +2,16 @@
 
 (function() {
 
-    function toDate(pyTimestamp) {
-        return moment(pyTimestamp).toDate();
-    }
-
-    function controller(scope, Session, http) {
+    function controller(scope, Session, http, util) {
         http.defaults.headers.post['CSRF-TOKEN'] = Session.csrfToken;
         scope.dataUpdated = 0;
 
         function onLoad(data) {
             scope.data = data;
-            scope.data.billingPeriodStartDate  = toDate(data.billing_period_startdate);
-            scope.data.billingPeriodEndDate = toDate(data.billing_period_enddate);
-            scope.data.seasonEndDate = toDate(data.season_enddate);
-            scope.data.seasonStartDate = toDate(data.season_startdate);
+            scope.data.billingPeriodStartDate  = util.toDate(data.billing_period_startdate);
+            scope.data.billingPeriodEndDate = util.toDate(data.billing_period_enddate);
+            scope.data.seasonEndDate = util.toDate(data.season_enddate);
+            scope.data.seasonStartDate = util.toDate(data.season_startdate);
         }
 
         function load(onLoad) {
@@ -46,6 +42,6 @@
     }
 
     angular.module('insightApp')
-    .controller('PerformanceCtrl', ['$scope', 'Session', '$http', controller]);
+    .controller('PerformanceCtrl', ['$scope', 'Session', '$http', 'util', controller]);
 
 }).call(null);

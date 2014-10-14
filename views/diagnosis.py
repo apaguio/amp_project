@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import request, session, Blueprint
 from servers import r
 from models import diagnosis
 
@@ -12,3 +12,39 @@ def diagnosis_points(start, end):
     result['consumption'] = diagnosis.get_ekm_data_range(consumption_meter_id, start, end)
     result['solar'] = diagnosis.get_ekm_data_range(solar_meter_id, start, end)
     return r.success(result)
+
+@diagnosis_app.route("/diagnosis", methods=["GET"])
+def get_historical_instances():
+    """ Based on customer_id we should return the last state of historical tab
+        this should return array of wrappers each one has its own config.
+        wrappers: [
+            {
+                start: date,
+                end: date,
+                zoom_start: timestamp,
+                zoom_end timestamp,
+                graph: string
+            }
+        ]
+    """
+    result = []
+    return r.success(result)
+
+
+@diagnosis_app.route("/diagnosis", methods=["POST"])
+def set_historical_instances(configs):
+    """ Based on customer_id we should return the last state of historical tab
+        this should return array of wrappers each one has its own config.
+        wrappers: [
+            {
+                start: date,
+                end: date,
+                zoom_start: timestamp,
+                zoom_end timestamp,
+                graph: string
+            }
+        ]
+    """
+    wrappers = request.json
+    # TODO: SAVE TO DB
+    return r.success(wrappers)

@@ -6,7 +6,8 @@
         'ngCookies',
         'ngResource',
         'ngSanitize',
-        'ngRoute'
+        'ngRoute',
+        'ui.bootstrap'
     ]);
 
     app.constant('AuthEvents', {

@@ -2,24 +2,9 @@
 
 (function() {
 
-    function toDate(pyTimestamp) {
-        return moment(pyTimestamp).toDate();
-    }
-
     var fifteen = 15 * 60;
 
-    function toDateRange(timeformatted) {
-        var d0 = new Date(),
-            d1 = new Date();
-        var pyTimestamp = moment(timeformatted).unix();
-        var start = Math.floor(pyTimestamp - (pyTimestamp % fifteen));
-        var end = start + fifteen;
-        d0.setTime(start * 1000);
-        d1.setTime(end * 1000);
-        return [d0, d1];
-    }
-
-    function controller(scope, Session, http, timeout, $q, location) {
+    function controller(scope, Session, http, timeout, $q, location, util) {
         scope.nodata = false;
         http.defaults.headers.post['CSRF-TOKEN'] = Session.csrfToken;
         scope.lastTime = null;
@@ -27,10 +12,10 @@
         function onLoad(data) {
 
             scope.data = data;
-            scope.data.billingPeriodStartDate  = toDate(data.billing_period_startdate);
-            scope.data.billingPeriodEndDate = toDate(data.billing_period_enddate);
-            scope.data.seasonEndDate = toDate(data.season_enddate);
-            scope.data.seasonStartDate = toDate(data.season_startdate);
+            scope.data.billingPeriodStartDate  = util.toDate(data.billing_period_startdate);
+            scope.data.billingPeriodEndDate = util.toDate(data.billing_period_enddate);
+            scope.data.seasonEndDate = util.toDate(data.season_enddate);
+            scope.data.seasonStartDate = util.toDate(data.season_startdate);
             var today = new Date().toString().split(' ').slice(0, 4).join(' ') + ' ' ;
             var format = "hh:mm a";
             scope.data.peakStart = moment(today + data.peak_period_start).format(format);
@@ -69,13 +54,13 @@
                     return ;
                 }
                 scope.data.max_demand = data.data.max_demand;
-                var maxDemandRange = toDateRange(data.data.time);
+                var maxDemandRange = util.toDateRange(data.data.time);
                 scope.data.maxDemandStartDate = maxDemandRange[0];
                 scope.data.maxDemandEndDate = maxDemandRange[1];
             });
             http.get('/api/powerview/current_demand').success(function (data) {
                 scope.data.current_demand = data.data.current_demand;
-                var currentDemandRange = toDateRange(data.data.time);
+                var currentDemandRange = util.toDateRange(data.data.time);
                 scope.data.currentDemandStartDate = currentDemandRange[0];
                 scope.data.currentDemandEndDate = currentDemandRange[1];
             });
@@ -141,6 +126,6 @@
     }
 
     angular.module('insightApp')
-    .controller('PowerviewCtrl', ['$scope', 'Session', '$http', '$timeout', '$q', '$location', controller]);
+    .controller('PowerviewCtrl', ['$scope', 'Session', '$http', '$timeout', '$q', '$location', 'util', controller]);
 
 }).call(null);

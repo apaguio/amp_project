@@ -1,40 +1,13 @@
 <nav link="diagnosis"></nav>
-<div class="">
+<div id="diagnosis" class="">
+  <div class="col-xs-12" ng-repeat="wrapper in wrappers">
+    <diagnosiswrapper start="wrapper.start" end="wrapper.end"></diagnosiswrapper>
+  </div>
   <div class="col-xs-12">
-    <div id="diagnosischart"></div>
+    <button type="button" class="btn btn-primary pull-right"
+      ng-click="addWrapper()">
+      <i class="glyphicon glyphicon-plus"></i>
+      Add <span ng-show="wrappers.length">another</span> historical view
+    </button>
   </div>
 </div>
-
-<script>
-$(function () {
-    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=range.json&callback=?', function (data) {
-
-        $('#diagnosischart').highcharts('StockChart', {
-          chart: {
-                type: 'arearange'
-            },
-
-            rangeSelector: {
-              inputEnabled: $('#diagnosischart').width() > 480,
-                selected: 2
-            },
-
-            title: {
-                text: 'Temperature variation by day'
-            },
-
-            tooltip: {
-                valueSuffix: '°C'
-            },
-
-            series: [{
-                name: 'Temperatures',
-                data: data
-            }]
-
-        });
-    });
-
-});
-</script>
-
