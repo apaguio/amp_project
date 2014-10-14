@@ -2,6 +2,7 @@ from flask import request, session, Blueprint
 from servers import r
 
 auth_app = Blueprint('auth', __name__)
+fake_password = 'c3nergy'
 
 @auth_app.route("/logout", methods=["POST"])
 def logout():
@@ -11,7 +12,7 @@ def logout():
 @auth_app.route("/login", methods=["POST"])
 def login():
     credentials = request.json
-    if not credentials or credentials.get('username', '') != 'test' or credentials.get('password', '') != 'test':
+    if not credentials or credentials.get('username', '') != 'test' or credentials.get('password', '') != fake_password:
         error = 'Invalid username or password'
         return r.error(error)
     else:
