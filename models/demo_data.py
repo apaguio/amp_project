@@ -3,7 +3,7 @@ from models import db
 from pytz import timezone, utc
 
 def generate():
-    customer = db.Customer(name='test', email='test@example.com')
+    customer = db.Customer(name='test', email='test@example.com', password='c3nergy')
     customer.holidays = [utc.localize(datetime(2014, 11, 11)),
                          utc.localize(datetime(2014, 11, 27)),
                          utc.localize(datetime(2014, 12, 25))]

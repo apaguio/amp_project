@@ -4,6 +4,7 @@ from socketio.namespace import BaseNamespace
 from socketio.mixins import RoomsMixin, BroadcastMixin
 from servers import r, pubsub
 from models import powerview
+from flask_login import login_required, current_user
 import time
 
 powerview_app = Blueprint('powerview', __name__)
@@ -15,6 +16,7 @@ def generate_demo_data():
     return r.success(result)
 
 @powerview_app.route("/powerview/points", methods=["GET"])
+@login_required
 def powerview_points():
     params = request.args
     solar_meter_id = 10068
@@ -38,6 +40,7 @@ def powerview_points():
     return r.success(consumption)
 
 @powerview_app.route("/powerview/current_demand", methods=["GET"])
+@login_required
 def get_current_demand():
     consumption_meter_id = 10054
     solar_meter_id = 10068
@@ -45,12 +48,14 @@ def get_current_demand():
     return r.success(result)
 
 @powerview_app.route("/powerview/max_demand", methods=["GET"])
+@login_required
 def get_max_demand():
     consumption_meter_id = 10054
     result = powerview.get_max_demand(consumption_meter_id)
     return r.success(result)
 
 @powerview_app.route("/powerview", methods=["GET"])
+@login_required
 def powerview_data():
     return r.success(powerview.get_tariff_details())
 

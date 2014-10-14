@@ -2,9 +2,19 @@ from gevent import monkey
 from socketio.server import SocketIOServer
 from flask import Flask, request
 from celery import Celery
+from flask_login import LoginManager
+from models import db
 
 app = Flask(__name__)
 app.config.from_object('settings')
+
+def init_login(app):
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return db.Customer.objects(name=user_id).first()
 
 def make_celery(app):
     celery = Celery(app.import_name, broker=app.config['CELERY_BROKER_URL'])
@@ -18,6 +28,7 @@ def make_celery(app):
     celery.Task = ContextTask
     return celery
 
+init_login(app)
 celery = make_celery(app)
 
 monkey.patch_all()

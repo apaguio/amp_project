@@ -38,9 +38,23 @@ class Customer(mongodb.Document):
     uid = mongodb.UUIDField(default=uuid.uuid4())
     name = mongodb.StringField()
     email = mongodb.EmailField()
+    password = mongodb.StringField()
     timezone = mongodb.StringField(default='PST8PDT')
     read_cycle = mongodb.EmbeddedDocumentField(ReadCycle)
     seasons = mongodb.ListField(mongodb.EmbeddedDocumentField(Season))
     facility = mongodb.ListField(mongodb.EmbeddedDocumentField(EkmMeter))
     solar = mongodb.ListField(mongodb.EmbeddedDocumentField(EkmMeter))
     holidays = mongodb.ListField(mongodb.DateTimeField())
+
+    # Flask-Login integration
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return self.name
