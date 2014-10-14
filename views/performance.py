@@ -10,19 +10,13 @@ def performance_graph():
     consumption_meter_id = 10054
 
     energy = performance.get_energy_data(consumption_meter_id)
-    energy['this_month_money'] = performance.calculate_energy_charges(consumption_meter_id)
-    energy['last_month_money'] = performance.calculate_energy_charges(consumption_meter_id)
-    energy['last_year_money'] = performance.calculate_energy_charges(consumption_meter_id)
+    energy['charges'] = performance.calculate_energy_charges(consumption_meter_id)
 
     solar = performance.get_energy_data(solar_meter_id)
-    solar['this_month_money'] = performance.calculate_energy_charges(solar_meter_id)
-    solar['last_month_money'] = performance.calculate_energy_charges(solar_meter_id)
-    solar['last_year_money'] = performance.calculate_energy_charges(solar_meter_id)
+    solar['charges'] = performance.calculate_energy_charges(solar_meter_id)
 
     demand = performance.get_demand_data(consumption_meter_id)
-    demand['this_month_money'] = performance.calculate_demand_charges(consumption_meter_id)
-    demand['last_month_money'] = performance.calculate_demand_charges(consumption_meter_id)
-    demand['last_year_money'] = performance.calculate_demand_charges(consumption_meter_id)
+    demand['charges'] = performance.calculate_demand_charges(consumption_meter_id)
 
     res = {
         "energy": energy,

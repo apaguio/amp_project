@@ -1,7 +1,7 @@
 import time
 from datetime import datetime
 from models import db
-from models.powerview import get_customer_timezone, get_tariff_details
+from models.powerview import get_tariff_details
 from models import influxdb
 from pytz import timezone
 
@@ -151,23 +151,26 @@ def _calculate_demand_charges_helper(demand_query_result):
     customer = db.Customer.objects(name='test').first()
     demand_charges = 0.0
     demand_data = dict()
+    import rpdb2; rpdb2.start_embedded_debugger('diaa');
     for res in demand_query_result:
+        maxDemand = res['points'][0][1]
         name_parts = res['name'].split('_')
-        season = name_parts[2]
         peakperiod = name_parts[3]
+        season = name_parts[2]
+        if season not in demand_data:
+            demand_data[season] = list()
         for sn in customer['seasons']:
-            if sn['name'] == season:
-                if season not in demand_data:
-                    demand_data[season] = list()
-                demand_data[season].append(res['points'][0][1])
-                for pp in sn['peak_periods']:
-                    if pp['name'] == peakperiod:
-                        if peakperiod == 'onpeak':
-                            demand_charges += pp['demand_charge'] * res['points'][0][1]
-                        else:
-                            if pp['demand_charge'] not in demand_data[season]:
-                                demand_data[season].append(pp['demand_charge'])
-                        break
+            if sn['name'] != season: continue
+            demand_data[season].append(maxDemand)
+            for pp in sn['peak_periods']:
+                if pp['name'] != peakperiod: continue
+                charges = pp['demand_charge']
+                if peakperiod == 'onpeak':
+                    demand_charges += charges * maxDemand
+                else:
+                    if charges not in demand_data[season]:
+                        demand_data[season].append(charges)
+                break
     for season, demand_values in demand_data.iteritems():
         max_demand_anytime = max(demand_values[:-1])
         demand_charges += max_demand_anytime * demand_values[-1]

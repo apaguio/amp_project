@@ -32,6 +32,16 @@
         return (value < 0 ? arrowDown : arrowUp)(svg, classOfChange(group, value));
     }
 
+    function updateData(originalData) {
+        _.each(originalData, function(v, k) {
+            v.this_month_money = v.charges.this_month;
+            v.last_month_money = v.charges.last_month;
+            v.last_year_money = v.charges.last_year;
+            delete v.charges;
+        });
+        return originalData;
+    }
+
     function fakeData(originalData) {
         _.each(originalData, function(data, k) {
             data.last_year = data.this_month + ( data.this_month / 20);
@@ -56,6 +66,7 @@
             return;
         }
 
+        data = updateData(data);
         data = fakeData(data);
 
         var total = {
