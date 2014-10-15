@@ -1,8 +1,13 @@
 'use strict';
 
+/**
+ * @ngdoc directive
+ * @name insightApp.controller:powerview
+ * @description
+ * # powerview
+ * Contains the graph for power view and the peaks data and dates
+ */
 (function() {
-
-    var fifteen = 15 * 60;
 
     function controller(scope, Session, http, timeout, $q, location, util) {
         scope.nodata = false;
@@ -120,9 +125,8 @@
         scope.setResolution = function(resolution) {
             scope.resolution = resolution;
         };
+
         scope.setTimeFrame('30m');
-        scope.setResolution('1s');
-        scope.setReloadTime(5000);
     }
 
     angular.module('insightApp')

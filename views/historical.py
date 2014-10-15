@@ -31,8 +31,8 @@ def get_historical_instances():
     return r.success(result)
 
 
-@historical_app.route("/histroical", methods=["POST"])
-def set_historical_instances(configs):
+@historical_app.route("/historical", methods=["POST"])
+def set_historical_instances():
     """ Based on customer_id we should return the last state of historical tab
         this should return array of wrappers each one has its own config.
         wrappers: [

@@ -158,9 +158,73 @@ body {
     }
 }
 
-#powerview {
-    a.selected {
-        color: green;
+.powerviewgraphwrapper {
+    .powerviewgraph {
+        svg {
+            font: 10px sans-serif;
+            line, path {
+                /*stroke: #222;*/
+                stroke: @darkcolor1;
+                stroke-width: 1px;
+                shape-rendering: crispedges;
+                fill: none;
+            }
+
+            * {
+                pointer-events: none;
+            }
+
+            rect.mouserect {
+                pointer-events: all;
+            }
+            .lineHover{
+                /*stroke: #e5e5e5;*/
+                stroke: @color1;
+                stroke-width: 1.5px;
+                pointer-events: none;         
+            }
+
+            text.title, text.maxdemand {
+                text-anchor: end;
+                /*fill: #777;*/
+                fill: @darkcolor2;
+            }
+            line.maxdemand{
+                stroke-dasharray: 5,5;
+            }
+            .lines {
+                path {
+                    &.linePower {
+                        stroke-dasharray: 1,1;
+                    }
+                    &.area {
+                        stroke-width: 0;
+                        /*fill: yellow;*/
+                        fill: @main;
+                    }
+                }
+            }
+            .powerFactorLines, .voltageLines {
+                path.linePF {
+                    fill: none;
+                    shape-rendering: crispedges;
+                    stroke-width: 1px;
+                    /*stroke: #222;*/
+                    stroke: @color1;
+                }
+            }
+            .tick line {
+                stroke-width: 0;
+            }
+            .y.axis {
+                .tick line {
+                    stroke: lighten(@color1, 10%);
+                    stroke-width: 1px;
+                    pointer-events: none;         
+                }
+            }
+
+        }
     }
     div.tooltip {
         pointer-events: none;
@@ -200,70 +264,11 @@ body {
             }
         }
     }
-    svg {
-        font: 10px sans-serif;
-        line, path {
-            /*stroke: #222;*/
-            stroke: @darkcolor1;
-            stroke-width: 1px;
-            shape-rendering: crispedges;
-            fill: none;
-        }
+}
 
-        * {
-            pointer-events: none;
-        }
-
-        rect.mouserect {
-            pointer-events: all;
-        }
-        .lineHover{
-            /*stroke: #e5e5e5;*/
-            stroke: @color1;
-            stroke-width: 1.5px;
-            pointer-events: none;         
-        }
-
-        text.title, text.maxdemand {
-            text-anchor: end;
-            /*fill: #777;*/
-            fill: @darkcolor2;
-        }
-        line.maxdemand{
-            stroke-dasharray: 5,5;
-        }
-        .lines {
-            path {
-                &.linePower {
-                    stroke-dasharray: 1,1;
-                }
-                &.area {
-                    stroke-width: 0;
-                    /*fill: yellow;*/
-                    fill: @main;
-                }
-            }
-        }
-        .powerFactorLines, .voltageLines {
-            path.linePF {
-                fill: none;
-                shape-rendering: crispedges;
-                stroke-width: 1px;
-                /*stroke: #222;*/
-                stroke: @color1;
-            }
-        }
-        .tick line {
-            stroke-width: 0;
-        }
-        .y.axis {
-            .tick line {
-                stroke: lighten(@color1, 10%);
-                stroke-width: 1px;
-                pointer-events: none;         
-            }
-        }
-
+#powerview {
+    a.selected {
+        color: green;
     }
 
 }

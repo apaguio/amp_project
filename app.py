@@ -32,11 +32,11 @@ def register_views(app):
     mongodb.init_app(app)
     from views.performance import performance_app
     from views.powerview import powerview_app
-    from views.diagnosis import diagnosis_app
+    from views.historical import historical_app
     from views.auth import auth_app
     app.register_blueprint(performance_app)
     app.register_blueprint(powerview_app)
-    app.register_blueprint(diagnosis_app)
+    app.register_blueprint(historical_app)
     app.register_blueprint(auth_app)
 
 

@@ -132,10 +132,63 @@ body {
 #settings .inlinecontainer label {
   min-width: 100px;
 }
-#powerview a.selected {
-  color: green;
+.powerviewgraphwrapper .powerviewgraph svg {
+  font: 10px sans-serif;
 }
-#powerview div.tooltip {
+.powerviewgraphwrapper .powerviewgraph svg line,
+.powerviewgraphwrapper .powerviewgraph svg path {
+  /*stroke: #222;*/
+  stroke: #918d76;
+  stroke-width: 1px;
+  shape-rendering: crispedges;
+  fill: none;
+}
+.powerviewgraphwrapper .powerviewgraph svg * {
+  pointer-events: none;
+}
+.powerviewgraphwrapper .powerviewgraph svg rect.mouserect {
+  pointer-events: all;
+}
+.powerviewgraphwrapper .powerviewgraph svg .lineHover {
+  /*stroke: #e5e5e5;*/
+  stroke: #dedbcb;
+  stroke-width: 1.5px;
+  pointer-events: none;
+}
+.powerviewgraphwrapper .powerviewgraph svg text.title,
+.powerviewgraphwrapper .powerviewgraph svg text.maxdemand {
+  text-anchor: end;
+  /*fill: #777;*/
+  fill: #917e8c;
+}
+.powerviewgraphwrapper .powerviewgraph svg line.maxdemand {
+  stroke-dasharray: 5,5;
+}
+.powerviewgraphwrapper .powerviewgraph svg .lines path.linePower {
+  stroke-dasharray: 1,1;
+}
+.powerviewgraphwrapper .powerviewgraph svg .lines path.area {
+  stroke-width: 0;
+  /*fill: yellow;*/
+  fill: #f7ff00;
+}
+.powerviewgraphwrapper .powerviewgraph svg .powerFactorLines path.linePF,
+.powerviewgraphwrapper .powerviewgraph svg .voltageLines path.linePF {
+  fill: none;
+  shape-rendering: crispedges;
+  stroke-width: 1px;
+  /*stroke: #222;*/
+  stroke: #dedbcb;
+}
+.powerviewgraphwrapper .powerviewgraph svg .tick line {
+  stroke-width: 0;
+}
+.powerviewgraphwrapper .powerviewgraph svg .y.axis .tick line {
+  stroke: #f2f1ea;
+  stroke-width: 1px;
+  pointer-events: none;
+}
+.powerviewgraphwrapper div.tooltip {
   border: 1px solid #222;
   opacity: 0.7;
   border-radius: 4px;
@@ -153,69 +206,16 @@ body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   pointer-events: none;
 }
-#powerview div.tooltip .title {
+.powerviewgraphwrapper div.tooltip .title {
   font-weight: bold;
   text-align: center;
 }
-#powerview div.tooltip .body .entry .value {
+.powerviewgraphwrapper div.tooltip .body .entry .value {
   float: right;
   font-weight: bolder;
 }
-#powerview svg {
-  font: 10px sans-serif;
-}
-#powerview svg line,
-#powerview svg path {
-  /*stroke: #222;*/
-  stroke: #918d76;
-  stroke-width: 1px;
-  shape-rendering: crispedges;
-  fill: none;
-}
-#powerview svg * {
-  pointer-events: none;
-}
-#powerview svg rect.mouserect {
-  pointer-events: all;
-}
-#powerview svg .lineHover {
-  /*stroke: #e5e5e5;*/
-  stroke: #dedbcb;
-  stroke-width: 1.5px;
-  pointer-events: none;
-}
-#powerview svg text.title,
-#powerview svg text.maxdemand {
-  text-anchor: end;
-  /*fill: #777;*/
-  fill: #917e8c;
-}
-#powerview svg line.maxdemand {
-  stroke-dasharray: 5,5;
-}
-#powerview svg .lines path.linePower {
-  stroke-dasharray: 1,1;
-}
-#powerview svg .lines path.area {
-  stroke-width: 0;
-  /*fill: yellow;*/
-  fill: #f7ff00;
-}
-#powerview svg .powerFactorLines path.linePF,
-#powerview svg .voltageLines path.linePF {
-  fill: none;
-  shape-rendering: crispedges;
-  stroke-width: 1px;
-  /*stroke: #222;*/
-  stroke: #dedbcb;
-}
-#powerview svg .tick line {
-  stroke-width: 0;
-}
-#powerview svg .y.axis .tick line {
-  stroke: #f2f1ea;
-  stroke-width: 1px;
-  pointer-events: none;
+#powerview a.selected {
+  color: green;
 }
 #performance a.selected {
   color: green;

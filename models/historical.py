@@ -1,6 +1,7 @@
 from models import influxdb
 from pytz import timezone
 from models.powerview import get_customer_timezone
+from datetime import datetime
 
 def get_ekm_data_range(meter_id, start, end, resolution=None):
     """

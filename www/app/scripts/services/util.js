@@ -9,6 +9,8 @@
  */
 (function() {
 
+    var fifteen = 15 * 60;
+
     function util() {
 
         this.toDate = function toDate(pyTimestamp) {

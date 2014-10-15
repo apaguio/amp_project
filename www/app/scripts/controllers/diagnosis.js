@@ -6,6 +6,11 @@
         http.defaults.headers.post['CSRF-TOKEN'] = Session.csrfToken;
         scope.wrappers = [];
 
+        scope.onWrapperUpdate = function onWrapperUpdate(wrapper) {
+            var i = _.findIndex(scope.wrappers, {id: wrapper.id});
+            scope.wrappers[i] = wrapper;
+        };
+
         scope.addWrapper = function addWrapper() {
             scope.wrappers.push({
                 start: moment().subtract(1, 'months'),
@@ -15,8 +20,7 @@
         };
 
         function onSuccess (result) {
-            debugger; 
-            scope.wrappers = result;
+            scope.wrappers = result.data;
         }
 
         function onError(err) {

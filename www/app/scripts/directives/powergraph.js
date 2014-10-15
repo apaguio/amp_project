@@ -67,7 +67,7 @@
             .x(function(d) { return scope.x(d.time); })
             .y(function(d) { return scope.vy(d.L1_V || 0); });
 
-        scope.svg = d3.select(el[0]).select(".graph").append("svg")
+        scope.svg = d3.select(el[0]).select(".powerviewgraph").append("svg")
             .attr("width", scope.width + scope.margin.left + scope.margin.right)
             .attr("height", scope.height + scope.margin.top + scope.margin.bottom);
 

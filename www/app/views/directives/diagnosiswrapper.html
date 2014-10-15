@@ -47,10 +47,11 @@
   </div>
 
   <div class="col-xs-12" class="chartcontainer" ng-show="!loading && !nodata">
-    <diagnosisgraph data="graphdata" graphtype="graph"></diagnosisgraph>
+      <powergraph data="graphdata" max-demand="{{data.max_demand}}"
+      dataupdated="{{dataUpdated}}"></powergraph>
   </div>
 
-  <div class="col-xs-12" class="timeselectors">
+  <div class="col-xs-12" class="timeselectors" ng-show="falseValue">
     <a href="javascript:;" ng-click="setGraph('consumption')"
       ng-class="{'selected': graph=='consumption'}"> kW / kWh </a> |
     <a href="javascript:;" ng-click="setGraph('powerfactor')"
