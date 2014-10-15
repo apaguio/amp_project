@@ -1,17 +1,17 @@
 from flask import request, session, Blueprint
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, login_required, current_user
 from servers import r
 from models import db
 
 auth_app = Blueprint('auth', __name__)
 fake_password = 'c3nergy'
 
-@auth_app.route("/logout", methods=["POST"])
+@auth_app.route("/auth/logout", methods=["POST"])
 def logout():
     logout_user()
     return r.success()
 
-@auth_app.route("/login", methods=["POST"])
+@auth_app.route("/auth/login", methods=["POST"])
 def login():
     credentials = request.json
     if not credentials:
@@ -21,13 +21,20 @@ def login():
     customer = db.Customer.objects(name=user_name).first()
     if customer.password != credentials.get('password'):
         error = 'Invalid user name and/or password'
-        return r.error(error)
+        return r.error(error, 401)
     else:
         login_user(customer)
+        print current_user
         return r.success({
-            "session_id": session.get('_id'),
-            "user_id": customer.uid,
-            "user_role": "user",
-            "csrf_token": session.get('csrf_token')
+            "name": customer["name"],
+            "role": "user"
         })
 
+@auth_app.route("/auth/load", methods=["GET"])
+@login_required
+def load_user():
+    return r.success({
+        "name": current_user["name"],
+        #"role": customer["role"] or "user"
+        "role": "user"
+    })

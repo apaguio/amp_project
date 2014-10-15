@@ -27,7 +27,10 @@
             d1.setTime(end * 1000);
             return [d0, d1];
         };
-        // AngularJS will instantiate a singleton by calling "new" on this function
+
+        this.onError = function onError(err) {
+            console.log(err);
+        };
     }
 
     angular.module('insightApp').service('util', util);

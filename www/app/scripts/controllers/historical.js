@@ -20,7 +20,7 @@
         };
 
         function onSuccess (result) {
-            scope.wrappers = result.data;
+            scope.wrappers = result;
         }
 
         function onError(err) {
@@ -40,6 +40,6 @@
     }
 
     angular.module('insightApp')
-    .controller('DiagnosisCtrl', ['$scope', 'Session', '$location', '$http', 'util', controller]);
+    .controller('HistoricalCtrl', ['$scope', 'Session', '$location', '$http', 'util', controller]);
 
 }).call(null);

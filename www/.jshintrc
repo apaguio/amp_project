@@ -21,6 +21,6 @@
   "globals": {
     "angular": true,
     "_": true,
-    "moment: true"
+    "moment": true
   }
 }

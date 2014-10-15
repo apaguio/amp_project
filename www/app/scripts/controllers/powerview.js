@@ -38,39 +38,40 @@
         }
 
         function load(onLoad) {
-            http
-                .get('/api/powerview', {})
-                .then(function (res) {
-                    var d = res.data;
-                    if (d.status === "error") {
-                        console.log("Error : " + d.message);
-                    } else {
-                        onLoad(d.data);
-                    }
-                });
+            http.get('/api/powerview').then(function (res) {
+                onLoad(res.data);
+            }, util.onError);
         }
 
         function tick(deferred) {
             if (location.path() !== '/powerview') {
                 return deferred.reject(false);
             }
-            http.get('/api/powerview/max_demand').success(function (data) {
-                if (!data.data.max_demand) {
+
+            http.get('/api/powerview/max_demand').then(function (result) {
+                var data = result.data;
+                if (!data.max_demand) {
                     return ;
                 }
-                scope.data.max_demand = data.data.max_demand;
-                var maxDemandRange = util.toDateRange(data.data.time);
+                scope.data.max_demand = data.max_demand;
+                var maxDemandRange = util.toDateRange(data.time);
                 scope.data.maxDemandStartDate = maxDemandRange[0];
                 scope.data.maxDemandEndDate = maxDemandRange[1];
-            });
-            http.get('/api/powerview/current_demand').success(function (data) {
-                scope.data.current_demand = data.data.current_demand;
-                var currentDemandRange = util.toDateRange(data.data.time);
+            }, util.onError);
+
+            http.get('/api/powerview/current_demand').then(function (result) {
+                var data = result.data;
+                scope.data.current_demand = data.current_demand;
+                var currentDemandRange = util.toDateRange(data.time);
                 scope.data.currentDemandStartDate = currentDemandRange[0];
                 scope.data.currentDemandEndDate = currentDemandRange[1];
-            });
-            http.get('/api/powerview/points', {params : {'timeframe': scope.timeframe, 'resolution':scope.resolution}}).success(function (data) {
-                var points = _.map(data.data, function(d) {
+            }, util.onError);
+
+            var pointsParams = {params : {'timeframe': scope.timeframe, 'resolution':scope.resolution}};
+
+            http.get('/api/powerview/points', pointsParams).then(function (result) {
+                var data = result.data;
+                var points = _.map(data, function(d) {
                     d.time = new Date(d.time);
                     return d;
                 });
@@ -87,9 +88,9 @@
                 scope.nodata = false;
                 deferred.resolve(true);
                 scope.loading = false;
-            }).error(function(err) {
-                console.log(err);
-                console.log("Error, Connection issue.");
+
+            }, function(err) {
+                util.onError(err);
                 deferred.reject(err);
             });
         }

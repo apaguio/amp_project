@@ -52,16 +52,21 @@
         };
 
         scope.nodata = false;
-        http.defaults.headers.post['CSRF-TOKEN'] = Session.csrfToken;
-        scope.lastTime = null;
 
         function load() {
-            http.get('/api/powerview/points', {params : {'timeframe': scope.timeframe, 'resolution':scope.resolution}}).success(function (data) {
-                if (!data.data || !data.data.length) {
+
+            var params = {params : {
+                'timeframe': scope.timeframe,
+                'resolution':scope.resolution
+            }};
+
+            http.get('/api/powerview/points', params).then(function (result) {
+                var data = result.data;
+                if (!result.data || !result.data.length) {
                     scope.nodata = true;
                     return;
                 }
-                var points = _.map(data.data, function(d) {
+                var points = _.map(result.data, function(d) {
                     d.time = new Date(d.time);
                     return d;
                 });
@@ -69,10 +74,7 @@
                 scope.dataUpdated = ++scope.dataUpdated || 0;
                 scope.nodata = false;
                 scope.loading = false;
-            }).error(function(err) {
-                console.log(err);
-                console.log("Error, Connection issue.");
-            });
+            }, util.onError);
         }
 
         load();

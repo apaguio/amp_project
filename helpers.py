@@ -50,19 +50,14 @@ class CreateResponse(object):
     def __init__(self):
         pass
 
-    def error(self, message, code=0, data={}):
-        return jsonify({
-            "status" : "error",
-            "message": message,
-            "data" : data,
-            "code": code
-        });
+    def error(self, data={}, code=400):
+        response = jsonify(data);
+        response.status_code = code
+        return response
 
     @gzipped
     def success(self, data={}, code=200):
-        return jsonify({
-            "status" : "success",
-            "data" : data,
-            "code" : code
-        });
+        response = jsonify(data);
+        response.status_code = code
+        return response
 

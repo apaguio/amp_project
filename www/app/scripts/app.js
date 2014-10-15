@@ -1,6 +1,7 @@
 'use strict';
 (function() {
 
+    var systemRoutes = ['/powerview', '/performance', '/historical', '/settings', '/alerts'];
     var app = angular
     .module('insightApp', [
         'ngCookies',
@@ -41,9 +42,9 @@
             controller: 'PerformanceCtrl',
             access: 'user'
         })
-        .when('/diagnosis', {
-            templateUrl: 'views/diagnosis.html',
-            controller: 'DiagnosisCtrl',
+        .when('/historical', {
+            templateUrl: 'views/historical.html',
+            controller: 'HistoricalCtrl',
             access: 'user'
         })
         .when('/alerts', {
@@ -62,32 +63,46 @@
         ]);
     });
 
-    app.run(function($rootScope, Auth, AuthEvents, $location) {
-
-        $rootScope.$on('$routeChangeStart', function (event, next) {
-            var access = next.access;
-            if (!Auth.isAuthorized(access)) {
-                event.preventDefault();
-                if (Auth.isAuthenticated()) {
-                    // user is not allowed
-                    console.log("Not authorized");
-                    $rootScope.$broadcast(AuthEvents.notAuthorized);
-                } else {
-                    // user is not logged in
-                    console.log("Not logged in");
-                    $rootScope.$broadcast(AuthEvents.notAuthenticated);
-                }
+    app.run(['$rootScope', 'Auth', 'AuthEvents', '$location', 'Session',
+    function($rootScope, Auth, AuthEvents, location, Session) {
+        var next;
+        function notAuth(event, err) {
+            if (next.originalPath !== '/') {
+                console.log(event.name);
+                //if (event.name === "auth-not-authenticated") {
+                //}
+                Session.destroy();
+                location.path('/');
             } else {
-                localStorage.setItem("lastPage", next.originalPath);
+                console.log(err);
             }
-        });
-
-        function notAuth() {
-            $location.path('/');
         }
 
+        function loginSuccess(event, err) {
+            if (next.originalPath === '/') {
+                var lastPage = localStorage.getItem("lastPage");
+                if (systemRoutes.indexOf(lastPage) < 0) {
+                    location.path('/powerview');
+                } else {
+                    location.path(lastPage);
+                }
+            }
+        }
+
+        $rootScope.$on('$routeChangeStart', function (event, pathNext) {
+            next = pathNext;
+            Auth.loadUser().then(function() {
+                if (location.path() !== '/') {
+                    localStorage.setItem("lastPage", location.path());
+                }
+            });
+        });
+
+        $rootScope.$on(AuthEvents.loginSuccess, loginSuccess);
+        $rootScope.$on(AuthEvents.notAuthorized, notAuth);
         $rootScope.$on(AuthEvents.notAuthenticated, notAuth);
         $rootScope.$on(AuthEvents.sessionTimeout, notAuth);
-    });
+        $rootScope.$on(AuthEvents.logoutSuccess, notAuth);
+    }]);
 
 }).call(null);

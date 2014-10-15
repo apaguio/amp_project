@@ -17,19 +17,12 @@
             scope.error = null;
         };
 
-        var systemRoutes = ['/powerview', '/performance', '/diagnosis', '/settings', '/alerts'];
         scope.login = function(credentials) {
             Auth.login(credentials).then(function() {
-                $rootScope.$broadcast(AuthEvents.loginSuccess);
-                var lastPage = localStorage.getItem("lastPage");
-                if (systemRoutes.indexOf(lastPage) < 0) {
-                    location.path('/powerview');
-                } else {
-                    location.path(lastPage);
-                }
+                // Everything is handled in loginSuccess in app.js
             }, function (message) {
                 console.log(message);
-                scope.error = "Incorrect username or password.";
+                scope.error = message;
                 $rootScope.$broadcast(AuthEvents.loginFailed);
             });
         };

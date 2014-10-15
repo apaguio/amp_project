@@ -14,7 +14,7 @@ def init_login(app):
 
     @login_manager.user_loader
     def load_user(user_id):
-        return db.Customer.objects(name=user_id).first()
+        return db.Customer.objects(pk=user_id).first()
 
 def make_celery(app):
     celery = Celery(app.import_name, broker=app.config['CELERY_BROKER_URL'])

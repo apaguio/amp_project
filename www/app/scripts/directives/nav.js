@@ -11,8 +11,6 @@
 
         scope.logout = function() {
             Auth.logout();
-            $rootScope.$broadcast(AuthEvents.logoutSuccess);
-            location.path('/');
         };
     }
 

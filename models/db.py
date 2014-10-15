@@ -35,7 +35,6 @@ class ReadCycle(mongodb.EmbeddedDocument):
     billing_periods = mongodb.ListField(mongodb.EmbeddedDocumentField(BillingPeriod))
 
 class Customer(mongodb.Document):
-    uid = mongodb.UUIDField(default=uuid.uuid4())
     name = mongodb.StringField()
     email = mongodb.EmailField()
     password = mongodb.StringField()
@@ -57,4 +56,6 @@ class Customer(mongodb.Document):
         return False
 
     def get_id(self):
-        return self.name
+        print "Getting customer ID : %s" % self.pk
+        return str(self.pk)
+
