@@ -2,6 +2,7 @@ flask
 flask-jsonpify
 flask-mongoengine
 flask-compress
+flask-login
 celery[redis]
 redis
 influxdb

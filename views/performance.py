@@ -1,10 +1,12 @@
 from flask import Blueprint
 from servers import r
 from models import performance
+from flask_login import login_required, current_user
 
 performance_app = Blueprint('performance', __name__)
 
 @performance_app.route("/performance/graph", methods=["GET"])
+@login_required
 def performance_graph():
     solar_meter_id = 10068
     consumption_meter_id = 10054
@@ -28,6 +30,7 @@ def performance_graph():
 
 
 @performance_app.route("/performance", methods=["GET"])
+@login_required
 def performance_data():
     return r.success(performance.get_tariff_data())
 
