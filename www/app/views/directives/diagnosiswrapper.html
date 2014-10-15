@@ -10,7 +10,7 @@
 
         <input type="text" class="form-control frompicker" ng-model="wrapper.start"
         datepicker-options="dateOptions" is-open="isOpen.start"
-        datepicker-popup="{{format}}" close-text="Close" />
+        max-date="wrapper.end" datepicker-popup="{{format}}" close-text="Close" />
 
         <span class="input-group-btn">
           <button type="button" class="btn btn-default"
@@ -27,7 +27,7 @@
 
         <input type="text" class="form-control topicker" ng-model="wrapper.end"
         datepicker-options="dateOptions" is-open="isOpen.end"
-        datepicker-popup="{{format}}" close-text="Close"/>
+        min-date="wrapper.start" datepicker-popup="{{format}}" close-text="Close"/>
 
         <span class="input-group-btn">
           <button type="button" class="btn btn-default"
