@@ -8,11 +8,15 @@
         <label for="from"> From </label>
         <p class="input-group col-xs-10 pull-right">
 
-        <input type="text" class="form-control frompicker" datepicker-popup="{{format}}"
-        ng-model="start" max-date="end" close-text="Close" />
+        <input type="text" class="form-control frompicker" ng-model="wrapper.start"
+        datepicker-options="dateOptions" is-open="isOpen.start"
+        datepicker-popup="{{format}}" close-text="Close" />
 
         <span class="input-group-btn">
-          <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+          <button type="button" class="btn btn-default"
+            ng-click="open($event, 'start')">
+            <i class="glyphicon glyphicon-calendar"></i>
+          </button>
         </span>
         </p>
       </div>
@@ -21,11 +25,14 @@
         <label for="to"> To </label>
         <p class="input-group col-xs-10 pull-right">
 
-        <input type="text" class="form-control topicker" datepicker-popup="{{format}}"
-        ng-model="end" min-date="start" max-date="tomorrow" close-text="Close"/>
+        <input type="text" class="form-control topicker" ng-model="wrapper.end"
+        datepicker-options="dateOptions" is-open="isOpen.end"
+        datepicker-popup="{{format}}" close-text="Close"/>
 
         <span class="input-group-btn">
-          <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+          <button type="button" class="btn btn-default"
+            ng-click="open($event, 'end')">
+            <i class="glyphicon glyphicon-calendar"></i></button>
         </span>
         </p>
       </div>

@@ -13,9 +13,27 @@
     function controller(scope, Session, http, $q, util) {
 
         scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
-        scope.format = scope.formats[1];
+        scope.format = scope.formats[0];
 
-        scope.tomorrow = moment().format(scope.format);
+        if (!scope.wrapper.start) {
+            scope.wrapper.start = moment().subtract(1, 'days');
+        }
+
+        if (!scope.wrapper.end) {
+            scope.wrapper.end = new Date();
+        }
+
+        scope.dateOptions = {
+            formatYear: 'yy',
+            startingDay: 1
+        };
+
+        scope.isOpen = { start: false, end: false };
+        scope.open = function($event, picker) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            scope.isOpen[picker] = true;
+        };
 
         scope.setGraph = function setGraph(graph) {
             scope.graph = graph;
