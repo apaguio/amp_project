@@ -1,7 +1,6 @@
 import time
 from datetime import datetime
-from models import db
-from models import influxdb
+from models import db, influxdb, utils
 from pytz import timezone
 
 def get_ekm_data(meter_id, period, resolution=None):
@@ -17,30 +16,13 @@ def get_ekm_data(meter_id, period, resolution=None):
     else:
         query = '''select mean(P) as P, mean(L1_PF) as L1_PF, mean(L1_V) as L1_V
                    from "%s" where time > now() - %s group by time(%s);''' % (meter_id, period, resolution)
-    query_result = influxdb.query(query)
-    result = list()
-    if query_result:
-        query_result = query_result[0]
-        customer_tz = timezone(get_customer_timezone(customer_name='test')) # TODO replace with current customer_id
-        for point in query_result['points']:
-            point_dict = dict()
-            for i, value in enumerate(point):
-                if query_result['columns'][i] == 'time':
-                    point_dict[query_result['columns'][i]] = customer_tz.fromutc(datetime.utcfromtimestamp(value)).strftime('%Y-%m-%d %H:%M:%S')
-                else:
-                    point_dict[query_result['columns'][i]] = round(value, 2)
-                result.append(point_dict)
-    return result
-
-def generate_demo_data():
-    import demo_data
-    demo_data.generate()
+    return utils.collect_ekm_data(query)
 
 def get_current_demand(meter_id, solar_meter_id):
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
     # round to nearest 15-min interval, and calculate minutes difference
     number_of_miutes = utc_now.minute % 15
-    customer_tz = timezone(get_customer_timezone(customer_name='test')) # TODO replace with current customer_id
+    customer_tz = timezone(utils.get_customer_timezone(customer_name='test')) # TODO replace with current customer_id
     #utc_now.strftime('%Y-%m-%d %H:%M:%S')
     # (number_of_miutes * 60), to get the seconds precision
     facility_query = 'select mean(P) as current_demand from "%s" where time > now() - %ss;' % (meter_id, ((number_of_miutes*60) + utc_now.second))
@@ -84,11 +66,6 @@ def _is_time_in_range(start, end, x):
         return start <= x <= end
     else:
         return start <= x or x <= end
-
-def get_customer_timezone(customer_name='test'):
-    customer = db.Customer.objects(name=customer_name).first()
-    if customer:
-        return customer.timezone
 
 def get_tariff_details(customer_name='test'):
     """

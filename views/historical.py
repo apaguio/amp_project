@@ -1,4 +1,4 @@
-from flask import request, session, Blueprint
+from flask import request, Blueprint
 from servers import r
 from models import historical
 from flask_login import login_required
@@ -8,12 +8,21 @@ historical_app = Blueprint('historical', __name__)
 @historical_app.route("/historical/points/<start>/<end>", methods=["GET"])
 @login_required
 def historical_points(start, end):
-    consumption_meter_id = 10068
-    solar_meter_id = 10054
-    result = dict()
-    result['consumption'] = historical.get_ekm_data_range(consumption_meter_id, start, end)
-    result['solar'] = historical.get_ekm_data_range(solar_meter_id, start, end)
-    return r.success(result)
+    params = request.args
+    solar_meter_id = 10068
+    consumption_meter_id = 10054
+    duration = params.get('timeframe', '10m')
+    resolution = params.get('resolution', None)
+    consumption = historical.get_ekm_data(consumption_meter_id, duration, resolution)
+    solar = historical.get_ekm_data(solar_meter_id, duration, resolution)
+    solarLen = len(solar)
+    for i, d in enumerate(consumption):
+        if i < solarLen:
+            d['S'] = solar[i].get('P', 0)
+    # Return consumption after updating with solar
+    # NOTE: assumption that S has the same timestamp as P
+    consumption = sorted(consumption, key=lambda k: k['time'])
+    return r.success(consumption)
 
 @historical_app.route("/historical", methods=["GET"])
 @login_required

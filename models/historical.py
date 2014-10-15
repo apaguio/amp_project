@@ -1,7 +1,4 @@
-from models import influxdb
-from pytz import timezone
-from models.powerview import get_customer_timezone
-from datetime import datetime
+from models import utils
 
 def get_ekm_data_range(meter_id, start, end, resolution=None):
     """
@@ -17,17 +14,5 @@ def get_ekm_data_range(meter_id, start, end, resolution=None):
     else:
         query = '''select mean(P) as P, mean(L1_PF) as L1_PF, mean(L1_V) as L1_V
                    from "%s" where time > %ss and time < %ss group by time(%s);''' % (meter_id, start, end, resolution)
-    query_result = influxdb.query(query)
-    result = list()
-    if query_result:
-        query_result = query_result[0]
-        customer_tz = timezone(get_customer_timezone(customer_name='test')) # TODO replace with current customer_id
-        for point in query_result['points']:
-            point_dict = dict()
-            for i, value in enumerate(point):
-                if query_result['columns'][i] == 'time':
-                    point_dict[query_result['columns'][i]] = customer_tz.fromutc(datetime.utcfromtimestamp(value)).strftime('%Y-%m-%d %H:%M:%S')
-                else:
-                    point_dict[query_result['columns'][i]] = round(value, 2)
-                result.append(point_dict)
-    return result
+    return utils.collect_ekm_data(query)
+
