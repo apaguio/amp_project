@@ -13,7 +13,7 @@
 
         scope.addWrapper = function addWrapper() {
             scope.wrappers.push({
-                start: moment().subtract(1, 'months'),
+                start: moment().subtract(1, 'days'),
                 end: moment()
             });
             update(scope.wrappers);

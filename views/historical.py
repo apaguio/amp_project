@@ -9,12 +9,14 @@ historical_app = Blueprint('historical', __name__)
 @login_required
 def historical_points(start, end):
     params = request.args
+    print start
+    print end
+    print params
     solar_meter_id = 10068
     consumption_meter_id = 10054
-    duration = params.get('timeframe', '10m')
     resolution = params.get('resolution', None)
-    consumption = historical.get_ekm_data(consumption_meter_id, duration, resolution)
-    solar = historical.get_ekm_data(solar_meter_id, duration, resolution)
+    consumption = historical.get_ekm_data(consumption_meter_id, start, end, resolution)
+    solar = historical.get_ekm_data(solar_meter_id, start, end, resolution)
     solarLen = len(solar)
     for i, d in enumerate(consumption):
         if i < solarLen:

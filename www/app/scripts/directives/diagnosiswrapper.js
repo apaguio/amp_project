@@ -45,17 +45,22 @@
         function load() {
 
             var params = {params : {
-                'timeframe': scope.timeframe,
-                'resolution':scope.resolution
+                'resolution': scope.resolution
             }};
 
-            http.get('/api/powerview/points', params).then(function (result) {
+            var start = moment(scope.wrapper.start).utc().unix();
+            var end = moment(scope.wrapper.end).utc().unix();
+            var url = '/api/historical/points/' + start + '/' + end;
+            console.log(url);
+            http.get(url, params).then(function (result) {
                 var data = result.data;
-                if (!result.data || !result.data.length) {
+                console.log(data);
+                if (!data || !data.length) {
+                    debugger; 
                     scope.nodata = true;
                     return;
                 }
-                var points = _.map(result.data, function(d) {
+                var points = _.map(data, function(d) {
                     d.time = new Date(d.time);
                     return d;
                 });
@@ -66,34 +71,13 @@
             }, util.onError);
         }
 
-        load();
-
-        /** 
-         * @param timefram graph time frame in minutes
-         */
-        scope.setTimeFrame = function(timeframe) {
-            scope.timeframe = timeframe;
-            scope.loading = true;
-            if (timeframe === '24h') {
-                scope.setReloadTime(60000)
-                return scope.setResolution('1m');
-            }
-            if (timeframe === '8h') {
-                scope.setReloadTime(30000)
-                return scope.setResolution('1m');
-            }
-            if (timeframe === '2h') {
-                scope.setReloadTime(10000)
-                return scope.setResolution('1m');
-            }
-            return scope.setResolution('1s');
-        };
-
         scope.setResolution = function(resolution) {
             scope.resolution = resolution;
+            load();
         };
 
-        scope.setTimeFrame('30m');
+        scope.setResolution('1h');
+
     }
 
     angular.module('insightApp')
