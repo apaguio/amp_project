@@ -334,3 +334,9 @@ body {
   stroke: #008000;
   fill: none;
 }
+#historical {
+  padding-top: 10px;
+}
+#historical .historicalwrapper {
+  margin-top: 10px;
+}

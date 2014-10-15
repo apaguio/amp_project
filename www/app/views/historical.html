@@ -1,13 +1,15 @@
 <nav link="historical"></nav>
-<div id="diagnosis" class="">
+<div id="historical" class="">
   <div class="col-xs-12" ng-repeat="wrapper in wrappers">
     <diagnosiswrapper wrapper="wrapper"></diagnosiswrapper>
   </div>
   <div class="col-xs-12">
-    <button type="button" class="btn btn-primary pull-right"
-      ng-click="addWrapper()">
-      <i class="glyphicon glyphicon-plus"></i>
-      Add <span ng-show="wrappers.length">another</span> historical view
-    </button>
+    <div class="pull-right" style="padding-right: 10px;">
+      <button type="button" class="btn btn-primary"
+        ng-click="addWrapper()">
+        <i class="glyphicon glyphicon-plus"></i>
+        Add <span ng-show="wrappers.length">another</span> historical view
+      </button>
+    </div>
   </div>
 </div>

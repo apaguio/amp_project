@@ -1,31 +1,28 @@
-<div class="diagnosiswrapper col-xs-12">
+<div class="historicalwrapper col-xs-12">
   <!-- Date Picking -->
   <div class="col-xs-12">
 
     <form class="form-inline" role="form" name="datepicking">
 
-      <div class="form-group">
-        <label class="sr-only" for="from"> From </label>
-        <p class="input-group">
+      <div class="form-group col-xs-12 col-sm-6 col-lg-4">
+        <label for="from"> From </label>
+        <p class="input-group col-xs-10 pull-right">
 
         <input type="text" class="form-control frompicker" datepicker-popup="{{format}}"
-        ng-model="dt" is-open="opened" min-date="minDate" max-date="'2015-06-22'"
-        datepicker-options="dateOptions" date-disabled="disabled(date, mode)"
-        ng-required="true" close-text="Close" />
+        ng-model="start" max-date="end" close-text="Close" />
 
         <span class="input-group-btn">
           <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
         </span>
         </p>
       </div>
-      <div class="form-group">
-        <label class="sr-only" for="to"> To </label>
-        <p class="input-group">
+
+      <div class="form-group col-xs-12 col-sm-6 col-lg-4">
+        <label for="to"> To </label>
+        <p class="input-group col-xs-10 pull-right">
 
         <input type="text" class="form-control topicker" datepicker-popup="{{format}}"
-        ng-model="dt" is-open="opened" min-date="minDate" max-date="'2015-06-22'"
-        datepicker-options="dateOptions" date-disabled="disabled(date, mode)"
-        ng-required="true" close-text="Close" />
+        ng-model="end" min-date="start" max-date="tomorrow" close-text="Close"/>
 
         <span class="input-group-btn">
           <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
