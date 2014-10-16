@@ -71,16 +71,16 @@ def get_winter_peak_periods(winter):
     winter.peak_periods = [partpeak_period, offpeak_period]
 
 def init_billing_periods():
-    b1 = db.BillingPeriod(name='JAN', start=utc.localize(datetime(2013, 12, 17)), end=utc.localize(datetime(2014, 1, 15)), number_of_days=30)
-    b2 = db.BillingPeriod(name='FEB', start=utc.localize(datetime(2014, 1, 16)), end=utc.localize(datetime(2014, 2, 17)), number_of_days=33)
-    b3 = db.BillingPeriod(name='MAR', start=utc.localize(datetime(2014, 2, 18)), end=utc.localize(datetime(2014, 3, 18)), number_of_days=29)
-    b4 = db.BillingPeriod(name='APR', start=utc.localize(datetime(2014, 3, 19)), end=utc.localize(datetime(2014, 4, 17)), number_of_days=30)
-    b5 = db.BillingPeriod(name='MAY', start=utc.localize(datetime(2014, 4, 18)), end=utc.localize(datetime(2014, 5, 18)), number_of_days=31)
-    b6 = db.BillingPeriod(name='JUN', start=utc.localize(datetime(2014, 5, 19)), end=utc.localize(datetime(2014, 6, 17)), number_of_days=30)
-    b7 = db.BillingPeriod(name='JUL', start=utc.localize(datetime(2014, 6, 18)), end=utc.localize(datetime(2014, 7, 17)), number_of_days=30)
-    b8 = db.BillingPeriod(name='AUG', start=utc.localize(datetime(2014, 7, 18)), end=utc.localize(datetime(2014, 8, 18)), number_of_days=32)
-    b9 = db.BillingPeriod(name='SEP', start=utc.localize(datetime(2014, 8, 19)), end=utc.localize(datetime(2014, 9, 17)), number_of_days=30)
-    b10 = db.BillingPeriod(name='OCT', start=utc.localize(datetime(2014, 9, 18)), end=utc.localize(datetime(2014, 10, 16)), number_of_days=29)
-    b11 = db.BillingPeriod(name='NOV', start=utc.localize(datetime(2014, 10, 17)), end=utc.localize(datetime(2014, 11, 17)), number_of_days=32)
-    b12 = db.BillingPeriod(name='DEC', start=utc.localize(datetime(2014, 11, 18)), end=utc.localize(datetime(2014, 12, 16)), number_of_days=29)
+    b1 = db.BillingPeriod(name='JAN', start=utc.localize(datetime(2013, 12, 17)), end=utc.localize(datetime(2014, 1, 16)), number_of_days=30)
+    b2 = db.BillingPeriod(name='FEB', start=utc.localize(datetime(2014, 1, 16)), end=utc.localize(datetime(2014, 2, 18)), number_of_days=33)
+    b3 = db.BillingPeriod(name='MAR', start=utc.localize(datetime(2014, 2, 18)), end=utc.localize(datetime(2014, 3, 19)), number_of_days=29)
+    b4 = db.BillingPeriod(name='APR', start=utc.localize(datetime(2014, 3, 19)), end=utc.localize(datetime(2014, 4, 18)), number_of_days=30)
+    b5 = db.BillingPeriod(name='MAY', start=utc.localize(datetime(2014, 4, 18)), end=utc.localize(datetime(2014, 5, 19)), number_of_days=31)
+    b6 = db.BillingPeriod(name='JUN', start=utc.localize(datetime(2014, 5, 19)), end=utc.localize(datetime(2014, 6, 18)), number_of_days=30)
+    b7 = db.BillingPeriod(name='JUL', start=utc.localize(datetime(2014, 6, 18)), end=utc.localize(datetime(2014, 7, 18)), number_of_days=30)
+    b8 = db.BillingPeriod(name='AUG', start=utc.localize(datetime(2014, 7, 18)), end=utc.localize(datetime(2014, 8, 19)), number_of_days=32)
+    b9 = db.BillingPeriod(name='SEP', start=utc.localize(datetime(2014, 8, 19)), end=utc.localize(datetime(2014, 9, 18)), number_of_days=30)
+    b10 = db.BillingPeriod(name='OCT', start=utc.localize(datetime(2014, 9, 18)), end=utc.localize(datetime(2014, 10, 17)), number_of_days=29)
+    b11 = db.BillingPeriod(name='NOV', start=utc.localize(datetime(2014, 10, 17)), end=utc.localize(datetime(2014, 11, 18)), number_of_days=32)
+    b12 = db.BillingPeriod(name='DEC', start=utc.localize(datetime(2014, 11, 18)), end=utc.localize(datetime(2014, 12, 17)), number_of_days=29)
     return [b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12]
