@@ -1,7 +1,7 @@
 from flask import Blueprint
 from servers import r
 from models import performance
-from flask_login import login_required, current_user
+from flask_login import login_required
 
 performance_app = Blueprint('performance', __name__)
 

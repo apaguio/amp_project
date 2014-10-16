@@ -2,6 +2,7 @@ import time
 from datetime import datetime
 from models import db, influxdb, utils
 from pytz import timezone
+from flask_login import current_user
 
 def get_ekm_data(meter_id, period, resolution=None):
     """
@@ -22,7 +23,7 @@ def get_current_demand(meter_id, solar_meter_id):
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
     # round to nearest 15-min interval, and calculate minutes difference
     number_of_miutes = utc_now.minute % 15
-    customer_tz = timezone(utils.get_customer_timezone(customer_name='test')) # TODO replace with current customer_id
+    customer_tz = timezone(current_user.timezone)
     #utc_now.strftime('%Y-%m-%d %H:%M:%S')
     # (number_of_miutes * 60), to get the seconds precision
     facility_query = 'select mean(P) as current_demand from "%s" where time > now() - %ss;' % (meter_id, ((number_of_miutes*60) + utc_now.second))
@@ -43,7 +44,7 @@ def get_current_demand(meter_id, solar_meter_id):
 
 def get_max_demand(meter_id):
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
-    tariff_data = get_tariff_details(customer_name='test') # TODO replace with current customer_id
+    tariff_data = get_tariff_details()
     customer_tz = timezone(tariff_data['timezone'])
     customer_tz_now = customer_tz.fromutc(utc_now)
     time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tariff_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
@@ -67,14 +68,14 @@ def _is_time_in_range(start, end, x):
     else:
         return start <= x or x <= end
 
-def get_tariff_details(customer_name='test'):
+def get_tariff_details():
     """
     Gets the tariff Details
     """
     #TODO use customer_id instead of name
     result = dict()
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
-    customer = db.Customer.objects(name=customer_name).first()
+    customer = current_user
     customer_tz = timezone(customer.timezone)
     customer_tz_now = customer_tz.fromutc(utc_now)
     if customer:

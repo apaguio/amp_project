@@ -4,12 +4,13 @@ from models import db
 from models.powerview import get_tariff_details
 from models import influxdb
 from pytz import timezone
+from flask_login import current_user
 
 def get_energy_data(meter_id):
     #used for both consumption and production
     result = dict()
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
-    tariff_data = get_tariff_details(customer_name='test')
+    tariff_data = get_tariff_details()
     customer_tz = timezone(tariff_data['timezone'])
     customer_tz_now = customer_tz.fromutc(utc_now)
     time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tariff_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
@@ -59,7 +60,7 @@ def get_energy_data(meter_id):
 def get_demand_data(meter_id):
     result = dict()
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
-    tariff_data = get_tariff_details(customer_name='test') # TODO replace with current customer_id
+    tariff_data = get_tariff_details()
     customer_tz = timezone(tariff_data['timezone'])
     customer_tz_now = customer_tz.fromutc(utc_now)
     time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tariff_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
@@ -102,7 +103,7 @@ def get_demand_data(meter_id):
     return result
 
 def _calculate_energy_charges_helper(energy_query_result):
-    customer = db.Customer.objects(name='test').first()
+    customer = current_user
     energy_charges = 0.0
     for res in energy_query_result:
         name_parts = res['name'].split('_')
@@ -120,7 +121,7 @@ def calculate_energy_charges(meter_id):
     #can be used for both consumption and production
     result = dict()
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
-    tariff_data = get_tariff_details(customer_name='test') # TODO replace with current customer_id
+    tariff_data = get_tariff_details()
     customer_tz = timezone(tariff_data['timezone'])
     customer_tz_now = customer_tz.fromutc(utc_now)
     time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tariff_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
@@ -148,7 +149,7 @@ def calculate_energy_charges(meter_id):
     return result
 
 def _calculate_demand_charges_helper(demand_query_result):
-    customer = db.Customer.objects(name='test').first()
+    customer = current_user
     total_demand_charges = 0.0
     demand_data = dict()
     demand_charges = dict()
@@ -178,7 +179,7 @@ def _calculate_demand_charges_helper(demand_query_result):
 def calculate_demand_charges(meter_id):
     result = dict()
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
-    tariff_data = get_tariff_details(customer_name='test') # TODO replace with current customer_id
+    tariff_data = get_tariff_details()
     customer_tz = timezone(tariff_data['timezone'])
     customer_tz_now = customer_tz.fromutc(utc_now)
     time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tariff_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
@@ -205,5 +206,5 @@ def calculate_demand_charges(meter_id):
         result['last_year'] = 0
     return result
 
-def get_tariff_data(customer_name='test'):
-    return get_tariff_details(customer_name=customer_name)
+def get_tariff_data():
+    return get_tariff_details()
