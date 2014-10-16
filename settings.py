@@ -1,4 +1,5 @@
 from celery.schedules import crontab
+from datetime import timedelta
 
 DEBUG = True
 SECRET_KEY = 'L\x87V\x84\xc6\x82r\x7f\x91WXj\xfe\x19\xa67\xc9ik>.\x9b\x1aE'
@@ -52,4 +53,56 @@ CELERYBEAT_SCHEDULE = {
         'schedule': crontab(minute=0),
         'args': ('10068',)
     },
+    # facility resolution.aggregator series
+    'ekm.facility.1m.aggregator': {
+        'task': 'tasks.ekm.meter.resolution.aggregator',
+        'schedule': timedelta(minutes=1),
+        'args': ('10054', '1m')
+    },
+    'ekm.facility.5m.aggregator': {
+        'task': 'tasks.ekm.meter.resolution.aggregator',
+        'schedule': timedelta(minutes=5),
+        'args': ('10054', '5m')
+    },
+    'ekm.facility.15m.aggregator': {
+        'task': 'tasks.ekm.meter.resolution.aggregator',
+        'schedule': timedelta(minutes=15),
+        'args': ('10054', '15m')
+    },
+    'ekm.facility.30m.aggregator': {
+        'task': 'tasks.ekm.meter.resolution.aggregator',
+        'schedule': timedelta(minutes=30),
+        'args': ('10054', '30m')
+    },
+    'ekm.facility.1h.aggregator': {
+        'task': 'tasks.ekm.meter.resolution.aggregator',
+        'schedule': timedelta(hours=1),
+        'args': ('10054', '1h')
+    },
+    # solar resolution.aggregator series
+    'ekm.solar.1m.aggregator': {
+        'task': 'tasks.ekm.meter.resolution.aggregator',
+        'schedule': timedelta(minutes=1),
+        'args': ('10068', '1m')
+    },
+    'ekm.solar.5m.aggregator': {
+        'task': 'tasks.ekm.meter.resolution.aggregator',
+        'schedule': timedelta(minutes=5),
+        'args': ('10068', '5m')
+    },
+    'ekm.solar.15m.aggregator': {
+        'task': 'tasks.ekm.meter.resolution.aggregator',
+        'schedule': timedelta(minutes=15),
+        'args': ('10068', '15m')
+    },
+    'ekm.solar.30m.aggregator': {
+        'task': 'tasks.ekm.meter.resolution.aggregator',
+        'schedule': timedelta(minutes=30),
+        'args': ('10068', '30m')
+    },
+    'ekm.solar.1h.aggregator': {
+        'task': 'tasks.ekm.meter.resolution.aggregator',
+        'schedule': timedelta(hours=1),
+        'args': ('10068', '1h')
+    }
 }

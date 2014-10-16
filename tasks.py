@@ -14,8 +14,6 @@ redis = Redis()
 
 @celery.task(name="tasks.ekm.collect")
 def ekm_collect(meter_id, nr_readings, key, endpoint='io.ekmpush.com', simulate_solar=False):
-    logger.info('executing task: "ekm_collect" with args: meter_id:%s, nr_readings:%s, key:%s' %
-                (meter_id, nr_readings, key))
     def _compute_pf(pf):
         if pf < 100:
             pf = pf / 100.0
@@ -47,6 +45,18 @@ def ekm_collect(meter_id, nr_readings, key, endpoint='io.ekmpush.com', simulate_
 
     # Write to influxdb
     influxdb.write_points([data])
+
+@celery.task(name='tasks.ekm.meter.resolution.aggregator')
+def ekm_meter_aggregate_with_resolution(meter_id, resolution):
+    utc_now = datetime.utcfromtimestamp(time.time())
+    query = 'select mean(P), mean(L1_PF), mean(L1_V) from "%s" where time > now() - %s;' % (meter_id, resolution)
+    query_result = influxdb.query(query)
+    if query_result:
+        result_point = query_result[0]['points'][0]
+        utc_timestamp = int((utc_now - datetime(1970, 1, 1)).total_seconds())
+        data = {'name': '%s_%s' % (meter_id, resolution), 'columns': ['time', 'P', 'L1_PF', 'L1_V'],
+                'points': [[utc_timestamp, result_point[1], result_point[2], result_point[3]]]}
+        influxdb.write_points([data])
 
 @celery.task(name='tasks.ekm.facility.15mins.aggregator')
 def ekm_facility_aggregate(meter_id, solar_meter_id):
