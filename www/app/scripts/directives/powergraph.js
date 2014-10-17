@@ -390,7 +390,9 @@
 
                 if (scope.svg) {
                     update(scope, scope.data, maxDemand);
-                    scope.mousemove(scope.lastPoint);
+                    if (scope.lastPoint) {
+                        scope.mousemove(scope.lastPoint);
+                    }
                 } else {
                     scope.time = scope.max.time;
                     plot(scope, element, scope.data, maxDemand);

@@ -9,9 +9,6 @@ historical_app = Blueprint('historical', __name__)
 @login_required
 def historical_points(start, end):
     params = request.args
-    print start
-    print end
-    print params
     solar_meter_id = 10068
     consumption_meter_id = 10054
     resolution = params.get('resolution', None)

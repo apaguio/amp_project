@@ -112,6 +112,13 @@ body {
   border-bottom: 1px solid black;
   padding: 20px;
 }
+.loadergif {
+  padding-top: 100px;
+}
+.loadergif img {
+  width: 100px;
+  height: 100px;
+}
 #alerts .inlinecontainer {
   margin: 5px auto;
 }

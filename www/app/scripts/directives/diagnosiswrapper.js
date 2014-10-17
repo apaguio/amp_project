@@ -43,7 +43,7 @@
         scope.nodata = false;
 
         function load() {
-
+            scope.loading = true;
             var params = {params : {
                 'resolution': scope.resolution
             }};
@@ -51,10 +51,9 @@
             var start = moment(scope.wrapper.start).utc().unix();
             var end = moment(scope.wrapper.end).utc().unix();
             var url = '/api/historical/points/' + start + '/' + end;
-            console.log(url);
+
             http.get(url, params).then(function (result) {
                 var data = result.data;
-                console.log(data);
                 if (!data || !data.length) {
                     debugger; 
                     scope.nodata = true;
@@ -68,6 +67,7 @@
                 scope.dataUpdated = ++scope.dataUpdated || 0;
                 scope.nodata = false;
                 scope.loading = false;
+                scope.bindDates();
             }, util.onError);
         }
 
@@ -76,8 +76,11 @@
             load();
         };
 
-        scope.setResolution('1h');
+        scope.setResolution('30m');
 
+        scope.bindDates = _.once(function bindDates() {
+            scope.$watchGroup(['wrapper.start', 'wrapper.end'], load);
+        });
     }
 
     angular.module('insightApp')
