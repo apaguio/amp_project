@@ -6,7 +6,7 @@ import xml.etree.ElementTree as ET
 from influxdb_factory import get_influxdb
 from datetime import datetime
 from redis import Redis
-from models import powerview
+from models.utils import get_tariff_details
 from flask_login import current_user
 
 influxdb = get_influxdb()
@@ -63,7 +63,7 @@ def ekm_meter_aggregate_with_resolution(meter_id, resolution):
 def ekm_facility_aggregate(meter_id, solar_meter_id):
     utc_now = datetime.utcfromtimestamp(time.time())
     # get user information (customer_id) from session
-    tariff_data = powerview.get_tariff_details()
+    tariff_data = get_tariff_details()
 
     facility_query = 'select mean(P) as demand from "%s" where time > now() - 15m;' % meter_id
     facility_result = influxdb.query(facility_query)
@@ -85,7 +85,7 @@ def ekm_facility_aggregate(meter_id, solar_meter_id):
 def energy_1h_aggregate(meter_id):
     utc_now = datetime.utcfromtimestamp(time.time())
     # get user information (customer_id) from session
-    tariff_data = powerview.get_tariff_details()
+    tariff_data = get_tariff_details()
 
     energy_query = 'select mean(P) from "%s" where time > now() - 1h;' % meter_id
     energy_query_result = influxdb.query(energy_query)

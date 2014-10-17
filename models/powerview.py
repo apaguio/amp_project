@@ -44,7 +44,7 @@ def get_current_demand(meter_id, solar_meter_id):
 
 def get_max_demand(meter_id):
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
-    tariff_data = get_tariff_details()
+    tariff_data = utils.get_tariff_details()
     customer_tz = timezone(tariff_data['timezone'])
     customer_tz_now = customer_tz.fromutc(utc_now)
     time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tariff_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
@@ -59,50 +59,4 @@ def get_max_demand(meter_id):
         if time_point_query_result:
             result['time'] = customer_tz.fromutc(datetime.utcfromtimestamp(time_point_query_result[0]['points'][0][0])).strftime('%Y-%m-%d %H:%M:%S')
         result['max_demand'] = max_demand
-    return result
-
-def _is_time_in_range(start, end, x):
-    """Return true if x is in the range [start, end]"""
-    if start <= end:
-        return start <= x <= end
-    else:
-        return start <= x or x <= end
-
-def get_tariff_details():
-    """
-    Gets the tariff Details
-    """
-    #TODO use customer_id instead of name
-    result = dict()
-    utc_now = datetime.utcfromtimestamp(time.time()) # current request time
-    customer = current_user
-    customer_tz = timezone(customer.timezone)
-    customer_tz_now = customer_tz.fromutc(utc_now)
-    if customer:
-        result['timezone'] = customer.timezone
-        result['rate_tariff'] = customer.read_cycle.rate_tariff
-        result['read_cycle'] = customer.read_cycle.name
-        for season in customer.seasons:
-            if customer_tz.localize(season.start) <= customer_tz_now and customer_tz.localize(season.end) >= customer_tz_now:
-                result['season'] = season.name
-                result['season_startdate'] = season.start.strftime('%Y-%m-%d %H:%M:%S')
-                result['season_enddate'] = season.end.strftime('%Y-%m-%d %H:%M:%S')
-                for peak_period in season.peak_periods:
-                    for schedule in peak_period.schedule:
-                        if customer_tz_now.weekday() == schedule.day_of_week and _is_time_in_range(schedule.start, schedule.end, customer_tz_now.time().isoformat().split('.')[0]):
-                            result['peak_period'] = peak_period.name
-                            result['peak_period_start'] = schedule.start
-                            result['peak_period_end'] = schedule.end
-                            result['energy_charge'] = peak_period.energy_charge
-                            result['demand_charge'] = peak_period.demand_charge
-                            result['peak_demand_charge'] = peak_period.peak_demand_charge
-                            break
-                break
-        for billing_period in customer.read_cycle.billing_periods:
-            if customer_tz.localize(billing_period.start) <= customer_tz_now and customer_tz.localize(billing_period.end) >= customer_tz_now:
-                result['billing_period'] = billing_period.name
-                result['billing_period_startdate'] = billing_period.start.strftime('%Y-%m-%d %H:%M:%S')
-                result['billing_period_enddate'] = billing_period.end.strftime('%Y-%m-%d %H:%M:%S')
-                result['number_of_days'] = billing_period.number_of_days
-                break
     return result

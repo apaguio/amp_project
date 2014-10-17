@@ -1,7 +1,7 @@
 import time
 from datetime import datetime
 from models import db
-from models.powerview import get_tariff_details
+from models.utils import get_tariff_details
 from models import influxdb
 from pytz import timezone
 from flask_login import current_user

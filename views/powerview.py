@@ -52,7 +52,7 @@ def get_max_demand():
 @powerview_app.route("/powerview", methods=["GET"])
 @login_required
 def powerview_data():
-    return r.success(powerview.get_tariff_details())
+    return r.success(utils.get_tariff_details())
 
 class PowerViewNS(BaseNamespace, RoomsMixin, BroadcastMixin):
 

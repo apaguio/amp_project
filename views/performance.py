@@ -1,6 +1,7 @@
 from flask import Blueprint
 from servers import r
 from models import performance
+from models.utils import get_tariff_data
 from flask_login import login_required
 
 performance_app = Blueprint('performance', __name__)
@@ -32,5 +33,5 @@ def performance_graph():
 @performance_app.route("/performance", methods=["GET"])
 @login_required
 def performance_data():
-    return r.success(performance.get_tariff_data())
+    return r.success(get_tariff_data())
 

@@ -1,7 +1,54 @@
+import time
 from models import db, influxdb
 from pytz import timezone
 from datetime import datetime
 from flask_login import current_user
+
+def get_tariff_details():
+    """
+    Gets the tariff Details
+    """
+    #TODO use customer_id instead of name
+    result = dict()
+    utc_now = datetime.utcfromtimestamp(time.time()) # current request time
+    customer = current_user
+    customer_tz = timezone(customer.timezone)
+    customer_tz_now = customer_tz.fromutc(utc_now)
+    if customer:
+        result['timezone'] = customer.timezone
+        result['rate_tariff'] = customer.read_cycle.rate_tariff
+        result['read_cycle'] = customer.read_cycle.name
+        for season in customer.seasons:
+            if customer_tz.localize(season.start) <= customer_tz_now and customer_tz.localize(season.end) >= customer_tz_now:
+                result['season'] = season.name
+                result['season_startdate'] = season.start.strftime('%Y-%m-%d %H:%M:%S')
+                result['season_enddate'] = season.end.strftime('%Y-%m-%d %H:%M:%S')
+                for peak_period in season.peak_periods:
+                    for schedule in peak_period.schedule:
+                        if customer_tz_now.weekday() == schedule.day_of_week and _is_time_in_range(schedule.start, schedule.end, customer_tz_now.time().isoformat().split('.')[0]):
+                            result['peak_period'] = peak_period.name
+                            result['peak_period_start'] = schedule.start
+                            result['peak_period_end'] = schedule.end
+                            result['energy_charge'] = peak_period.energy_charge
+                            result['demand_charge'] = peak_period.demand_charge
+                            result['peak_demand_charge'] = peak_period.peak_demand_charge
+                            break
+                break
+        for billing_period in customer.read_cycle.billing_periods:
+            if customer_tz.localize(billing_period.start) <= customer_tz_now and customer_tz.localize(billing_period.end) >= customer_tz_now:
+                result['billing_period'] = billing_period.name
+                result['billing_period_startdate'] = billing_period.start.strftime('%Y-%m-%d %H:%M:%S')
+                result['billing_period_enddate'] = billing_period.end.strftime('%Y-%m-%d %H:%M:%S')
+                result['number_of_days'] = billing_period.number_of_days
+                break
+    return result
+
+def _is_time_in_range(start, end, x):
+    """Return true if x is in the range [start, end]"""
+    if start <= end:
+        return start <= x <= end
+    else:
+        return start <= x or x <= end
 
 def collect_ekm_data(query):
     query_result = influxdb.query(query)
