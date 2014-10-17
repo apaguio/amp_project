@@ -45,10 +45,10 @@
     function fakeData(originalData) {
         _.each(originalData, function(data, k) {
             data.last_year = data.this_month + ( data.this_month / 20);
-            data.last_month = data.this_month + ( data.this_month / 10);
+            //data.last_month = data.this_month + ( data.this_month / 10);
             if (k === 'solar') {
                 data.last_year = 0;
-                data.last_month = data.this_month - ( data.this_month / 10);
+                //data.last_month = data.this_month - ( data.this_month / 10);
             }
             if (k === 'demand') {
             } else {
