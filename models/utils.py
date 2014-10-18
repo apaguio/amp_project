@@ -66,6 +66,13 @@ def collect_ekm_data(query):
                 result.append(point_dict)
     return result
 
+acceptableResolutions = ['1m', '5m', '15m', '30m', '1h']
+def acceptableResolution(resolution):
+    if resolution in acceptableResolutions:
+        return resolution
+    return False
+
+
 def generate_demo_data():
     import demo_data
     demo_data.generate()

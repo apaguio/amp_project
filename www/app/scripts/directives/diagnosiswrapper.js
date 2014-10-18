@@ -35,14 +35,9 @@
             scope.isOpen[picker] = true;
         };
 
-        scope.setGraph = function setGraph(graph) {
-            scope.graph = graph;
-            load();
-        };
-
         scope.nodata = false;
 
-        function load() {
+        var load = function load() {
             scope.loading = true;
             var params = {params : {
                 'resolution': scope.resolution
@@ -69,7 +64,7 @@
                 scope.loading = false;
                 scope.bindDates();
             }, util.onError);
-        }
+        };
 
         scope.setResolution = function(resolution) {
             scope.resolution = resolution;
@@ -79,7 +74,16 @@
         scope.setResolution('30m');
 
         scope.bindDates = _.once(function bindDates() {
-            scope.$watchGroup(['wrapper.start', 'wrapper.end'], load);
+            scope.$watch('wrapper.start', function(newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    load();
+                }
+            });
+            scope.$watch('wrapper.end', function(newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    load();
+                }
+            });
         });
     }
 
