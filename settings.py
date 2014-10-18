@@ -79,6 +79,11 @@ CELERYBEAT_SCHEDULE = {
         'schedule': timedelta(hours=1),
         'args': ('10054', '1h')
     },
+    'ekm.facility.24h.aggregator': {
+        'task': 'tasks.ekm.meter.resolution.aggregator',
+        'schedule': timedelta(hours=24),
+        'args': ('10054', '24h')
+    },
     # solar resolution.aggregator series
     'ekm.solar.1m.aggregator': {
         'task': 'tasks.ekm.meter.resolution.aggregator',
@@ -104,5 +109,10 @@ CELERYBEAT_SCHEDULE = {
         'task': 'tasks.ekm.meter.resolution.aggregator',
         'schedule': timedelta(hours=1),
         'args': ('10068', '1h')
-    }
+    },
+    'ekm.solar.24h.aggregator': {
+        'task': 'tasks.ekm.meter.resolution.aggregator',
+        'schedule': timedelta(hours=24),
+        'args': ('10068', '24h')
+    },
 }
