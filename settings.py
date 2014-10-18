@@ -115,4 +115,20 @@ CELERYBEAT_SCHEDULE = {
         'schedule': timedelta(hours=24),
         'args': ('10068', '24h')
     },
+    # alerts
+    'one.minute.netload.avg.check': {
+        'task': 'tasks.one.minute.netload.avg.check',
+        'schedule': timedelta(minutes=1),
+        'args': ('10054', '10068')
+    },
+    'power.factor.check': {
+        'task': 'tasks.power.factor.check',
+        'schedule': timedelta(seconds=30),
+        'args': ('10054',)
+    },
+    'voltage.check': {
+        'task': 'tasks.voltage.check',
+        'schedule': timedelta(seconds=30),
+        'args': ('10054',)
+    },
 }

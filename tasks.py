@@ -62,7 +62,6 @@ def ekm_meter_aggregate_with_resolution(meter_id, resolution):
 @celery.task(name='tasks.ekm.facility.15mins.aggregator')
 def ekm_facility_aggregate(meter_id, solar_meter_id):
     utc_now = datetime.utcfromtimestamp(time.time())
-    # get user information (customer_id) from session
     tariff_data = get_tariff_details()
 
     facility_query = 'select mean(P) as demand from "%s" where time > now() - 15m;' % meter_id
@@ -95,3 +94,43 @@ def energy_1h_aggregate(meter_id):
     data = {'name': '%s_energy_1h_%s_%s' % (meter_id, tariff_data['season'], tariff_data['peak_period']), 'columns': ['time', 'energy_kwh'],
             'points': [[utc_timestamp, energy]]}
     influxdb.write_points([data])
+
+@celery.task(name='tasks.one.minute.netload.avg.check')
+def netload_avg_check(meter_id, solar_meter_id):
+    if current_user.one_minute_netload_avg_threshold and (current_user.alerts_email or current_user.alerts_phone):
+        facility_query = 'select mean(P) from "%s" where time > now() - 1m;' % meter_id
+        facility_result = influxdb.query(facility_query)
+        demand = round(facility_result[0]['points'][0][1], 2)
+
+        solar_power = 0
+        solar_query = 'select mean(P) from "%s" where time > now() - 1m;' % solar_meter_id
+        solar_result = influxdb.query(solar_query)
+        if solar_result:
+            solar_power = round(solar_result[0]['points'][0][1], 2)
+        net_load = demand - solar_power
+
+        if net_load > current_user.one_minute_netload_avg_threshold:
+            # send email and/or SMS
+            pass
+
+@celery.task(name='tasks.power.factor.check')
+def power_factor_check(meter_id):
+    if current_user.power_factor_threshold and (current_user.alerts_email or current_user.alerts_phone):
+        power_factor_query = 'select mean(L1_PF) from "%s" where time > now() - 30s;' % meter_id
+        power_factor_query_result = influxdb.query(power_factor_query)
+        power_factor = round(power_factor_query_result[0]['points'][0][1], 2)
+
+        if power_factor < current_user.power_factor_threshold:
+            # send email and/or SMS
+            pass
+
+@celery.task(name='tasks.voltage.check')
+def voltage_check(meter_id):
+    if current_user.voltage_threshold and (current_user.alerts_email or current_user.alerts_phone):
+        voltage_query = 'select mean(L1_V) from "%s" where time > now() - 30s;' % meter_id
+        voltage_query_result = influxdb.query(voltage_query)
+        voltage = round(voltage_query_result[0]['points'][0][1], 2)
+
+        if (voltage < 120 - current_user.voltage_threshold) or (voltage > 120 + current_user.voltage_threshold):
+            # send email and/or SMS
+            pass

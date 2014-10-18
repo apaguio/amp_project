@@ -44,6 +44,11 @@ class Customer(mongodb.Document):
     facility = mongodb.ListField(mongodb.EmbeddedDocumentField(EkmMeter))
     solar = mongodb.ListField(mongodb.EmbeddedDocumentField(EkmMeter))
     holidays = mongodb.ListField(mongodb.DateTimeField())
+    one_minute_netload_avg_threshold = mongodb.FloatField()
+    power_factor_threshold = mongodb.FloatField()
+    voltage_threshold = mongodb.FloatField()
+    alerts_email = mongodb.EmailField()
+    alerts_phone = mongodb.StringField()
 
     # Flask-Login integration
     def is_authenticated(self):
