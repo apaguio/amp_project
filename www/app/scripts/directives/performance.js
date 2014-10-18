@@ -92,7 +92,7 @@
 
         scope.yBegining = el[0].getBoundingClientRect().top;
         scope.margin = {top: 100, right: 0, bottom: 20, left: 40, between: 30};
-        scope.width = el.width() - scope.margin.right - scope.margin.left;
+        scope.width = (el.width() || el.parent().width()) - scope.margin.right - scope.margin.left;
         scope.height = el.height() - scope.margin.top - scope.margin.bottom;
         scope.bigheight = scope.height * 2 / 3;
         scope.smallheight = (scope.height / 3) - scope.margin.between;
