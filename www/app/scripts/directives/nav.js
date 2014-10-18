@@ -5,8 +5,12 @@
 
         scope.visible = Auth.isAuthenticated();
 
-        scope.$on(AuthEvents.notAuthenticated, function() {
+        scope.$on(AuthEvents.logger, function() {
             scope.visible = false;
+        });
+
+        scope.$on(AuthEvents.loginSuccess, function() {
+            scope.visible = true;
         });
 
         scope.logout = function() {
