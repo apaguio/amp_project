@@ -5,7 +5,7 @@
 
         scope.visible = Auth.isAuthenticated();
 
-        scope.$on(AuthEvents.logger, function() {
+        scope.$on(AuthEvents.notAuthenticated, function() {
             scope.visible = false;
         });
 
