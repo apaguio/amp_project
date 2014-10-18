@@ -40,7 +40,7 @@
         var load = function load() {
             scope.loading = true;
             var params = {params : {
-                'resolution': scope.resolution
+                'resolution': scope.wrapper.resolution
             }};
 
             var start = moment(scope.wrapper.start).utc().unix();
@@ -67,7 +67,7 @@
         };
 
         scope.setResolution = function(resolution) {
-            scope.resolution = resolution;
+            scope.wrapper.resolution = resolution;
             load();
         };
 

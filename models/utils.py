@@ -63,7 +63,7 @@ def collect_ekm_data(query):
                     point_dict[query_result['columns'][i]] = customer_tz.fromutc(datetime.utcfromtimestamp(value)).strftime('%Y-%m-%d %H:%M:%S')
                 else:
                     point_dict[query_result['columns'][i]] = round(value, 2)
-                result.append(point_dict)
+            result.append(point_dict)
     return result
 
 acceptableResolutions = ['1m', '5m', '15m', '30m', '1h']

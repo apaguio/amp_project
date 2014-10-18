@@ -17,7 +17,7 @@ def get_ekm_data(meter_id, start, end, resolution=None):
     else:
         if acceptableResolution:
             query = '''select mean(P) as P, mean(L1_PF) as L1_PF, mean(L1_V) as L1_V
-                    from "%s_%s" where time > %ss and time < %ss;''' % (meter_id, acceptableResolution, start, end)
+                    from "%s_%s" where time > %ss and time < %ss group by time(%s);''' % (meter_id, acceptableResolution, start, end, acceptableResolution)
         else:
             print "ISSUE Unacceptable resolution : %s " % resolution
             query = '''select mean(P) as P, mean(L1_PF) as L1_PF, mean(L1_V) as L1_V
