@@ -7,6 +7,7 @@
     var duration = 4900;
     var marginBetween = 30;
     var bisectDate = d3.bisector(function(d) { return d.time; }).left;
+
     function plot(scope, el, data, maxDemand) {
 
         if (!data || !data.length) {
@@ -25,6 +26,23 @@
 
         scope.x = d3.time.scale().range([0, scope.width - scope.margin.left - scope.margin.right]);
         scope.x.domain([scope.start, scope.end]);
+
+
+        function brushed() {
+          x.domain(brush.empty() ? x2.domain() : brush.extent());
+          focus.select(".area").attr("d", area);
+          focus.select(".x.axis").call(xAxis);
+        }
+
+        function type(d) {
+          d.date = parseDate(d.date);
+          d.price = +d.price;
+          return d;
+        }
+
+        var brush = d3.svg.brush()
+            .x(scope.x)
+            .on("brush", brushed);
 
         scope.y = d3.scale.linear().range([scope.bigheight, 0]);
         var minY = _.min([scope.min.P - scope.min.S, 0]);

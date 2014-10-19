@@ -135,8 +135,9 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     padding-left: 35px;
 }
 .chartcontainer {
-    border-bottom: 1px solid black;
     padding: 20px;
+    padding-bottom: 0;
+    margin-bottom: 0;
 }
 .loadergif {
     padding-top: 100px;
@@ -278,11 +279,10 @@ div.tooltip {
 }
 }
 
-#powerview {
+.timeselectors {
     a.selected {
-        color: green;
-}
-
+        color: green !important;
+    }
 }
 
 #performance {
@@ -431,4 +431,10 @@ svg {
 }
 }
 
+
+.brush .extent {
+    stroke: #fff;
+    fill-opacity: .125;
+    shape-rendering: crispEdges;
+}
 

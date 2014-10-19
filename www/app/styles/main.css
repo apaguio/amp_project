@@ -124,8 +124,9 @@ h6,
   padding-left: 35px;
 }
 .chartcontainer {
-  border-bottom: 1px solid black;
   padding: 20px;
+  padding-bottom: 0;
+  margin-bottom: 0;
 }
 .loadergif {
   padding-top: 100px;
@@ -236,8 +237,8 @@ h6,
   float: right;
   font-weight: bolder;
 }
-#powerview a.selected {
-  color: green;
+.timeselectors a.selected {
+  color: green !important;
 }
 #performance a.selected {
   color: green;
@@ -361,4 +362,9 @@ h6,
 }
 #historical .historicalwrapper {
   margin-top: 10px;
+}
+.brush .extent {
+  stroke: #fff;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
 }

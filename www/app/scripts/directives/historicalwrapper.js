@@ -2,10 +2,10 @@
 
 /**
  * @ngdoc directive
- * @name insightApp.directive:diagnosiswrapper
+ * @name insightApp.directive:historicalwrapper
  * @description
- * # diagnosiswrapper
- * Wraps diagnosis instance. Contains the graph and the date picking and 
+ * # historicalwrapper
+ * Wraps historical instance. Contains the graph and the date picking and 
  * makes calls to backend
  */
 (function() {
@@ -88,9 +88,9 @@
     }
 
     angular.module('insightApp')
-    .directive('diagnosiswrapper', function () {
+    .directive('historicalwrapper', function () {
         return {
-            templateUrl: 'views/directives/diagnosiswrapper.html',
+            templateUrl: 'views/directives/historicalwrapper.html',
             restrict: 'E',
             replace: true,
             scope: {
