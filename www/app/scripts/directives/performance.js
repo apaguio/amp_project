@@ -9,9 +9,16 @@
     var duration = 1000;
 
     function classOfChange(group, value) {
-        console.log("Value : " + value);
         if (group === "solar") {
+            if (_.isUndefined(value)) {
+                debugger; 
+                return "green";
+            }
             return value < 0 ? "red" : "green";
+        }
+        if (_.isUndefined(value)) {
+            debugger; 
+            return "red";
         }
         return value > 0 ? "red" : "green";
     }
@@ -36,7 +43,7 @@
         _.each(originalData, function(v, k) {
             v.this_month_money = v.charges.this_month;
             v.last_month_money = v.charges.last_month;
-            v.last_year_money = v.charges.last_year;
+            v.last_year_money = v.charges.last_year || (v.charges.this_month_money + ( v.charges.this_month_money * 20));
             delete v.charges;
         });
         return originalData;
@@ -442,10 +449,14 @@
 
             var yearXshift = scope.x.rangeBand()/2;
 
+            var changeVal = 0;
+            if (chartData.last_year) {
+                changeVal = chartData.this_month - chartData.last_year;
+            }
 
             var percentVal;
-            if (chartData.last_year) {
-                percentVal = 100 * (chartData.this_month - chartData.last_year) / chartData.last_year;
+            if (!_.isUndefined(chartData.last_year)) {
+                percentVal = 100 * changeVal / chartData.last_year;
             }
 
             var percentText = 'N / A';
@@ -457,11 +468,6 @@
                 .attr("class", "percent " + classOfChange(barsGroupName, percentVal))
                 .text(percentText)
                 .attr("transform", "translate(" + yearXshift +  ", " + 15 + ")");
-
-            var changeVal;
-            if (chartData.last_year) {
-                changeVal = chartData.this_month_money - chartData.last_year_money;
-            }
 
             var changeText = 'N / A';
             if (!_.isUndefined(changeVal)) {
@@ -497,9 +503,14 @@
 
             var monthXshift = miniX.rangeBand() + ((scope.x.rangeBand() - miniX.rangeBand())/2);
 
-            var percentVal;
+            changeVal = 0;
             if (chartData.last_month) {
-                percentVal = 100 * (chartData.this_month - chartData.last_month) / chartData.last_month;
+                changeVal = chartData.this_month - chartData.last_month;
+            }
+
+            var percentVal;
+            if (!_.isUndefined(chartData.last_month)) {
+                percentVal = 100 * changeVal / chartData.last_month;
             }
 
             var percentText = 'N / A';
@@ -511,11 +522,6 @@
                 .attr("class", "percent " + classOfChange(barsGroupName, percentVal))
                 .text(percentText)
                 .attr("transform", "translate(" + monthXshift +  ", " + (line1y + 15) + ")");
-
-            var changeVal;
-            if (chartData.last_month) {
-                changeVal = chartData.this_month_money - chartData.last_month_money;
-            }
 
             var changeText = 'N / A';
             if (!_.isUndefined(changeVal)) {

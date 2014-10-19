@@ -2,7 +2,7 @@
 
 (function() {
 
-    function controller(scope, Session, location, http, util) {
+    function controller(scope, Session, location, http, util, historical) {
         http.defaults.headers.post['CSRF-TOKEN'] = Session.csrfToken;
         scope.wrappers = [];
 
@@ -28,23 +28,18 @@
             scope.wrappers = result;
         }
 
-        function onError(err) {
-            console.log(err);
-            console.log("Error, Connection issue.");
-        }
-
         function load() {
-            http.get('/api/historical', {}).success(onSuccess).error(onError);
+            historical.load().success(onSuccess).error(util.onError);
         }
 
         function update(wrappers) {
-            http.post('/api/historical', wrappers).success(onSuccess).error(onError);
+            historical.update(wrappers).success(onSuccess).error(util.onError);
         }
 
         load();
     }
 
     angular.module('insightApp')
-    .controller('HistoricalCtrl', ['$scope', 'Session', '$location', '$http', 'util', controller]);
+    .controller('HistoricalCtrl', ['$scope', 'Session', '$location', '$http', 'util', 'historical', controller]);
 
 }).call(null);

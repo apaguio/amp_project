@@ -1,5 +1,4 @@
 from models import mongodb
-import uuid
 
 class EkmMeter(mongodb.EmbeddedDocument):
     id = mongodb.StringField()
@@ -34,6 +33,13 @@ class ReadCycle(mongodb.EmbeddedDocument):
     rate_tariff = mongodb.StringField()
     billing_periods = mongodb.ListField(mongodb.EmbeddedDocumentField(BillingPeriod))
 
+class Historical(mongodb.EmbeddedDocument):
+    name = mongodb.StringField()
+    start = mongodb.DateTimeField()
+    end = mongodb.DateTimeField()
+    resolution = mongodb.StringField()
+    graphs = mongodb.ListField(mongodb.StringField())
+
 class Customer(mongodb.Document):
     name = mongodb.StringField()
     email = mongodb.EmailField()
@@ -44,6 +50,7 @@ class Customer(mongodb.Document):
     facility = mongodb.ListField(mongodb.EmbeddedDocumentField(EkmMeter))
     solar = mongodb.ListField(mongodb.EmbeddedDocumentField(EkmMeter))
     holidays = mongodb.ListField(mongodb.DateTimeField())
+    historicals = mongodb.ListField(mongodb.EmbeddedDocumentField(Historical))
 
     # Flask-Login integration
     def is_authenticated(self):
@@ -56,6 +63,5 @@ class Customer(mongodb.Document):
         return False
 
     def get_id(self):
-        print "Getting customer ID : %s" % self.pk
         return str(self.pk)
 
