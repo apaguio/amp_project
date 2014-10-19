@@ -453,6 +453,10 @@
             if (chartData.last_year) {
                 changeVal = chartData.this_month - chartData.last_year;
             }
+            var changeValCharges = 0;
+            if (chartData.last_year_money) {
+                changeValCharges = chartData.this_month_money - chartData.last_year_money;
+            }
 
             var percentVal;
             if (!_.isUndefined(chartData.last_year)) {
@@ -470,8 +474,8 @@
                 .attr("transform", "translate(" + yearXshift +  ", " + 15 + ")");
 
             var changeText = 'N / A';
-            if (!_.isUndefined(changeVal)) {
-                changeText = '$ ' + Math.round(Math.abs(changeVal)) + " / day";
+            if (!_.isUndefined(changeValCharges)) {
+                changeText = '$ ' + Math.round(Math.abs(changeValCharges)) + " / day";
             }
 
             yearAnalysis.append("text")
@@ -507,6 +511,10 @@
             if (chartData.last_month) {
                 changeVal = chartData.this_month - chartData.last_month;
             }
+            changeValCharges = 0;
+            if (chartData.last_month_money) {
+                changeValCharges = chartData.this_month_money - chartData.last_month_money;
+            }
 
             var percentVal;
             if (!_.isUndefined(chartData.last_month)) {
@@ -524,8 +532,8 @@
                 .attr("transform", "translate(" + monthXshift +  ", " + (line1y + 15) + ")");
 
             var changeText = 'N / A';
-            if (!_.isUndefined(changeVal)) {
-                changeText = '$ ' + Math.round(Math.abs(changeVal)) + " / day";
+            if (!_.isUndefined(changeValCharges)) {
+                changeText = '$ ' + Math.round(Math.abs(changeValCharges)) + " / day";
             }
 
             monthAnalysis.append("text")

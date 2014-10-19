@@ -377,6 +377,7 @@
     function controller(scope, element) {
         scope.$watch('dataupdated', function() {
             if (scope.data) {
+
                 if (!scope.graphs) {
                     scope.graphs = {
                         'voltage': true,

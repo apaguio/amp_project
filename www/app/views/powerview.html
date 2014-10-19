@@ -57,7 +57,11 @@
       <h4 class="time">{{data.currentDemandStartDate | date:'h:mm'}} - {{data.currentDemandEndDate | date:'h:mm a'}}</h4>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 largewidget">
-      <h4 class="title">Max Demand</h4>
+      <h4 class="title" style="display: inline-block">{{maxDemandTitle}}
+      </h4>
+      <h6 style="display: inline-block; margin-top: 0; vertical-align: top;">
+        <a popover-placement="top" popover="{{maxDemandDescription}}" >
+          <i class="glyphicon glyphicon-info-sign"></i></a></h6>
       <h3 class="maincontent">{{data.max_demand | number:0}} <small>kW</small></h3>
       <h4 class="time">{{data.maxDemandStartDate | date:'fullDate'}}<br/>
         {{data.maxDemandStartDate | date:'h:mm'}} - {{data.maxDemandEndDate | date:'h:mm a'}}</h4>

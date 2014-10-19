@@ -9,13 +9,12 @@
  */
 (function() {
 
-    function controller(scope, Session, http, timeout, $q, location, util) {
+    function controller(scope, Session, http, timeout, $q, location, util, dateFilter) {
         scope.nodata = false;
         http.defaults.headers.post['CSRF-TOKEN'] = Session.csrfToken;
         scope.lastTime = null;
 
         function onLoad(data) {
-
             scope.data = data;
             scope.data.billingPeriodStartDate  = util.toDate(data.billing_period_startdate);
             scope.data.billingPeriodEndDate = util.toDate(data.billing_period_enddate);
@@ -53,10 +52,18 @@
                 if (!data.max_demand) {
                     return ;
                 }
+
                 scope.data.max_demand = data.max_demand;
                 var maxDemandRange = util.toDateRange(data.time);
                 scope.data.maxDemandStartDate = maxDemandRange[0];
                 scope.data.maxDemandEndDate = maxDemandRange[1];
+
+                var dateText = dateFilter(scope.data.maxDemandStartDate, 'fullDate') + " " + dateFilter(scope.data.maxDemandStartDate, 'h:mm') + " - " + dateFilter(scope.data.maxDemandEndDate, 'h:mm a');
+                var offPeakDemand = 'This is your maximum kW demand during the current billing period, regardless of time. Your Max Peak Demand this billing period is [' + scope.data.max_demand + ' kW], and occurred on [' + dateText + '].';
+                var maxPeakDemand = 'This is your maximum kW demand during On Peak times in the current billing period. Your Max Demand this billing period, either on or off peak, is [' + scope.data.max_demand + ' kW], and occurred on [' + dateText + '].';
+                scope.maxDemandTitle = scope.data.peak_period === 'onpeak' ? 'Max Peak Demand' : 'Max Demand';
+                scope.maxDemandDescription = scope.data.peak_period === 'onpeak' ? maxPeakDemand : offPeakDemand;
+
             }, util.onError);
 
             http.get('/api/powerview/current_demand').then(function (result) {
@@ -131,6 +138,6 @@
     }
 
     angular.module('insightApp')
-    .controller('PowerviewCtrl', ['$scope', 'Session', '$http', '$timeout', '$q', '$location', 'util', controller]);
+    .controller('PowerviewCtrl', ['$scope', 'Session', '$http', '$timeout', '$q', '$location', 'util', 'dateFilter', controller]);
 
 }).call(null);
