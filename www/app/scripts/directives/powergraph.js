@@ -21,8 +21,14 @@
         scope.margin = {top: 6, right: 0, bottom: 20, left: 40};
         scope.width = el.width() - scope.margin.right - scope.margin.left;
         scope.height = el.height() - scope.margin.top - scope.margin.bottom;
-        scope.bigheight = scope.height / 2;
-        scope.smallheight = (scope.height / 4) - (2 * marginBetween);
+        scope.bigheight = !!scope.graphs.consumption ? scope.height / 2 : 0;
+        scope.smallheight = ((scope.height - scope.bigheight) / 2) - (2 * marginBetween);
+        if (!scope.graphs.voltage || !scope.graphs.powerfactor) {
+            scope.smallheight += scope.smallheight;
+        }
+        if (!scope.graphs.voltage && !scope.graphs.powerfactor) {
+            scope.bigheight += scope.bigheight;
+        }
 
         scope.x = d3.time.scale().range([0, scope.width - scope.margin.left - scope.margin.right]);
         scope.x.domain([scope.start, scope.end]);
