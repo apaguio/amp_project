@@ -12,15 +12,15 @@
     function historical(http) {
 
         this.load = function load() {
-            http.get('/api/historical', {});
+            return http.get('/api/historical', {});
         };
 
         this.update = function update(wrappers) {
-            http.post('/api/historical', wrappers);
+            return http.post('/api/historical', wrappers);
         };
 
         this.updateSingle = function update(wrapper) {
-            http.post('/api/historical/' + wrapper.id, wrapper);
+            return http.post('/api/historical/' + wrapper.id, wrapper);
         };
     }
 
