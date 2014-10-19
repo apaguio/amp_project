@@ -111,13 +111,13 @@ h6,
   text-align: center;
 }
 .largewidget .title {
-  font-size: 18px;
-}
-.largewidget .maincontent {
   font-size: 24px;
 }
-.largewidget .time {
+.largewidget .maincontent {
   font-size: 18px;
+}
+.largewidget .time {
+  font-size: 14px;
 }
 .leftwidgets {
   padding: 20px;

@@ -54,8 +54,7 @@
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 largewidget">
       <h4 class="title">Current Demand</h4>
       <h3 class="maincontent">{{data.current_demand | number:0}} <small>kW</small></h3>
-      <h4 class="time">{{data.currentDemandStartDate | date:'fullDate'}}<br/>
-        {{data.currentDemandStartDate | date:'h:mm'}} - {{data.currentDemandEndDate | date:'h:mm a'}}</h4>
+      <h4 class="time">{{data.currentDemandStartDate | date:'h:mm'}} - {{data.currentDemandEndDate | date:'h:mm a'}}</h4>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 largewidget">
       <h4 class="title">Max Demand</h4>
