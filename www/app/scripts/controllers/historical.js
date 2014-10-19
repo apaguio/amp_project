@@ -14,7 +14,12 @@
         scope.addWrapper = function addWrapper() {
             scope.wrappers.push({
                 start: moment().subtract(1, 'days'),
-                end: moment()
+                end: moment(),
+                graphs: {
+                    powerfactor: true,
+                    voltage: true,
+                    consumption: true
+                }
             });
             update(scope.wrappers);
         };

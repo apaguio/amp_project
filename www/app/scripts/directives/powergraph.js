@@ -27,17 +27,16 @@
         scope.x = d3.time.scale().range([0, scope.width - scope.margin.left - scope.margin.right]);
         scope.x.domain([scope.start, scope.end]);
 
-
         function brushed() {
-          x.domain(brush.empty() ? x2.domain() : brush.extent());
-          focus.select(".area").attr("d", area);
-          focus.select(".x.axis").call(xAxis);
+            x.domain(brush.empty() ? x2.domain() : brush.extent());
+            focus.select(".area").attr("d", area);
+            focus.select(".x.axis").call(xAxis);
         }
 
         function type(d) {
-          d.date = parseDate(d.date);
-          d.price = +d.price;
-          return d;
+            d.date = parseDate(d.date);
+            d.price = +d.price;
+            return d;
         }
 
         var brush = d3.svg.brush()
@@ -49,7 +48,6 @@
         var maxY = _.max([scope.max.P]);
         scope.y.domain([minY, Math.max(maxDemand, maxY) + 20]);
         scope.y.axis = d3.svg.axis().scale(scope.y).ticks(5).orient("left");
-
 
         // Power Factor Y
         var minPF = scope.min.L1_PF;
@@ -102,13 +100,21 @@
             .attr("class", "big")
             .attr("transform", "translate(" + scope.margin.left + "," + scope.margin.top + ")");
 
+        scope.big.style("display", !!scope.graphs.consumption? "" : "none");
+
+        var powerfactorYshift = scope.margin.top + (!!scope.graphs.consumption? scope.bigheight + marginBetween : 0);
         scope.powerfactorSVG = scope.svg.append("g")
             .attr("class", "powerfactorSVG")
-            .attr("transform", "translate(" + scope.margin.left + "," + (scope.margin.top + scope.bigheight + marginBetween) + ")");
+            .attr("transform", "translate(" + scope.margin.left + "," + powerfactorYshift + ")");
 
+        scope.powerfactorSVG.style("display", !!scope.graphs.powerfactor? "" : "none");
+
+        var voltageYshift = powerfactorYshift + (!!scope.graphs.powerfactor? scope.smallheight + marginBetween : 0);
         scope.voltageSVG = scope.svg.append("g")
             .attr("class", "voltageSVG")
-            .attr("transform", "translate(" + scope.margin.left + "," + (scope.margin.top + scope.bigheight + scope.smallheight + (2 * marginBetween) ) + ")");
+            .attr("transform", "translate(" + scope.margin.left + "," + voltageYshift + ")");
+
+        scope.voltageSVG.style("display", !!scope.graphs.voltage? "" : "none");
 
         scope.svg.append("defs").append("clipPath")
             .attr("id", "clip")
@@ -365,6 +371,13 @@
     function controller(scope, element) {
         scope.$watch('dataupdated', function() {
             if (scope.data) {
+                if (!scope.graphs) {
+                    scope.graphs = {
+                        'voltage': true,
+                        'consumption': true,
+                        'powerfactor': true
+                    };
+                }
                 scope.max = {
                     S: Number.MIN_VALUE,
                     P: Number.MIN_VALUE,
@@ -430,6 +443,7 @@
                 data: '=',
                 dataupdated: '@',
                 maxDemand: '@',
+                graphs: '='
             },
             controller: ['$scope', '$element', controller]
         };

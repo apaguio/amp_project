@@ -66,6 +66,11 @@
             }, util.onError);
         };
 
+        scope.toggleGraph = function(graph) {
+            scope.wrapper.graphs[graph] = !scope.wrapper.graphs[graph];
+            load();
+        };
+
         scope.setResolution = function(resolution) {
             scope.wrapper.resolution = resolution;
             load();
