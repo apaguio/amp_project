@@ -1,4 +1,18 @@
 <div class="header" ng-if="visible">
+
+  <script type="text/ng-template" id="logoutModal.html">
+    <div class="modal-header">
+      <h3 class="modal-title">Logout Confirmation</h3>
+    </div>
+    <div class="modal-body">
+      Are you sure you want to logout ?
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" ng-click="ok()">Logout</button>
+      <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+    </div>
+  </script>
+
   <ul class="nav nav-pills pull-right">
     <li ng-class="{active: link=='powerview'}"><a ng-href="#/powerview">PowerView</a></li>
     <li ng-class="{active: link=='performance'}"><a ng-href="#/performance">Performance</a></li>
