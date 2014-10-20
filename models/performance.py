@@ -102,7 +102,7 @@ def get_demand_data(meter_id):
         result['last_year'] = 0
     return result
 
-def _calculate_energy_charges_helper(energy_query_result):
+def _calculate_energy_charges_helper(energy_query_result, number_of_days=30):
     customer = current_user
     energy_charges = 0.0
     for res in energy_query_result:
@@ -113,7 +113,10 @@ def _calculate_energy_charges_helper(energy_query_result):
             if sn['name'] == season:
                 for pp in sn['peak_periods']:
                     if pp['name'] == peakperiod:
-                        energy_charges += pp['energy_charge'] * res['points'][0][1]
+                        if number_of_days > 1:
+                            energy_charges += (pp['energy_charge'] * res['points'][0][1]) / number_of_days
+                        else:
+                            energy_charges += pp['energy_charge'] * res['points'][0][1]
                         break
     return energy_charges
 
@@ -127,9 +130,9 @@ def calculate_energy_charges(meter_id):
     time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tariff_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
 
     #current billing period query
-    energy_query = 'select sum(energy_kwh) from /^%s_energy_1h_\.*/ where time > now() - %ss;' % (meter_id, time_diff.total_seconds())
+    energy_query = 'select sum(energy_kwh) from /^%s_energy_1h_\.*/ where time > now() - %sd;' % (meter_id, time_diff.days)
     energy_query_result = influxdb.query(energy_query)
-    result['this_month'] = _calculate_energy_charges_helper(energy_query_result)
+    result['this_month'] = _calculate_energy_charges_helper(energy_query_result, time_diff.days)
 
     #last month query
     last_month_energy_query = 'select sum(energy_kwh) from /^%s_energy_1h_\.*/ where time < now() - %sd and time > now() - %sd;' % (meter_id, time_diff.days, time_diff.days + 30)
