@@ -20,6 +20,9 @@ def performance_graph():
 
     demand = performance.get_demand_data(consumption_meter_id)
     demand['charges'] = performance.calculate_demand_charges(consumption_meter_id)
+    demand['charges']['this_month'] = demand['charges']['this_month']/ 30
+    demand['charges']['last_month'] = demand['charges']['last_month'] / 30
+    demand['charges']['last_year'] = demand['charges']['last_year'] / 30
 
     res = {
         "energy": energy,
