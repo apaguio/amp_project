@@ -4,20 +4,16 @@
 
 (function() {
 
-    var duration = 4900;
-    var bisectDate = d3.bisector(function(d) { return d.time; }).left;
     var duration = 1000;
 
     function classOfChange(group, value) {
         if (group === "solar") {
             if (_.isUndefined(value)) {
-                debugger; 
                 return "green";
             }
             return value < 0 ? "red" : "green";
         }
         if (_.isUndefined(value)) {
-            debugger; 
             return "red";
         }
         return value > 0 ? "red" : "green";
@@ -40,7 +36,7 @@
     }
 
     function updateData(originalData) {
-        _.each(originalData, function(v, k) {
+        _.each(originalData, function(v) {
             v.this_month_money = v.charges.this_month;
             v.last_month_money = v.charges.last_month;
             v.last_year_money = v.charges.last_year || (v.charges.this_month_money + ( v.charges.this_month_money * 20));
@@ -56,6 +52,7 @@
             //data.last_month = data.this_month + ( data.this_month / 10);
             if (k === 'solar') {
                 data.last_year = 0;
+                data.last_year_money = 0;
                 //data.last_month = data.this_month - ( data.this_month / 10);
             }
             if (k === 'demand') {
@@ -118,7 +115,7 @@
         
         var miniChartDomain = ['energy', 'demand', 'solar', 'total'];
         //var miniChartDomain = _.keys(data);
-        scope.x = d3.scale.ordinal().rangeRoundBands([0, scope.width - scope.margin.left - scope.margin.right], .1);
+        scope.x = d3.scale.ordinal().rangeRoundBands([0, scope.width - scope.margin.left - scope.margin.right], 0.1);
         // To preserve the order
         scope.x.domain(miniChartDomain);
 
@@ -143,7 +140,7 @@
             .attr("class", function(d) { return d; })
             .attr("transform", function(d) { return "translate(" + scope.x(d) + ",0)"; });
 
-        var miniX = d3.scale.ordinal().rangeRoundBands([0, scope.x.rangeBand()], .3);
+        var miniX = d3.scale.ordinal().rangeRoundBands([0, scope.x.rangeBand()], 0.3);
 
         miniChart.each(function(barsGroupName) {
 
@@ -159,14 +156,11 @@
                 xLine = chart.append('line')
                     .attr("class", "x")
                     .attr("x1", 0)
-                    .attr("x2", function(d) { return scope.x.rangeBand(); })
+                    .attr("x2", function() { return scope.x.rangeBand(); })
                     .attr("y1", scope.bigheight)
                     .attr("y2", scope.bigheight);
             }
 
-
-            var big = chart.append("g")
-                .attr("class", "big");
 
             var small = chart.append("g")
                 .attr("class", "small")
@@ -179,10 +173,6 @@
                 .attr("transform", function(d) { return "translate(" + miniX(d) + ",0)"; });
 
             if (barsGroupName === 'total') {
-                var solar = data.solar;
-                var demand = data.demand;
-                var energy = data.energy;
-
                 bar.append("rect")
                     .attr("class", "energy")
                     .attr("y", scope.bigheight)
@@ -354,7 +344,7 @@
             // Bar value
             bar.append("text")
                 .attr("x", miniX.rangeBand() / 2)
-                .attr("y", function(d) { return scope.bigheight - 15; })
+                .attr("y", function() { return scope.bigheight - 15; })
                 .attr("dy", ".75em")
                 .text(function(d) {
                     if (barsGroupName === 'total') {
@@ -449,44 +439,29 @@
 
             var yearXshift = scope.x.rangeBand()/2;
 
-            var changeVal = 0;
-            if (chartData.last_year) {
-                changeVal = chartData.this_month - chartData.last_year;
-            }
             var changeValCharges = 0;
-            if (chartData.last_year_money) {
-                changeValCharges = chartData.this_month_money - chartData.last_year_money;
-            }
-
-            var percentVal;
-            if (!_.isUndefined(chartData.last_year)) {
-                percentVal = 100 * changeVal / chartData.last_year;
-            }
-
             var percentText = 'N / A';
-            if (!_.isUndefined(percentVal)) {
-                percentText = Math.round(Math.abs(percentVal)) + '%';
+            var changeText = 'N / A';
+            if (!_.isUndefined(chartData.last_year_money)) {
+                if (chartData.last_year_money !== 0) {
+                    changeValCharges = chartData.this_month_money - chartData.last_year_money;
+                    var percentVal = 100 * changeValCharges / chartData.last_year_money;
+                    percentText = Math.round(Math.abs(percentVal)) + '%';
+                    changeText = '$ ' + Math.round(Math.abs(changeValCharges)) + " / day";
+                    var yearArrow = arrowOf(yearAnalysis, barsGroupName, changeValCharges);
+                    yearArrow.attr("transform", "translate(" + 0 +  ", " + 5 + "), scale(0.35)");
+                }
             }
 
             yearAnalysis.append("text")
-                .attr("class", "percent " + classOfChange(barsGroupName, percentVal))
+                .attr("class", "percent " + classOfChange(barsGroupName, changeValCharges))
                 .text(percentText)
                 .attr("transform", "translate(" + yearXshift +  ", " + 15 + ")");
 
-            var changeText = 'N / A';
-            if (!_.isUndefined(changeValCharges)) {
-                changeText = '$ ' + Math.round(Math.abs(changeValCharges)) + " / day";
-            }
-
             yearAnalysis.append("text")
-                .attr("class", "value " + classOfChange(barsGroupName, changeVal))
+                .attr("class", "value " + classOfChange(barsGroupName, changeValCharges))
                 .text(changeText)
                 .attr("transform", "translate(" + yearXshift +  ", " + 30 + ")");
-
-            if (changeVal) {
-                var yearArrow = arrowOf(yearAnalysis, barsGroupName, changeVal);
-                yearArrow.attr("transform", "translate(" + 0 +  ", " + 5 + "), scale(0.35)");
-            }
 
             var line2y = line1y * 2;
             monthAnalysis.append("line")
@@ -507,44 +482,29 @@
 
             var monthXshift = miniX.rangeBand() + ((scope.x.rangeBand() - miniX.rangeBand())/2);
 
-            changeVal = 0;
-            if (chartData.last_month) {
-                changeVal = chartData.this_month - chartData.last_month;
-            }
-            changeValCharges = 0;
-            if (chartData.last_month_money) {
-                changeValCharges = chartData.this_month_money - chartData.last_month_money;
-            }
-
-            var percentVal;
-            if (!_.isUndefined(chartData.last_month)) {
-                percentVal = 100 * changeVal / chartData.last_month;
-            }
-
-            var percentText = 'N / A';
-            if (!_.isUndefined(percentVal)) {
-                percentText = Math.round(Math.abs(percentVal)) + '%';
+            var monthChangeValCharges = 0;
+            var monthPercentText = 'N / A';
+            var monthChangeText = 'N / A';
+            if (!_.isUndefined(chartData.last_month_money)) {
+                if (chartData.last_month_money) {
+                    monthChangeValCharges = chartData.this_month_money - chartData.last_month_money;
+                    var monthPercentVal = 100 * monthChangeValCharges / chartData.last_month_money;
+                    monthPercentText = Math.round(Math.abs(monthPercentVal)) + '%';
+                    monthChangeText = '$ ' + Math.round(Math.abs(monthChangeValCharges)) + " / day";
+                    var monthArrow = arrowOf(monthAnalysis, barsGroupName, monthChangeValCharges);
+                    monthArrow.attr("transform", "translate(" + miniX.rangeBand() +  ", " + (line1y + 5) + "), scale(0.35)");
+                }
             }
 
             monthAnalysis.append("text")
-                .attr("class", "percent " + classOfChange(barsGroupName, percentVal))
-                .text(percentText)
+                .attr("class", "percent " + classOfChange(barsGroupName, monthChangeValCharges))
+                .text(monthPercentText)
                 .attr("transform", "translate(" + monthXshift +  ", " + (line1y + 15) + ")");
 
-            var changeText = 'N / A';
-            if (!_.isUndefined(changeValCharges)) {
-                changeText = '$ ' + Math.round(Math.abs(changeValCharges)) + " / day";
-            }
-
             monthAnalysis.append("text")
-                .attr("class", "value " + classOfChange(barsGroupName, changeVal))
-                .text(changeText)
+                .attr("class", "value " + classOfChange(barsGroupName, monthChangeValCharges))
+                .text(monthChangeText)
                 .attr("transform", "translate(" + monthXshift +  ", " + (line1y + 30) + ")");
-
-            if (changeVal) {
-                var monthArrow = arrowOf(monthAnalysis, barsGroupName, changeVal);
-                monthArrow.attr("transform", "translate(" + miniX.rangeBand() +  ", " + (line1y + 5) + "), scale(0.35)");
-            }
 
         });
 
