@@ -190,13 +190,14 @@
 
         function mouseover() {
             scope.hoverLineOpacity = 0.9;
-            scope.hoverLineGroup.style("opacity", "1");
+            scope.hoverLineGroup.style("opacity", scope.hoverLineOpacity);
+            scope.tooltip.transition().duration(200).style("opacity", scope.hoverLineOpacity);
         }
 
         function mouseout() {
-            scope.hoverLineGroup.style("opacity", 1e-6);
-            scope.tooltip.style("opacity", 0);
-            scope.hoverLineOpacity = 0;
+            scope.hoverLineOpacity = 1e-6;
+            scope.hoverLineGroup.style("opacity", scope.hoverLineOpacity);
+            scope.tooltip.transition().duration(200).style("opacity", scope.hoverLineOpacity);
         }
 
         var lastPoint = null;
@@ -245,8 +246,6 @@
                 .attr('x1', xVal + scope.margin.left)
                 .attr('x2', xVal + scope.margin.left);
 
-            scope.hoverLineOpacity = 0.9;
-            scope.tooltip.transition().duration(200).style("opacity", 0.9);
             var tooltipY = yPoint - scope.yBegining + scope.margin.top;
             scope.tooltip
                 .style("left", function(d) {
@@ -283,7 +282,7 @@
         scope.mouseRect
             .on('mousemove', scope.mousemove)
             .on('mouseenter', mouseover)
-            .on('mouseout', mouseout);
+            .on('mouseleave', mouseout);
     }
 
     function update(scope, data, maxDemand) {

@@ -5,17 +5,17 @@
 
       <div class="entry">
         <span class="key"> Facility </span>
-        <span class="value"> {{lastPoint.P | number:0}} </span>
+        <span class="value"> {{lastPoint.P | number:0}} kW</span>
       </div>
 
       <div class="entry">
         <span class="key"> Solar </span>
-        <span class="value"> {{lastPoint.S | number:0}} </span>
+        <span class="value"> {{lastPoint.S | number:0}} kW</span>
       </div>
 
       <div class="entry">
         <span class="key"> Net Demand </span>
-        <span class="value"> {{lastPoint.P - lastPoint.S | number:0}} </span>
+        <span class="value"> {{lastPoint.P - lastPoint.S | number:0}} kW</span>
       </div>
 
       <div class="entry">
@@ -25,7 +25,7 @@
 
       <div class="entry">
         <span class="key"> Voltage </span>
-        <span class="value"> {{lastPoint.L1_V | number:0}} </span>
+        <span class="value"> {{lastPoint.L1_V | number:0}} V</span>
       </div>
 
     </div>
