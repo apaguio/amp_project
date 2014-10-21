@@ -74,7 +74,8 @@ h6,
   color: #4d7f1d;
 }
 #main .logincontainer .form-group.buttons button {
-  margin-right: 15px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 .mediumwidget,
 .smallwidget,
