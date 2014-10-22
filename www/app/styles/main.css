@@ -6,6 +6,33 @@ body {
   padding-top: 0px;
   padding-bottom: 0px;
 }
+.darkRed {
+  color: #800000;
+}
+.lightRed {
+  color: #e85600;
+}
+.darkGreen {
+  color: #008000;
+}
+.lightGreen {
+  color: #56e800;
+}
+.darkBlue {
+  color: #05b3d1;
+}
+.lightBlue {
+  color: #05b3d1;
+}
+.darkerBlue {
+  color: #256188;
+}
+.lightYellow {
+  color: #f9ff33;
+}
+.darkYellow {
+  color: #edf500;
+}
 .popover-content {
   width: 250px;
 }
@@ -164,7 +191,6 @@ h6,
 }
 .powerviewgraphwrapper .powerviewgraph svg line,
 .powerviewgraphwrapper .powerviewgraph svg path {
-  /*stroke: #222;*/
   stroke: #918d76;
   stroke-width: 1px;
   shape-rendering: crispedges;
@@ -190,13 +216,19 @@ h6,
 }
 .powerviewgraphwrapper .powerviewgraph svg line.maxdemand {
   stroke-dasharray: 5,5;
+  stroke: #e85600;
+}
+.powerviewgraphwrapper .powerviewgraph svg .lines path.lineSolar {
+  stroke: #256188;
+  stroke-width: 1px;
 }
 .powerviewgraphwrapper .powerviewgraph svg .lines path.linePower {
-  stroke-dasharray: 1,1;
+  stroke: #256188;
+  stroke-dasharray: 5,3;
+  stroke-width: 2px;
 }
 .powerviewgraphwrapper .powerviewgraph svg .lines path.area {
   stroke-width: 0;
-  /*fill: yellow;*/
   fill: #f7ff00;
 }
 .powerviewgraphwrapper .powerviewgraph svg .powerFactorLines path.linePF,
@@ -237,9 +269,23 @@ h6,
   font-weight: bold;
   text-align: center;
 }
+.powerviewgraphwrapper div.tooltip .body .entry {
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
 .powerviewgraphwrapper div.tooltip .body .entry .value {
   float: right;
   font-weight: bolder;
+}
+.powerviewgraphwrapper div.tooltip .body .entry.facility {
+  border-bottom: 2px dashed #256188;
+}
+.powerviewgraphwrapper div.tooltip .body .entry.solar {
+  background-color: #f9ff33;
+  color: #8a8f00;
+}
+.powerviewgraphwrapper div.tooltip .body .entry.netdemand {
+  border-bottom: 1px solid #256188;
 }
 .timeselectors a.selected {
   color: green !important;

@@ -3,19 +3,19 @@
     <div class="title"> {{lastPoint.time | date:'h:mm:ss a'}} </div>
     <div class="body">
 
-      <div class="entry">
+      <div class="entry facility">
         <span class="key"> Facility </span>
-        <span class="value"> {{lastPoint.P | number:0}} kW</span>
+        <span class="value darkerBlue"> {{lastPoint.P | number:0}} kW</span>
       </div>
 
-      <div class="entry">
+      <div class="entry solar">
         <span class="key"> Solar </span>
         <span class="value"> {{lastPoint.S | number:0}} kW</span>
       </div>
 
-      <div class="entry">
+      <div class="entry netdemand">
         <span class="key"> Net Demand </span>
-        <span class="value"> {{lastPoint.P - lastPoint.S | number:0}} kW</span>
+        <span class="value darkerBlue"> {{lastPoint.P - lastPoint.S | number:0}} kW</span>
       </div>
 
       <div class="entry">

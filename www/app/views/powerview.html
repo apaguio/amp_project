@@ -86,7 +86,7 @@
           <i class="glyphicon glyphicon-info-sign"></i></a>
       </h6>
       </h4>
-      <h3 class="maincontent">{{data.current_demand | number:0}} <small>kW</small></h3>
+      <h3 class="maincontent darkerBlue">{{data.current_demand | number:0}} <small>kW</small></h3>
       <h4 class="time">{{data.currentDemandStartDate | date:'h:mm'}} - {{data.currentDemandEndDate | date:'h:mm a'}}</h4>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 largewidget">
@@ -96,7 +96,8 @@
         <a popover-placement="top" popover="{{maxDemandDescription}}" >
           <i class="glyphicon glyphicon-info-sign"></i></a>
       </h6>
-      <h3 class="maincontent">{{data.max_demand | number:0}} <small>kW</small></h3>
+      <h3 class="maincontent darkRed" ng-if="data.peak_period!=='onpeak'">{{data.max_demand | number:0}} <small>kW</small></h3>
+      <h3 class="maincontent darkRed" ng-if="data.peak_period==='onpeak'">{{data.max_deamnd | number:0}} <small>kW</small></h3>
       <h4 class="time">{{data.maxDemandStartDate | date:'fullDate'}}<br/>
         {{data.maxDemandStartDate | date:'h:mm'}} - {{data.maxDemandEndDate | date:'h:mm a'}}</h4>
     </div>

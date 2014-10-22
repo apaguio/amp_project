@@ -20,12 +20,23 @@
 /*@lightBlue: rgb(179, 204, 253);*/
 @lightBlue: #06DAFF;
 @darkBlue: #05B3D1;
+@darkerBlue: #256188;
 
 body {
     font-family: "Open Sans", sans-serif;
     padding-top: 0px;
     padding-bottom: 0px;
 }
+
+.darkRed { color: @darkRed; }
+.lightRed { color: @lightRed; }
+.darkGreen { color: @darkGreen; }
+.lightGreen { color: @lightGreen; }
+.darkBlue { color: @darkBlue; }
+.lightBlue { color: @darkBlue; }
+.darkerBlue { color: @darkerBlue; }
+.lightYellow { color: @lightYellow; }
+.darkYellow { color: @darkYellow; }
 
 .popover-content {
     width: 250px;
@@ -184,7 +195,6 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
         svg {
             font: 10px sans-serif;
             line, path {
-                /*stroke: #222;*/
                 stroke: @darkcolor1;
                 stroke-width: 1px;
                 shape-rendering: crispedges;
@@ -212,15 +222,21 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
             }
             line.maxdemand{
                 stroke-dasharray: 5,5;
+                stroke: @lightRed;
             }
             .lines {
                 path {
+                    &.lineSolar {
+                        stroke: @darkerBlue;
+                        stroke-width: 1px;
+                    }
                     &.linePower {
-                        stroke-dasharray: 1,1;
+                        stroke: @darkerBlue;
+                        stroke-dasharray: 5,3;
+                        stroke-width: 2px;
                     }
                     &.area {
                         stroke-width: 0;
-                        /*fill: yellow;*/
                         fill: @main;
                     }
                 }
@@ -276,11 +292,23 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
         }
         .body {
             .entry{
+                margin-bottom: 5px;
+                margin-top: 5px;
                 .key{
                 }
                 .value {
                     float: right;
                     font-weight: bolder;
+                }
+                &.facility {
+                    border-bottom: 2px dashed @darkerBlue;
+                }
+                &.solar {
+                    background-color: @lightYellow;
+                    color: darken(@darkYellow, 20%);
+                }
+                &.netdemand {
+                    border-bottom: 1px solid @darkerBlue;
                 }
             }
         }
