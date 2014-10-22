@@ -83,6 +83,6 @@ def get_max_demand_anytime(meter_id):
         if time_point_query_result:
             max_demand_time = customer_tz.fromutc(datetime.utcfromtimestamp(time_point_query_result[0]['points'][0][0])).strftime('%Y-%m-%d %H:%M:%S')
         max_demands[max_demand] = max_demand_time
-    result['max_demand_anytime'] = max(max_demands.keys())
-    result['time'] = max_demands[result['max_demand_anytime']]
+    result['max_demand'] = max(max_demands.keys())
+    result['time'] = max_demands[result['max_demand']]
     return result
