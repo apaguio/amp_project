@@ -22,6 +22,17 @@
         this.updateSingle = function update(wrapper) {
             return http.post('/api/historical/' + wrapper.id, wrapper);
         };
+
+        this.fixServerWrapperObject = function fixServerWrapperObject(wrapper) {
+            wrapper.start = moment(wrapper.start.$date).toDate();
+            wrapper.end = moment(wrapper.end.$date).toDate();
+            var graphs = wrapper.graphs;
+            wrapper.graphs = {
+                powerfactor: graphs.indexOf('powerfactor') >= 0,
+                voltage: graphs.indexOf('voltage') >= 0,
+                consumption: graphs.indexOf('consumption') >= 0
+            };
+        };
     }
 
     angular.module('insightApp')

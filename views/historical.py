@@ -1,7 +1,8 @@
 from flask import request, Blueprint
 from servers import r
-from models import historical
+from models import historical, db
 from flask_login import login_required, current_user
+from uuid import uuid4
 
 historical_app = Blueprint('historical', __name__)
 
@@ -38,7 +39,8 @@ def get_historical_instances():
             }
         ]
     """
-    return r.success(current_user.historicals or [])
+    user = db.Customer.objects(id=current_user.get_id()).first()
+    return r.success(user.historicals or [])
 
 
 @historical_app.route("/historical", methods=["POST"])
@@ -57,13 +59,25 @@ def set_historical_instances():
         ]
     """
     wrappers = request.json
-    current_user.historicals = wrappers
-    current_user.save();
+    user = db.Customer.objects(id=current_user.get_id()).first()
+    user.historicals = []
+    for wrapper in wrappers:
+        wrapper['zoom_start'] = wrapper.get('zoom_start', wrapper.get('start'))
+        wrapper['zoom_end'] = wrapper.get('zoom_end', wrapper.get('end'))
+        graphs = wrapper.get('graphs', {})
+        wrapper['graphs'] = []
+        for graph, visible in graphs.iteritems():
+            if visible:
+                wrapper['graphs'].append(graph)
+        wrapper['id'] = str(uuid4())
+        historical = db.Historical(**wrapper)
+        user.historicals.append(historical)
+    user.save();
     return r.success(wrappers)
 
 @historical_app.route("/historical/<id>", methods=["POST"])
 @login_required
-def update_historical_instance():
+def update_historical_instance(id):
     """ Based on customer_id we should return the last state of historical tab
         this should return array of wrappers each one has its own config.
         wrappers: [
@@ -76,6 +90,26 @@ def update_historical_instance():
             }
         ]
     """
-    #current_user.historicals = db.historical.get("")
-    wrappers = request.json
-    return r.success(wrappers)
+    wrapper = request.json
+    user = db.Customer.objects(id=current_user.get_id()).first()
+    index = -1
+    for i, h in enumerate(user.historicals):
+        if h.id == id:
+            index = i
+            break
+
+    wrapper['id'] = id
+    wrapper['zoom_start'] = wrapper.get('zoom_start', wrapper.get('start'))
+    wrapper['zoom_end'] = wrapper.get('zoom_end', wrapper.get('end'))
+    graphs = wrapper.get('graphs', {})
+    wrapper['graphs'] = []
+    for graph, visible in graphs.iteritems():
+        if visible:
+            wrapper['graphs'].append(graph)
+    historical = db.Historical(**wrapper)
+    if index >= 0:
+        user.historicals[index] = historical
+    else:
+        user.historicals.append(historical)
+    user.save()
+    return r.success(historical)

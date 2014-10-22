@@ -10,7 +10,7 @@
  */
 (function() {
 
-    function controller(scope, Session, http, $q, util) {
+    function controller(scope, Session, http, $q, util, historical) {
 
         scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
         scope.format = scope.formats[0];
@@ -37,7 +37,7 @@
 
         scope.nodata = false;
 
-        var load = function load() {
+        function load() {
             scope.loading = true;
             var params = {params : {
                 'resolution': scope.wrapper.resolution
@@ -64,16 +64,25 @@
                 scope.loading = false;
                 scope.bindDates();
             }, util.onError);
-        };
+        }
 
         scope.toggleGraph = function(graph) {
             scope.wrapper.graphs[graph] = !scope.wrapper.graphs[graph];
+            update();
+        };
+
+        function onUpdate (wrapper) {
+            historical.fixServerWrapperObject(wrapper);
             load();
+        }
+
+        function update() {
+            historical.updateSingle(scope.wrapper).success(onUpdate).error(util.onError);
         };
 
         scope.setResolution = function(resolution) {
             scope.wrapper.resolution = resolution;
-            load();
+            update();
         };
 
         scope.setResolution('30m');
@@ -81,12 +90,12 @@
         scope.bindDates = _.once(function bindDates() {
             scope.$watch('wrapper.start', function(newValue, oldValue) {
                 if (newValue !== oldValue) {
-                    load();
+                    update();
                 }
             });
             scope.$watch('wrapper.end', function(newValue, oldValue) {
                 if (newValue !== oldValue) {
-                    load();
+                    update();
                 }
             });
         });
@@ -101,7 +110,7 @@
             scope: {
                 wrapper: '='
             },
-            controller: ['$scope', 'Session', '$http', '$q', 'util', controller]
+            controller: ['$scope', 'Session', '$http', '$q', 'util', 'historical', controller]
         };
     });
 }).call(null);

@@ -34,11 +34,15 @@ class ReadCycle(mongodb.EmbeddedDocument):
     billing_periods = mongodb.ListField(mongodb.EmbeddedDocumentField(BillingPeriod))
 
 class Historical(mongodb.EmbeddedDocument):
+    id = mongodb.StringField()
     name = mongodb.StringField()
     start = mongodb.DateTimeField()
     end = mongodb.DateTimeField()
     resolution = mongodb.StringField()
     graphs = mongodb.ListField(mongodb.StringField())
+
+    def get_id(self):
+        return str(self.id)
 
 class Customer(mongodb.Document):
     name = mongodb.StringField()
