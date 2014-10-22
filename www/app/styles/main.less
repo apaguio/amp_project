@@ -189,102 +189,102 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
                 stroke-width: 1px;
                 shape-rendering: crispedges;
                 fill: none;
-        }
+            }
 
             * {
                 pointer-events: none;
-        }
-
-        rect.mouserect {
-            pointer-events: all;
-        }
-        .lineHover{
-            /*stroke: #e5e5e5;*/
-            stroke: @color1;
-            stroke-width: 1.5px;
-            pointer-events: none;         
-        }
-
-        text.title, text.maxdemand {
-            text-anchor: end;
-            /*fill: #777;*/
-            fill: @darkcolor2;
-        }
-        line.maxdemand{
-            stroke-dasharray: 5,5;
-        }
-        .lines {
-            path {
-                &.linePower {
-                    stroke-dasharray: 1,1;
-                }
-                &.area {
-                    stroke-width: 0;
-                    /*fill: yellow;*/
-                    fill: @main;
-                }
             }
-        }
-        .powerFactorLines, .voltageLines {
-            path.linePF {
-                fill: none;
-                shape-rendering: crispedges;
-                stroke-width: 1px;
-                /*stroke: #222;*/
+
+            rect.mouserect {
+                pointer-events: all;
+            }
+            .lineHover{
+                /*stroke: #e5e5e5;*/
                 stroke: @color1;
-            }
-        }
-        .tick line {
-            stroke-width: 0;
-        }
-        .y.axis {
-            .tick line {
-                stroke: lighten(@color1, 10%);
-                stroke-width: 1px;
+                stroke-width: 1.5px;
                 pointer-events: none;         
             }
-        }
 
-    }
-}
-div.tooltip {
-    pointer-events: none;
-    border: 1px solid #222;
-    background-color: white;
-    opacity: 0.7;
-    border-radius: 4px;
-    padding: 10px;
-
-    min-width: 100px;
-    position: absolute;           
-    text-align: left;           
-    width: auto;                  
-    height: auto;                 
-    min-width: 150px;
-
-    border: 1px solid #bbbbbb;
-    color: black;
-    background-color: white;
-    position: absolute;
-    font-family: "Open Sans", sans-serif;
-    padding: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    pointer-events: none;         
-    .title{
-        font-weight: bold;
-        text-align: center;
-    }
-    .body {
-        .entry{
-            .key{
+            text.title, text.maxdemand {
+                text-anchor: end;
+                /*fill: #777;*/
+                fill: @darkcolor2;
             }
-            .value {
-                float: right;
-                font-weight: bolder;
+            line.maxdemand{
+                stroke-dasharray: 5,5;
+            }
+            .lines {
+                path {
+                    &.linePower {
+                        stroke-dasharray: 1,1;
+                    }
+                    &.area {
+                        stroke-width: 0;
+                        /*fill: yellow;*/
+                        fill: @main;
+                    }
+                }
+            }
+            .powerFactorLines, .voltageLines {
+                path.linePF {
+                    fill: none;
+                    shape-rendering: crispedges;
+                    stroke-width: 1px;
+                    /*stroke: #222;*/
+                    stroke: @color1;
+                }
+            }
+            .tick line {
+                stroke-width: 0;
+            }
+            .y.axis {
+                .tick line {
+                    stroke: lighten(@color1, 10%);
+                    stroke-width: 1px;
+                    pointer-events: none;         
+                }
+            }
+
+        }
+    }
+    div.tooltip {
+        pointer-events: none;
+        border: 1px solid #222;
+        background-color: white;
+        opacity: 0.7;
+        border-radius: 4px;
+        padding: 10px;
+
+        min-width: 100px;
+        position: absolute;           
+        text-align: left;           
+        width: auto;                  
+        height: auto;                 
+        min-width: 150px;
+
+        border: 1px solid #bbbbbb;
+        color: black;
+        background-color: white;
+        position: absolute;
+        font-family: "Open Sans", sans-serif;
+        padding: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        pointer-events: none;         
+        .title{
+            font-weight: bold;
+            text-align: center;
+        }
+        .body {
+            .entry{
+                .key{
+                }
+                .value {
+                    float: right;
+                    font-weight: bolder;
+                }
             }
         }
     }
-}
 }
 
 .timeselectors {
@@ -296,147 +296,142 @@ div.tooltip {
 #performance {
     a.selected {
         color: green;
-}
-div.tooltip {
-    pointer-events: none;
-    border: 1px solid #222;
-    background-color: white;
-    opacity: 0.7;
-    border-radius: 4px;
-    padding: 10px;
-
-    min-width: 100px;
-    position: absolute;           
-    text-align: left;           
-    width: auto;                  
-    height: auto;                 
-    min-width: 150px;
-
-    border: 1px solid #bbbbbb;
-    color: black;
-    background-color: white;
-    position: absolute;
-    font-family: "Open Sans", sans-serif;
-    padding: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    pointer-events: none;         
-    .title{
-        font-weight: bold;
-        text-align: center;
     }
-    .body {
-        .entry{
-            .key{
-            }
-            .value {
-                float: right;
-                font-weight: bolder;
-            }
-        }
-    }
-}
-svg {
-    font: 10px sans-serif;
-    line, path {
-        /*stroke: #222;*/
-        stroke: @darkcolor1;
-        stroke-width: 1px;
-        shape-rendering: crispedges;
-        fill: none;
-    }
-
-    * {
+    div.tooltip {
         pointer-events: none;
+        border: 1px solid #222;
+        background-color: white;
+        opacity: 0.7;
+        border-radius: 4px;
+        padding: 10px;
+
+        min-width: 100px;
+        position: absolute;           
+        text-align: left;           
+        width: auto;                  
+        height: auto;                 
+        min-width: 150px;
+
+        border: 1px solid #bbbbbb;
+        color: black;
+        background-color: white;
+        position: absolute;
+        font-family: "Open Sans", sans-serif;
+        padding: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        pointer-events: none;         
+        .title{
+            font-weight: bold;
+            text-align: center;
+        }
+        .body {
+            .entry{
+                .key{
+                }
+                .value {
+                    float: right;
+                    font-weight: bolder;
+                }
+            }
+        }
     }
-
-    g  {
-        text {
-            text-anchor: middle;
-        }
-        &.demand {
-            rect {
-                fill: @darkBlue;
-                stroke: darken(@darkBlue, 5%);
-            }
-        }
-        &.energy {
-            rect {
-                fill: @darkGreen;
-                stroke: darken(@darkGreen, 5%);
-            }
-        }
-        &.solar {
-            rect {
-                fill: @darkYellow;
-                stroke: darken(@darkYellow, 5%);
-            }
-        }
-        &.total {
-            /*sub rectangles*/
-            rect.solar {
-                fill: @darkYellow;
-                stroke: darken(@darkYellow, 5%);
-            }
-            rect.energy {
-                fill: @darkGreen;
-                stroke: darken(@darkGreen, 5%);
-            }
-            rect.demand {
-                fill: @darkBlue;
-                stroke: darken(@darkBlue, 5%);
-            }
-        }
-        text {
-            text-anchor: middle;
-            &.title {
-                font-size: 18px;
-            }
-            &.units {
-                font-size: 14px;
-            }
-        }
-
-        .arrow {
-            stroke: none;
+    svg {
+        font: 10px sans-serif;
+        line, path {
+            /*stroke: #222;*/
+            stroke: @darkcolor1;
             stroke-width: 1px;
-            &.green {
-                fill: @darkGreen;
-                stroke: lighten(@darkGreen, 5%);
-            }
-            &.red {
-                fill: @darkRed;
-                stroke: lighten(@darkRed, 5%);
-            }
-
+            shape-rendering: crispedges;
+            fill: none;
         }
 
-        .monthAnalysis, .yearAnalysis {
-            font-size: 10px;
-            fill: @darkBlue;
-            stroke: @darkBlue;
-            .percent.red, .value.red {
-                stroke: @darkRed;
-                fill: none;
+        * {
+            pointer-events: none;
+        }
+
+        g  {
+            text {
+                text-anchor: middle;
             }
-            .percent.green, .value.green {
-                stroke: @darkGreen;
-                fill: none;
+            &.demand {
+                rect {
+                    fill: @darkBlue;
+                    stroke: darken(@darkBlue, 5%);
+                }
+            }
+            &.energy {
+                rect {
+                    fill: @darkGreen;
+                    stroke: darken(@darkGreen, 5%);
+                }
+            }
+            &.solar {
+                rect {
+                    fill: @darkYellow;
+                    stroke: darken(@darkYellow, 5%);
+                }
+            }
+            &.total {
+                /*sub rectangles*/
+                rect.solar {
+                    fill: @darkYellow;
+                    stroke: darken(@darkYellow, 5%);
+                }
+                rect.energy {
+                    fill: @darkGreen;
+                    stroke: darken(@darkGreen, 5%);
+                }
+                rect.demand {
+                    fill: @darkBlue;
+                    stroke: darken(@darkBlue, 5%);
+                }
+            }
+            text {
+                text-anchor: middle;
+                &.title {
+                    font-size: 18px;
+                }
+                &.units {
+                    font-size: 14px;
+                }
+            }
+
+            .arrow {
+                stroke: none;
+                stroke-width: 1px;
+                &.green {
+                    fill: @darkGreen;
+                    stroke: lighten(@darkGreen, 5%);
+                }
+                &.red {
+                    fill: @darkRed;
+                    stroke: lighten(@darkRed, 5%);
+                }
+
+            }
+
+            .monthAnalysis, .yearAnalysis {
+                font-size: 10px;
+                fill: @darkBlue;
+                stroke: @darkBlue;
+                .percent.red, .value.red {
+                    stroke: @darkRed;
+                    fill: none;
+                }
+                .percent.green, .value.green {
+                    stroke: @darkGreen;
+                    fill: none;
+                }
             }
         }
     }
-    /*.barLabel {*/
-    /*transform: rotate(-45deg);*/
-    /*}*/
-
-}
-
 }
 
 #historical {
     padding-top: 10px;
     .historicalwrapper {
         margin-top: 10px;
-}
+    }
 }
 
 

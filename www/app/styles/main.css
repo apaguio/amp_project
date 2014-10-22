@@ -275,9 +275,6 @@ h6,
 }
 #performance svg {
   font: 10px sans-serif;
-  /*.barLabel {*/
-  /*transform: rotate(-45deg);*/
-  /*}*/
 }
 #performance svg line,
 #performance svg path {
