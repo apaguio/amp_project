@@ -16,7 +16,7 @@
         scope.format = scope.formats[0];
 
         if (!scope.wrapper.start) {
-            scope.wrapper.start = moment().subtract(1, 'days');
+            scope.wrapper.start = moment().subtract(1, 'days').toDate();
         }
 
         if (!scope.wrapper.end) {
@@ -26,6 +26,10 @@
         scope.dateOptions = {
             formatYear: 'yy',
             startingDay: 1
+        };
+
+        scope.remove = function remove() {
+            historical.remove(scope.wrapper.id);
         };
 
         scope.isOpen = { start: false, end: false };
@@ -77,6 +81,10 @@
         }
 
         function update() {
+            if (!scope.wrapper.id) {
+                console.log("Wrapper has no ID");
+                return;
+            }
             historical.updateSingle(scope.wrapper).success(onUpdate).error(util.onError);
         };
 

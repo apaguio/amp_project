@@ -8,8 +8,8 @@
 
         scope.addWrapper = function addWrapper() {
             scope.wrappers.push({
-                start: moment().subtract(1, 'days'),
-                end: moment(),
+                start: moment().subtract(1, 'days').toDate(),
+                end: moment().toDate(),
                 graphs: {
                     powerfactor: true,
                     voltage: true,
@@ -33,6 +33,10 @@
         }
 
         load();
+
+        scope.$on('historical_removed', function(event, data) {
+            _.remove(scope.wrappers, {id: data.id});
+        });
     }
 
     angular.module('insightApp')

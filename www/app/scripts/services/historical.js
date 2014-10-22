@@ -9,7 +9,7 @@
  */
 (function() {
 
-    function historical(http) {
+    function historical(http, $q, $rootScope) {
 
         this.load = function load() {
             return http.get('/api/historical', {});
@@ -24,8 +24,10 @@
         };
 
         this.fixServerWrapperObject = function fixServerWrapperObject(wrapper) {
-            wrapper.start = moment(wrapper.start.$date).toDate();
-            wrapper.end = moment(wrapper.end.$date).toDate();
+            var start = wrapper.start.$date || wrapper.start;
+            var end = wrapper.end.$date || wrapper.end;
+            wrapper.start = moment(start).toDate();
+            wrapper.end = moment(end).toDate();
             var graphs = wrapper.graphs;
             wrapper.graphs = {
                 powerfactor: graphs.indexOf('powerfactor') >= 0,
@@ -33,9 +35,20 @@
                 consumption: graphs.indexOf('consumption') >= 0
             };
         };
+
+        this.remove = function remove(id) {
+            var deferred = $q.defer();
+            http.delete('/api/historical/' + id).then(function() {
+                $rootScope.$broadcast("historical_removed", {
+                    id: id
+                });
+                deferred.resolve("id");
+            });
+            return deferred.promise;
+        };
     }
 
     angular.module('insightApp')
-    .service('historical', ['$http', historical]);
+    .service('historical', ['$http', '$q', '$rootScope', historical]);
 
 }).call(null);

@@ -116,3 +116,21 @@ def update_historical_instance(id):
         user.historicals.append(historical)
     user.save()
     return r.success(historical)
+
+@historical_app.route("/historical/<id>", methods=["DELETE"])
+@login_required
+def remove_historical_instance(id):
+    print "Deleteing %s" % id
+    user = db.Customer.objects(id=current_user.get_id()).first()
+    index = -1
+    for i, h in enumerate(user.historicals):
+        if h.id == id:
+            index = i
+            break
+
+    print index
+    if index >= 0:
+        del user.historicals[index]
+        user.save()
+        return r.success()
+    return r.error()
