@@ -33,6 +33,7 @@ def get_historical_instances():
             {
                 start: date,
                 end: date,
+                resolution: string,
                 zoom_start: timestamp,
                 zoom_end timestamp,
                 graph: string
@@ -52,6 +53,7 @@ def set_historical_instances():
             {
                 start: date,
                 end: date,
+                resolution: string,
                 zoom_start: timestamp,
                 zoom_end timestamp,
                 graph: string
@@ -84,6 +86,7 @@ def update_historical_instance(id):
             {
                 start: date,
                 end: date,
+                resolution: string,
                 zoom_start: timestamp,
                 zoom_end timestamp,
                 graph: string

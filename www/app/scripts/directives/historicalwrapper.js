@@ -85,7 +85,11 @@
             update();
         };
 
-        scope.setResolution('30m');
+        if (!scope.wrapper.resolution) {
+            scope.setResolution('30m');
+        } else {
+            load();
+        }
 
         scope.bindDates = _.once(function bindDates() {
             scope.$watch('wrapper.start', function(newValue, oldValue) {
