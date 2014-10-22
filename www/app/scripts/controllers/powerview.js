@@ -10,6 +10,8 @@
 (function() {
 
     function controller(scope, Session, http, timeout, $q, location, util, dateFilter) {
+
+        scope.titleTooltip = 'Summer rates apply May 1 to October 31. Winter rates apply November 1 to April 30.';
         scope.nodata = false;
         http.defaults.headers.post['CSRF-TOKEN'] = Session.csrfToken;
         scope.lastTime = null;

@@ -6,6 +6,9 @@ body {
   padding-top: 0px;
   padding-bottom: 0px;
 }
+.popover-content {
+  width: 250px;
+}
 .uppercase {
   text-transform: uppercase;
 }

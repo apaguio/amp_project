@@ -2,33 +2,51 @@
 <div id="powerview" class="">
   <div class="col-xs-12 col-sm-5 col-md-4 col-lg-3 leftwidgets">
     <div class="mediumwidget col-xs-12">
-      <h4 class="title">Current Time and Date</h4>
+      <h4 class="title">Current Time and Date
+        <a popover-placement="right" popover="{{titleTooltip}}" >
+          <i class="glyphicon glyphicon-info-sign"></i></a>
+      </h4>
       <h3 class="maincontent capitalize">{{lastTime | date:'h:mm a'}}</h3>
       <h4 class="time">{{lastTime | date:'MMMM d, yyyy'}}</h4>
     </div>
     <div class="mediumwidget col-xs-12">
-      <h4 class="title">Current Billing Period</h4>
+      <h4 class="title">Current Billing Period
+        <a popover-placement="right" popover="{{titleTooltip}}" >
+          <i class="glyphicon glyphicon-info-sign"></i></a>
+      </h4>
       <h3 class="maincontent capitalize">{{data.billing_period | fullmonth}}</h3>
       <h4 class="time">{{data.billingPeriodStartDate | date:'MMM d'}} -
         {{data.billingPeriodEndDate | date:'MMM d, yyyy'}}</h4>
     </div>
     <div class="mediumwidget col-xs-12">
-      <h4 class="title">Current Season</h4>
+      <h4 class="title">Current Season
+        <a popover-placement="right" popover="{{titleTooltip}}" >
+          <i class="glyphicon glyphicon-info-sign"></i></a>
+      </h4>
       <h3 class="maincontent capitalize">{{data.season}}</h3>
       <h4 class="time">{{data.seasonStartDate | date:'MMMM d'}} -
         {{data.seasonEndDate | date:'MMMM d'}}</h4>
     </div>
     <div class="mediumwidget col-xs-12">
-      <h4 class="title">Current Period</h4>
+      <h4 class="title">Current Period
+        <a popover-placement="right" popover="{{titleTooltip}}" >
+          <i class="glyphicon glyphicon-info-sign"></i></a>
+      </h4>
       <h3 class="maincontent capitalize">{{data.peak_period | peak}}</h3>
       <h4 class="time">{{data.peakStart}} - {{data.peakEnd}}</h4>
     </div>
     <div class="smallwidget col-xs-12">
-      <h4 class="title">Current Energy Charge</h4>
+      <h4 class="title">Current Energy Charge
+        <a popover-placement="right" popover="{{titleTooltip}}" >
+          <i class="glyphicon glyphicon-info-sign"></i></a>
+      </h4>
       <h3 class="maincontent">$ {{data.energy_charge}} / kWh</h3>
     </div>
     <div class="smallwidget col-xs-12">
-      <h4 class="title">Current Demand Charges</h4>
+      <h4 class="title">Current Demand Charges
+        <a popover-placement="right" popover="{{titleTooltip}}" >
+          <i class="glyphicon glyphicon-info-sign"></i></a>
+      </h4>
       <h3 class="maincontent">$ {{data.demand_charge}} / kW</h3>
     </div>
   </div>
@@ -61,7 +79,8 @@
       </h4>
       <h6 style="display: inline-block; margin-top: 0; vertical-align: top;">
         <a popover-placement="top" popover="{{maxDemandDescription}}" >
-          <i class="glyphicon glyphicon-info-sign"></i></a></h6>
+          <i class="glyphicon glyphicon-info-sign"></i></a>
+      </h6>
       <h3 class="maincontent">{{data.max_demand | number:0}} <small>kW</small></h3>
       <h4 class="time">{{data.maxDemandStartDate | date:'fullDate'}}<br/>
         {{data.maxDemandStartDate | date:'h:mm'}} - {{data.maxDemandEndDate | date:'h:mm a'}}</h4>
