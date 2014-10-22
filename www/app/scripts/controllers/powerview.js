@@ -115,7 +115,7 @@
             scope.loading = true;
             if (timeframe === '24h') {
                 scope.setReloadTime(60000)
-                return scope.setResolution('1m');
+                return scope.setResolution('5m');
             }
             if (timeframe === '8h') {
                 scope.setReloadTime(30000)
