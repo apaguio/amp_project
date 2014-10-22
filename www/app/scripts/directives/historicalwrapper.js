@@ -85,6 +85,10 @@
                 console.log("Wrapper has no ID");
                 return;
             }
+            scope.wrapper.start = moment(scope.wrapper.start).toDate();
+            scope.wrapper.end = moment(scope.wrapper.end).toDate();
+            scope.wrapper.zoom_start = moment(scope.wrapper.zoom_start).toDate();
+            scope.wrapper.zoom_end = moment(scope.wrapper.zoom_end).toDate();
             historical.updateSingle(scope.wrapper).success(onUpdate).error(util.onError);
         };
 

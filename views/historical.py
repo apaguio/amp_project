@@ -1,6 +1,6 @@
 from flask import request, Blueprint
 from servers import r
-from models import historical, db
+from models import historical, db, utils
 from flask_login import login_required, current_user
 from uuid import uuid4
 
@@ -64,8 +64,10 @@ def set_historical_instances():
     user = db.Customer.objects(id=current_user.get_id()).first()
     user.historicals = []
     for wrapper in wrappers:
-        wrapper['zoom_start'] = wrapper.get('zoom_start', wrapper.get('start'))
-        wrapper['zoom_end'] = wrapper.get('zoom_end', wrapper.get('end'))
+        wrapper['zoom_start'] = utils.from_utc(wrapper.get('zoom_start', wrapper.get('start')))
+        wrapper['zoom_end'] = utils.from_utc(wrapper.get('zoom_end', wrapper.get('end')))
+        wrapper['start'] = utils.from_utc(wrapper.get('start'))
+        wrapper['end'] = utils.from_utc(wrapper.get('end'))
         graphs = wrapper.get('graphs', {})
         wrapper['graphs'] = []
         for graph, visible in graphs.iteritems():
@@ -102,8 +104,10 @@ def update_historical_instance(id):
             break
 
     wrapper['id'] = id
-    wrapper['zoom_start'] = wrapper.get('zoom_start', wrapper.get('start'))
-    wrapper['zoom_end'] = wrapper.get('zoom_end', wrapper.get('end'))
+    wrapper['zoom_start'] = utils.from_utc(wrapper.get('zoom_start', wrapper.get('start')))
+    wrapper['zoom_end'] = utils.from_utc(wrapper.get('zoom_end', wrapper.get('end')))
+    wrapper['start'] = utils.from_utc(wrapper.get('start'))
+    wrapper['end'] = utils.from_utc(wrapper.get('end'))
     graphs = wrapper.get('graphs', {})
     wrapper['graphs'] = []
     for graph, visible in graphs.iteritems():

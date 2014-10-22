@@ -76,3 +76,11 @@ def acceptableResolution(resolution):
 def generate_demo_data():
     import demo_data
     demo_data.generate()
+
+def from_utc(utcTime, fmt="%Y-%m-%dT%H:%M:%S.%fZ"):
+    """
+    Convert UTC time string to time.struct_time
+    """
+    # change datetime.datetime to time, return time.struct_time
+    # type
+    return datetime.strptime(utcTime, fmt)
