@@ -104,12 +104,12 @@
 
         scope.bindDates = _.once(function bindDates() {
             scope.$watch('wrapper.start', function(newValue, oldValue) {
-                if (newValue !== oldValue) {
+                if (+newValue !== +oldValue) {
                     update();
                 }
             });
             scope.$watch('wrapper.end', function(newValue, oldValue) {
-                if (newValue !== oldValue) {
+                if (+newValue !== +oldValue) {
                     update();
                 }
             });
