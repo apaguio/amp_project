@@ -27,6 +27,12 @@
             scope.data.peakStart = moment(today + data.peak_period_start).format(format);
             scope.data.peakEnd = moment(today + data.peak_period_end).format(format);
 
+            if (scope.data.season === 'Summer') {
+                scope.demandChargesTooltip = 'You pay $12.74 / kW for your max demand, regardless of when it occurred. You pay an additional $8.72 / kW for your max demand during peak times.';
+            } else {
+                scope.demandChargesTooltip = 'You pay $4.58 / kW for your max demand, regardless of when it occurred.  There is no additional charge for your max demand during partial peak times.';
+            }
+
             var intervalTick = _.throttle(function(cont) {
                 if (!cont) {
                     return;
