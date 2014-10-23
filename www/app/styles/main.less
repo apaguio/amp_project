@@ -43,7 +43,7 @@ body {
 .lightYellow { color: @lightYellow; }
 .darkYellow { color: @darkYellow; }
 
-.popover-content {
+.tooltip {
     width: 250px;
 }
 
@@ -157,6 +157,9 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 .leftwidgets {
     padding: 20px;
     padding-left: 35px;
+    a:hover {
+        text-decoration: none;
+    }
 }
 
 .graph {
@@ -191,9 +194,9 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
             input {
                 height: 26px;
                 padding: 1px 12px;
+            }
         }
     }
-}
 }
 
 #settings {

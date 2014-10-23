@@ -2,59 +2,47 @@
 <div id="powerview" class="">
   <div class="col-xs-12 col-sm-4 col-md-3 col-lg-2 leftwidgets">
     <div class="mediumwidget col-xs-12">
-      <h4 class="title">Current Time and Date
-        <a popover-placement="right" popover="{{titleTooltip}}" >
-          <i class="glyphicon glyphicon-info-sign"></i></a>
-      </h4>
+      <h4 class="title">Current Time and Date</h4>
       <h3 class="maincontent capitalize">{{lastTime | date:'h:mm a'}}</h3>
       <h4 class="time">{{lastTime | date:'MMMM d, yyyy'}}</h4>
     </div>
     <div class="mediumwidget col-xs-12">
-      <h4 class="title">Current Billing Period
-        <a popover-placement="right" popover="{{titleTooltip}}" >
-          <i class="glyphicon glyphicon-info-sign"></i></a>
-      </h4>
+      <h4 class="title">Current Billing Period</h4>
       <h3 class="maincontent capitalize">{{data.billing_period | fullmonth}}</h3>
       <h4 class="time">{{data.billingPeriodStartDate | date:'MMM d'}} -
         {{data.billingPeriodEndDate | date:'MMM d, yyyy'}}</h4>
     </div>
     <div class="mediumwidget col-xs-12">
-      <h4 class="title">Current Season
-        <a popover-placement="right" popover="{{titleTooltip}}" >
-          <i class="glyphicon glyphicon-info-sign"></i></a>
-      </h4>
+      <a tooltip-placement="right" tooltip="{{titleTooltip}}">
+        <h4 class="title">Current Season</h4>
+      </a>
       <h3 class="maincontent capitalize">{{data.season}}</h3>
       <h4 class="time">{{data.seasonStartDate | date:'MMMM d'}} -
         {{data.seasonEndDate | date:'MMMM d'}}</h4>
     </div>
     <div class="mediumwidget col-xs-12">
-      <h4 class="title">Current Period
-        <a popover-placement="right" popover='
-          You are on a time-of-use (TOU) rate tariff.  This is the current TOU
-          period and how long it lasts.  Your rate tariff has "On Peak" and "Off
-          Peak" in the summer months, and "Partial Peak" and "Off Peak" in the
-          winter months.
-          '>
-          <i class="glyphicon glyphicon-info-sign"></i></a>
-      </h4>
+      <a tooltip-placement="right" tooltip='
+        You are on a time-of-use (TOU) rate tariff.  This is the current TOU
+        period and how long it lasts.  Your rate tariff has "On Peak" and "Off
+        Peak" in the summer months, and "Partial Peak" and "Off Peak" in the
+        winter months.'>
+        <h4 class="title">Current Period</h4>
+      </a>
       <h3 class="maincontent capitalize">{{data.peak_period | peak}}</h3>
       <h4 class="time">{{data.peakStart}} - {{data.peakEnd}}</h4>
     </div>
     <div class="smallwidget col-xs-12">
-      <h4 class="title">Current Energy Charge
-        <a popover-placement="right" popover="
-          You pay different rates depending on the current time period. This is
-          your real-time energy charge per kWh.
-          " >
-          <i class="glyphicon glyphicon-info-sign"></i></a>
-      </h4>
+      <a tooltip-placement="right" tooltip="You pay different rates depending on
+        the Current Period. This is your real-time energy charge per kWh.">
+        <h4 class="title">Current Energy Charge</h4>
+      </a>
       <h3 class="maincontent">$ {{data.energy_charge}} / kWh</h3>
     </div>
     <div class="smallwidget col-xs-12">
-      <h4 class="title">Current Demand Charges
-        <a popover-placement="right" popover="{{demandChargesTooltip}}" >
-          <i class="glyphicon glyphicon-info-sign"></i></a>
-      </h4>
+      <a tooltip-placement="right" tooltip="{{demandChargesTooltip}}" >
+        <h4 class="title">Current Demand Charges
+        </h4>
+      </a>
       <h3 class="maincontent">$ {{data.demandCharge}} / kW</h3>
     </div>
   </div>
@@ -79,24 +67,18 @@
       </div>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 largewidget">
-      <h4 class="title" style="display: inline-block">Current Demand
-      <h6 style="display: inline-block; margin-top: 0; vertical-align: top;">
-        <a popover-placement="top" popover="This is your average net
-          kW demand in the current 15 minute period.  Your utility used
-          15-minute averages to record your kW demand." >
-          <i class="glyphicon glyphicon-info-sign"></i></a>
-      </h6>
-      </h4>
+      <a tooltip-placement="top" tooltip="This is your average net kW demand in
+        the current 15 minute period. Your utility uses 15-minute averages to
+        record your kW demand.">
+        <h4 class="title" style="display: inline-block">Current Demand</h4>
+      </a>
       <h3 class="maincontent darkerBlue">{{data.current_demand | number:0}} <small>kW</small></h3>
       <h4 class="time">{{data.currentDemandStartDate | date:'h:mm'}} - {{data.currentDemandEndDate | date:'h:mm a'}}</h4>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 largewidget">
-      <h4 class="title" style="display: inline-block">{{maxDemandTitle}}
-      </h4>
-      <h6 style="display: inline-block; margin-top: 0; vertical-align: top;">
-        <a popover-placement="top" popover="{{maxDemandDescription}}" >
-          <i class="glyphicon glyphicon-info-sign"></i></a>
-      </h6>
+      <a tooltip-placement="top" tooltip="{{maxDemandDescription}}">
+        <h4 class="title" style="display: inline-block">{{maxDemandTitle}}</h4>
+      </a>
       <h3 class="maincontent darkRed" ng-if="data.peak_period!=='onpeak'">{{data.max_demand | number:0}} <small>kW</small></h3>
       <h3 class="maincontent darkRed" ng-if="data.peak_period==='onpeak'">{{data.max_deamnd | number:0}} <small>kW</small></h3>
       <h4 class="time">{{data.maxDemandStartDate | date:'fullDate'}}<br/>
