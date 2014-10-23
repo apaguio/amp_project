@@ -166,6 +166,49 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     border: 1px solid @widgetBorderColor;
     border-radius: 4px;
 }
+.graphtooltip {
+    background-color: white;
+    border-radius: 4px;
+    border: 1px solid #bbbbbb;
+    color: black;
+    font-family: "Open Sans", sans-serif;
+    height: auto;                 
+    min-width: 150px;
+    opacity: 0.7;
+    padding: 10px;
+    pointer-events: none;
+    position: absolute;           
+    text-align: left;           
+    width: 200px !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    pointer-events: none;         
+    .title{
+        font-weight: bold;
+        text-align: center;
+    }
+    .body {
+        .entry{
+            margin-bottom: 5px;
+            margin-top: 5px;
+            .key{
+            }
+            .value {
+                float: right;
+                font-weight: bolder;
+            }
+            &.facility {
+                border-bottom: 2px dashed @darkerBlue;
+            }
+            &.solar {
+                background-color: @lightYellow;
+                color: darken(@darkYellow, 20%);
+            }
+            &.netdemand {
+                border-bottom: 1px solid @darkerBlue;
+            }
+        }
+    }
+}
 .graph {
     min-height: 500px;
     .chartcontainer {
@@ -205,16 +248,16 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
         margin: 5px auto;
         label{
             min-width: 100px;
+        }
     }
-}
 }
 
 #powerview {
     .tooltip {
         width: 250px;
     }
-
 }
+
 .powerviewgraphwrapper {
     .powerviewgraph {
         svg {
@@ -289,54 +332,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
         }
     }
     div.tooltip {
-        pointer-events: none;
-        border: 1px solid #222;
-        background-color: white;
-        opacity: 0.7;
-        border-radius: 4px;
-        padding: 10px;
-
-        min-width: 100px;
-        position: absolute;           
-        text-align: left;           
-        width: auto;                  
-        height: auto;                 
-        min-width: 150px;
-
-        border: 1px solid #bbbbbb;
-        color: black;
-        background-color: white;
-        position: absolute;
-        font-family: "Open Sans", sans-serif;
-        padding: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        pointer-events: none;         
-        .title{
-            font-weight: bold;
-            text-align: center;
-        }
-        .body {
-            .entry{
-                margin-bottom: 5px;
-                margin-top: 5px;
-                .key{
-                }
-                .value {
-                    float: right;
-                    font-weight: bolder;
-                }
-                &.facility {
-                    border-bottom: 2px dashed @darkerBlue;
-                }
-                &.solar {
-                    background-color: @lightYellow;
-                    color: darken(@darkYellow, 20%);
-                }
-                &.netdemand {
-                    border-bottom: 1px solid @darkerBlue;
-                }
-            }
-        }
+        .graphtooltip;
     }
 }
 
@@ -349,44 +345,6 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 #performance {
     a.selected {
         color: green;
-    }
-    div.tooltip {
-        pointer-events: none;
-        border: 1px solid #222;
-        background-color: white;
-        opacity: 0.7;
-        border-radius: 4px;
-        padding: 10px;
-
-        min-width: 100px;
-        position: absolute;           
-        text-align: left;           
-        width: auto;                  
-        height: auto;                 
-        min-width: 150px;
-
-        border: 1px solid #bbbbbb;
-        color: black;
-        background-color: white;
-        position: absolute;
-        font-family: "Open Sans", sans-serif;
-        padding: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        pointer-events: none;         
-        .title{
-            font-weight: bold;
-            text-align: center;
-        }
-        .body {
-            .entry{
-                .key{
-                }
-                .value {
-                    float: right;
-                    font-weight: bolder;
-                }
-            }
-        }
     }
     svg {
         font: 10px sans-serif;
