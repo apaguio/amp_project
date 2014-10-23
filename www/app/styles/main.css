@@ -34,9 +34,6 @@ body {
 .darkYellow {
   color: #edf500;
 }
-.tooltip {
-  width: 250px;
-}
 .uppercase {
   text-transform: uppercase;
 }
@@ -211,6 +208,9 @@ h6,
 }
 #settings .inlinecontainer label {
   min-width: 100px;
+}
+#powerview .tooltip {
+  width: 250px;
 }
 .powerviewgraphwrapper .powerviewgraph svg {
   font: 10px sans-serif;
