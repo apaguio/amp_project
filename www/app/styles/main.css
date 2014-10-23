@@ -98,6 +98,11 @@ h6,
   opacity: 0;
 }
 #main .logincontainer {
+  background-color: #fbfcfc;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #cecece;
+  border-radius: 4px;
   margin-top: 10%;
 }
 #main .logincontainer h2 {
@@ -157,6 +162,13 @@ h6,
 }
 .leftwidgets a:hover {
   text-decoration: none;
+}
+.whitecontainer {
+  background-color: #fbfcfc;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #cecece;
+  border-radius: 4px;
 }
 .graph {
   min-height: 500px;

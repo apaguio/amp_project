@@ -101,7 +101,6 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
         opacity:0;
     }
     .logincontainer {
-        margin-top: 10%;
         h2 {
             margin: 10% 0;
             color: rgb(77, 127, 29);
@@ -113,6 +112,8 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
             }
 
         }
+        .whitecontainer;
+        margin-top: 10%;
     }
 }
 
@@ -162,6 +163,13 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     }
 }
 
+.whitecontainer {
+    background-color: @widgetColor;
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid @widgetBorderColor;
+    border-radius: 4px;
+}
 .graph {
     min-height: 500px;
     .chartcontainer {
@@ -178,11 +186,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
             height: 100px;
         }
     }
-    background-color: @widgetColor;
-    margin-top: 10px;
-    padding: 10px;
-    border: 1px solid @widgetBorderColor;
-    border-radius: 4px;
+    .whitecontainer;
 }
 
 #alerts {
