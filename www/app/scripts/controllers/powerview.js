@@ -15,6 +15,7 @@
         scope.nodata = false;
         http.defaults.headers.post['CSRF-TOKEN'] = Session.csrfToken;
         scope.lastTime = null;
+        scope.graphs = null;
 
         function onLoad(data) {
             scope.data = data;
@@ -94,7 +95,7 @@
             http.get('/api/powerview/points', pointsParams).then(function (result) {
                 var data = result.data;
                 var points = _.map(data, function(d) {
-                    d.time = new Date(d.time);
+                    d.time = moment(d.time).toDate();
                     return d;
                 });
                 var lastPoint = _.last(points);

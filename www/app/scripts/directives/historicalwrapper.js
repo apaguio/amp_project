@@ -15,6 +15,14 @@
         scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
         scope.format = scope.formats[0];
 
+        scope.settings = false;
+        scope.showSettings = function showSettings() {
+            scope.settings = true;
+        };
+        scope.hideSettings = function hideSettings() {
+            scope.settings = false;
+        };
+
         if (!scope.wrapper.start) {
             scope.wrapper.start = moment().subtract(1, 'days').toDate();
         }
@@ -65,12 +73,11 @@
             http.get(url, params).then(function (result) {
                 var data = result.data;
                 if (!data || !data.length) {
-                    debugger; 
                     scope.nodata = true;
                     return;
                 }
                 var points = _.map(data, function(d) {
-                    d.time = new Date(d.time);
+                    d.time = moment(d.time).toDate();
                     return d;
                 });
                 scope.graphdata = points;

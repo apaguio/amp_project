@@ -22,10 +22,15 @@
 @darkBlue: #05B3D1;
 @darkerBlue: #256188;
 
+@bgColor: #ECECEC;
+@widgetColor: #FBFCFC;
+@widgetBorderColor: #CECECE;
+
 body {
     font-family: "Open Sans", sans-serif;
     padding-top: 0px;
     padding-bottom: 0px;
+    background-color: @bgColor;
 }
 
 .darkRed { color: @darkRed; }
@@ -153,17 +158,28 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     padding: 20px;
     padding-left: 35px;
 }
-.chartcontainer {
-    padding: 20px;
-    padding-bottom: 0;
-    margin-bottom: 0;
-}
-.loadergif {
-    padding-top: 100px;
-    img {
-        width: 100px;
-        height: 100px;
+
+.graph {
+    min-height: 500px;
+    .chartcontainer {
+        padding: 10px;
+        padding-bottom: 0;
     }
+    .loadergif {
+        position: absolute;
+        vertical-align: middle;
+        text-align: center;
+        padding-top: 100px;
+        img {
+            width: 100px;
+            height: 100px;
+        }
+    }
+    background-color: @widgetColor;
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid @widgetBorderColor;
+    border-radius: 4px;
 }
 
 #alerts {
@@ -458,7 +474,16 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 #historical {
     padding-top: 10px;
     .historicalwrapper {
-        margin-top: 10px;
+        .settings {
+            padding-top: 50px;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(255, 255, 255, 0.8);
+            z-index: 1000;
+        }
     }
 }
 

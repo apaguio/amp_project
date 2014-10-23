@@ -18,9 +18,9 @@
         scope.start = scope.min.time;
         scope.end = scope.max.time;
 
-        scope.margin = {top: 6, right: 0, bottom: 20, left: 40};
-        scope.width = el.width() - scope.margin.right - scope.margin.left;
-        scope.height = el.height() - scope.margin.top - scope.margin.bottom;
+        scope.margin = {top: 0, right: 20, bottom: 20, left: 40};
+        scope.width = el.width();
+        scope.height = el.height();
         scope.bigheight = !!scope.graphs.consumption ? scope.height / 2 : 0;
         scope.smallheight = ((scope.height - scope.bigheight) / 2) - (2 * marginBetween);
         if (!scope.graphs.voltage || !scope.graphs.powerfactor) {
@@ -28,10 +28,11 @@
         }
         if (!scope.graphs.voltage && !scope.graphs.powerfactor) {
             scope.bigheight += scope.bigheight;
+            scope.bigheight -= (2*marginBetween) - scope.margin.top - scope.margin.bottom;
         }
 
         scope.x = d3.time.scale().range([0, scope.width - scope.margin.left - scope.margin.right]);
-        scope.x.domain([scope.start, scope.end]);
+        scope.x.domain([moment(scope.start).toDate(), moment(scope.end).toDate()]);
 
         function brushed() {
             x.domain(brush.empty() ? x2.domain() : brush.extent());
@@ -71,27 +72,27 @@
 
         scope.linePower = d3.svg.line()
             //.interpolate("basis")
-            .x(function(d) { return scope.x(d.time); })
+            .x(function(d) { return scope.x(moment(d.time).toDate()); })
             .y(function(d) { return scope.y(d.P || 0); });
 
         scope.lineSolar = d3.svg.line()
             //.interpolate("basis")
-            .x(function(d) { return scope.x(d.time); })
+            .x(function(d) { return scope.x(moment(d.time).toDate()); })
             .y(function(d) { return scope.y( (d.P || 0) - (d.S || 0 ) ); });
 
         scope.linePF = d3.svg.line()
             //.interpolate("basis")
-            .x(function(d) { return scope.x(d.time); })
+            .x(function(d) { return scope.x(moment(d.time).toDate()); })
             .y(function(d) { return scope.pfy(d.L1_PF || 0); });
 
         scope.lineV = d3.svg.line()
             //.interpolate("basis")
-            .x(function(d) { return scope.x(d.time); })
+            .x(function(d) { return scope.x(moment(d.time).toDate()); })
             .y(function(d) { return scope.vy(d.L1_V || 0); });
 
         scope.svg = d3.select(el[0]).select(".powerviewgraph").append("svg")
-            .attr("width", scope.width + scope.margin.left + scope.margin.right)
-            .attr("height", scope.height + scope.margin.top + scope.margin.bottom);
+            .attr("width", scope.width)
+            .attr("height", scope.height);
 
         scope.mouseRect = scope.svg.append('rect')
             .attr('class', 'mouserect')
@@ -130,10 +131,27 @@
 
         // An area generator, for the light fill.
         scope.area = d3.svg.area()
-            //.interpolate("monotone")
-            .x(function(d) { return scope.x(d.time); })
-            .y0(function(d) { return scope.y((d.P || 0) - (d.S || 0)); })
-            .y1(function(d) { return scope.y(d.P || 0); });
+            .x(function(d) {
+                var ret = scope.x(d.time) || 0; 
+                if (_.isNaN(ret)) {
+                    debugger; 
+                }
+                return ret
+            })
+            .y0(function(d) {
+                var ret = (scope.y((d.P || 0) - (d.S || 0))) || 0;
+                if (_.isNaN(ret)) {
+                    debugger; 
+                }
+                return ret;
+            })
+            .y1(function(d) {
+                var ret = (scope.y(d.P || 0)) || 0;
+                if (_.isNaN(ret)) {
+                    debugger; 
+                }
+                return ret;
+            });
 
         var xEnd = -scope.x(scope.end);
 
@@ -184,7 +202,7 @@
             .attr("x1", 0)
             .attr("x2", 0)
             .attr("y1", 0)
-            .attr("y2", scope.height );
+            .attr("y2", scope.height - scope.margin.bottom - scope.margin.top);
 
         scope.hoverLineGroup.style("opacity", scope.hoverLineOpacity || 1e-6);
 
@@ -241,7 +259,7 @@
                     scope.lastPoint = point;
                 });
             }
-            var xVal = scope.x(scope.lastPoint.time);
+            var xVal = scope.x(moment(scope.lastPoint.time).toDate());
             scope.lineHover
                 .attr('x1', xVal + scope.margin.left)
                 .attr('x2', xVal + scope.margin.left);
@@ -290,11 +308,11 @@
         scope.start = scope.min.time;
         scope.end = scope.max.time;
 
-        scope.x.domain([scope.start, scope.end]);
+        scope.x.domain([moment(scope.start).toDate(), moment(scope.end).toDate()]);
 
         var minY = _.min([scope.min.P - scope.min.S, 0]);
         var maxY = _.max([scope.max.P]);
-        scope.y.domain([minY, Math.max(maxDemand, maxY) + 20]);
+        scope.y.domain([minY, Math.max(maxDemand, maxY)]);
 
         var minPF = scope.min.L1_PF;
         var maxPF = 1;
@@ -315,13 +333,13 @@
                 .attr("class", "maxdemand");
         }
         maxdemandLine
-            .attr("x1", scope.x(scope.start))
-            .attr("x2", scope.x(scope.end))
+            .attr("x1", scope.x(moment(scope.start).toDate()))
+            .attr("x2", scope.x(moment(scope.end).toDate()))
             .attr("y1", scope.y(maxDemand))
             .attr("y2", scope.y(maxDemand));
 
         maxdemandText
-            .attr("x", scope.x(scope.end))
+            .attr("x", scope.x(moment(scope.end).toDate()))
             .attr("y", scope.y(maxDemand) + 10)
             .text("Max Demand");
 
@@ -374,9 +392,9 @@
     }
 
     function controller(scope, element) {
+
         scope.$watch('dataupdated', function() {
             if (scope.data) {
-
                 if (!scope.graphs) {
                     scope.graphs = {
                         'voltage': true,
@@ -389,14 +407,14 @@
                     P: Number.MIN_VALUE,
                     L1_V: Number.MIN_VALUE,
                     L1_PF: Number.MIN_VALUE,
-                    time: Number.MIN_VALUE
+                    time: new Date(0)
                 };
                 scope.min = {
                     S: Number.MAX_VALUE,
                     P: Number.MAX_VALUE,
                     L1_V: Number.MAX_VALUE,
                     L1_PF: Number.MAX_VALUE,
-                    time: Number.MAX_VALUE
+                    time: new Date()
                 };
 
                 // Single loop to get them all, single ring to role them all :D
@@ -423,7 +441,6 @@
                 scope.tooltip = d3.select(element[0])
                     .select("div.tooltip")
                     .style("opacity", scope.hoverLineOpacity || 1e-6);
-
 
                 if (scope.svg) {
                     update(scope, scope.data, maxDemand);

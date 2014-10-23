@@ -124,7 +124,7 @@
         scope.y.domain([0, maxValue + 20]);
         scope.yTotal.domain([0, maxTotalValue + 20]);
 
-        scope.svg = d3.select(el[0]).select(".graph").append("svg")
+        scope.svg = d3.select(el[0]).select(".performancegraph").append("svg")
             .attr("width", scope.width + scope.margin.left + scope.margin.right)
             .attr("height", scope.height + scope.margin.top + scope.margin.bottom);
 

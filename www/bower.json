@@ -17,7 +17,8 @@
     "highstock-release": "~2.0.4",
     "d3": "~3.4.11",
     "underscore.string": "~2.3.3",
-    "angular-bootstrap": "~0.11.2"
+    "angular-bootstrap": "~0.11.2",
+    "jquery.flip": "*"
   },
   "devDependencies": {
     "angular-mocks": "~1.2.15",

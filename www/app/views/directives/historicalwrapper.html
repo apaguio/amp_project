@@ -1,85 +1,100 @@
 <div class="historicalwrapper col-xs-12">
   <!-- Date Picking -->
-  <div class="col-xs-12">
 
-    <form class="form-inline" role="form" name="datepicking">
+  <div class="col-xs-12 graph">
+    <div class="settings" ng-show="settings">
+      <div class="col-xs-12 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3">
+        <form class="form-horizontal" role="form">
+          <div class="form-group">
+            <label for="from" class="col-xs-2"> From </label>
+            <p class="input-group col-xs-10">
+            <input type="text" class="form-control frompicker" ng-model="wrapper.start"
+            datepicker-options="dateOptions" is-open="isOpen.start"
+            max-date="wrapper.end" datepicker-popup="{{format}}" close-text="Close" />
+            <span class="input-group-btn">
+              <button type="button" class="btn btn-default"
+                ng-click="open($event, 'start')">
+                <i class="glyphicon glyphicon-calendar"></i>
+              </button>
+            </span>
+            </p>
+          </div>
 
-      <div class="form-group col-xs-12 col-sm-6 col-lg-4">
-        <label for="from"> From </label>
-        <p class="input-group col-xs-10 pull-right">
-        <input type="text" class="form-control frompicker" ng-model="wrapper.start"
-        datepicker-options="dateOptions" is-open="isOpen.start"
-        max-date="wrapper.end" datepicker-popup="{{format}}" close-text="Close" />
-        <span class="input-group-btn">
-          <button type="button" class="btn btn-default"
-            ng-click="open($event, 'start')">
-            <i class="glyphicon glyphicon-calendar"></i>
-          </button>
-        </span>
-        </p>
+          <div class="form-group">
+            <label for="to" class="col-xs-2"> To </label>
+            <p class="input-group col-xs-10">
+            <input type="text" class="form-control topicker" ng-model="wrapper.end"
+            datepicker-options="dateOptions" is-open="isOpen.end"
+            min-date="wrapper.start" datepicker-popup="{{format}}" close-text="Close"/>
+            <span class="input-group-btn">
+              <button type="button" class="btn btn-default"
+                ng-click="open($event, 'end')">
+                <i class="glyphicon glyphicon-calendar"></i></button>
+            </span>
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label class="col-xs-2">Resolutions</label>
+            <div class="col-xs-10">
+              <a href="javascript:;" ng-click="setResolution('5m')"
+                ng-class="{'selected': wrapper.resolution=='5m'}"> 5 min </a> |
+              <a href="javascript:;" ng-click="setResolution('30m')"
+                ng-class="{'selected': wrapper.resolution=='30m'}"> 30 min </a> |
+              <a href="javascript:;" ng-click="setResolution('1h')"
+                ng-class="{'selected': wrapper.resolution=='1h'}"> 1 hour </a> |
+              <a href="javascript:;" ng-click="setResolution('24h')"
+                ng-class="{'selected': wrapper.resolution=='24h'}"> 24 hours </a>
+            </div>
+          </div>
+
+          <div class="timeselectors form-group">
+            <label class="col-xs-2">Graphs</label>
+            <div class="col-xs-10">
+              <div class="btn-group">
+                <button type="button" class="btn btn-sm btn-default"
+                  ng-click="toggleGraph('consumption')"
+                  ng-class="{'btn-success': wrapper.graphs.consumption}">Consumption</button>
+                <button type="button" class="btn btn-sm btn-default"
+                  ng-click="toggleGraph('voltage')"
+                  ng-class="{'btn-success': wrapper.graphs.voltage}">Voltage</button>
+                <button type="button" class="btn btn-sm btn-default"
+                  ng-click="toggleGraph('powerfactor')"
+                  ng-class="{'btn-success': wrapper.graphs.powerfactor}">Power Factor</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <button class="btn btn-danger pull-left" ng-click="remove()">
+              <i class="glyphicon glyphicon-remove"></i>
+              Remove
+            </button>
+            <button class="btn btn-success pull-right" ng-click="hideSettings()">
+              <i class="glyphicon glyphicon-ok"></i>
+              Done
+            </button>
+          </div>
+        </form>
+
       </div>
-
-      <div class="form-group col-xs-12 col-sm-6 col-lg-4">
-        <label for="to"> To </label>
-        <p class="input-group col-xs-10 pull-right">
-        <input type="text" class="form-control topicker" ng-model="wrapper.end"
-        datepicker-options="dateOptions" is-open="isOpen.end"
-        min-date="wrapper.start" datepicker-popup="{{format}}" close-text="Close"/>
-        <span class="input-group-btn">
-          <button type="button" class="btn btn-default"
-            ng-click="open($event, 'end')">
-            <i class="glyphicon glyphicon-calendar"></i></button>
-        </span>
-        </p>
-      </div>
-      <div class="form-group col-xs-12 col-sm-6 col-lg-4">
-        <div class="pull-right">
-          <button class="btn btn-danger" ng-click="remove()">
-            <i class="glyphicons glyphicons-remove"></i>
-            Remove</button>
-        </div>
-      </div>
-    </form>
-  </div>
-
-  <div class="col-xs-12 loadergif" ng-if="loading && !nodata">
-    <center><img src="images/loader.gif" width="100" height="100"></center>
-  </div>
-
-  <div class="col-xs-12 chartcontainer" ng-if="nodata"
-    style="padding: 100px 0">
-    <center><h2> No Data Available</h2></center>
-  </div>
-
-  <div class="col-xs-12 chartcontainer" ng-if="!loading && !nodata">
+    </div>
+    <div class="">
+      <button class="btn btn-default pull-right" ng-click="showSettings()"
+        tooltip="Settings" tooltip-placement="left">
+        <i class="glyphicon glyphicon-cog"></i>
+      </button>
+    </div>
+    <div class="col-xs-12 loadergif" ng-if="loading && !nodata">
+      <center><img src="images/loader.gif" width="100" height="100"></center>
+    </div>
+    <div class="col-xs-12 chartcontainer" ng-if="nodata">
+      <center><h2> No Data Available</h2></center>
+    </div>
+    <div class="col-xs-12 chartcontainer" ng-if="!loading && !nodata">
       <powergraph data="graphdata" max-demand="{{data.max_demand}}"
       dataupdated="{{dataUpdated}}" graphs="wrapper.graphs"></powergraph>
     </div>
-    <div class="col-xs-6 timeselectors">
-      <span class="hdden-xs">Resolutions :</span>
-      <a href="javascript:;" ng-click="setResolution('5m')"
-        ng-class="{'selected': wrapper.resolution=='5m'}"> 5 min </a> |
-      <a href="javascript:;" ng-click="setResolution('30m')"
-        ng-class="{'selected': wrapper.resolution=='30m'}"> 30 min </a> |
-      <a href="javascript:;" ng-click="setResolution('1h')"
-        ng-class="{'selected': wrapper.resolution=='1h'}"> 1 hour </a> |
-      <a href="javascript:;" ng-click="setResolution('24h')"
-        ng-class="{'selected': wrapper.resolution=='24h'}"> 24 hours </a>
-    </div>
-    <div class="col-xs-6 timeselectors">
-      <span class="hdden-xs">Graphs :</span>
-
-      <div class="btn-group">
-        <button type="button" class="btn btn-sm btn-default"
-          ng-click="toggleGraph('consumption')"
-          ng-class="{'btn-success': wrapper.graphs.consumption}">Consumption</button>
-        <button type="button" class="btn btn-sm btn-default"
-          ng-click="toggleGraph('voltage')"
-          ng-class="{'btn-success': wrapper.graphs.voltage}">Voltage</button>
-        <button type="button" class="btn btn-sm btn-default"
-          ng-click="toggleGraph('powerfactor')"
-          ng-class="{'btn-success': wrapper.graphs.powerfactor}">Power Factor</button>
-      </div>
-    </div>
+  </div>
 
 </div>
