@@ -221,11 +221,11 @@ h6,
   position: absolute;
   vertical-align: middle;
   text-align: center;
-  padding-top: 100px;
+  padding-top: 150px;
 }
 .graph .loadergif img {
-  width: 100px;
-  height: 100px;
+  width: 50px;
+  height: 50px;
 }
 #alerts .inlinecontainer {
   margin: 5px auto;
