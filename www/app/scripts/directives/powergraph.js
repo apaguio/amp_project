@@ -18,7 +18,7 @@
         scope.start = scope.min.time;
         scope.end = scope.max.time;
 
-        scope.margin = {top: 0, right: 20, bottom: 20, left: 40};
+        scope.margin = {top: 20, right: 20, bottom: 20, left: 40};
         scope.width = el.width();
         scope.height = el.height();
         scope.bigheight = !!scope.graphs.consumption ? scope.height / 2 : 0;
