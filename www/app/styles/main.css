@@ -280,16 +280,19 @@ h6,
 }
 .powerviewgraphwrapper .powerviewgraph svg line.maxdemand {
   stroke-dasharray: 5,5;
-  stroke: #e85600;
+  /*stroke: @lightRed;*/
+  stroke: #d91e18;
 }
 .powerviewgraphwrapper .powerviewgraph svg .lines path.lineSolar {
-  stroke: #256188;
+  /*stroke: @darkerBlue;*/
+  stroke: #1f3a93;
   stroke-width: 1px;
 }
 .powerviewgraphwrapper .powerviewgraph svg .lines path.linePower {
-  stroke: #256188;
-  stroke-dasharray: 5,3;
-  stroke-width: 2px;
+  /*stroke: @darkerBlue;*/
+  stroke: #6c7a89;
+  /*stroke-dasharray: 5,3;*/
+  stroke-width: 1px;
 }
 .powerviewgraphwrapper .powerviewgraph svg .lines path.area {
   stroke-width: 0;

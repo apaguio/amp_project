@@ -26,6 +26,10 @@
 @widgetColor: #FBFCFC;
 @widgetBorderColor: #CECECE;
 
+@netloadColor: #1F3A93;
+@maxdemandColor: #D91E18;
+@consumptionColor: #6C7A89;
+
 body {
     font-family: "Open Sans", sans-serif;
     padding-top: 0px;
@@ -290,18 +294,21 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
             }
             line.maxdemand{
                 stroke-dasharray: 5,5;
-                stroke: @lightRed;
+                /*stroke: @lightRed;*/
+                stroke: @maxdemandColor;
             }
             .lines {
                 path {
                     &.lineSolar {
-                        stroke: @darkerBlue;
+                        /*stroke: @darkerBlue;*/
+                        stroke: @netloadColor;
                         stroke-width: 1px;
                     }
                     &.linePower {
-                        stroke: @darkerBlue;
-                        stroke-dasharray: 5,3;
-                        stroke-width: 2px;
+                        /*stroke: @darkerBlue;*/
+                        stroke: @consumptionColor;
+                        /*stroke-dasharray: 5,3;*/
+                        stroke-width: 1px;
                     }
                     &.area {
                         stroke-width: 0;
