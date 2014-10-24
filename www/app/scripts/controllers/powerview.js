@@ -62,7 +62,7 @@
                 return deferred.reject(false);
             }
 
-            var demandAPI = '/api/powerview/max_demand';
+            var demandAPI = '/api/powerview/max_peak_demand';
             var dateText = dateFilter(scope.data.maxDemandStartDate, 'fullDate') + " " + dateFilter(scope.data.maxDemandStartDate, 'h:mm') + " - " + dateFilter(scope.data.maxDemandEndDate, 'h:mm a');
             scope.maxDemandTitle = 'Max Peak Demand';
             scope.maxDemandDescription = 'This is your maximum kW demand during On Peak times in the current billing period. Your Max Demand this billing period, either on or off peak, is [' + scope.data.max_demand + ' kW], and occurred on [' + dateText + '].';

@@ -80,7 +80,7 @@
         <h4 class="title" style="display: inline-block">{{maxDemandTitle}}</h4>
       </a>
       <h3 class="maincontent darkRed" ng-if="data.peak_period!=='onpeak'">{{data.max_demand | number:0}} <small>kW</small></h3>
-      <h3 class="maincontent darkRed" ng-if="data.peak_period==='onpeak'">{{data.max_deamnd | number:0}} <small>kW</small></h3>
+      <h3 class="maincontent darkRed" ng-if="data.peak_period==='onpeak'">{{data.max_demand | number:0}} <small>kW</small></h3>
       <h4 class="time">{{data.maxDemandStartDate | date:'fullDate'}}<br/>
         {{data.maxDemandStartDate | date:'h:mm'}} - {{data.maxDemandEndDate | date:'h:mm a'}}</h4>
     </div>
