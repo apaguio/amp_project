@@ -97,15 +97,15 @@ def energy_1h_aggregate(meter_id):
     influxdb.write_points([data])
 
 def _send_alerts(title, msg):
-    if current_user.alerts_email:
-        emailer.send_email([current_user.email], title, msg)
+    if current_user.alerts_emails:
+        emailer.send_email(current_user.alerts_emails, title, msg)
     if current_user.alerts_phones:
         for phone in current_user.alerts_phones:
             sms.send(phone, msg)
 
 @celery.task(name='tasks.one.minute.netload.avg.check')
 def netload_avg_check(meter_id, solar_meter_id):
-    if current_user.one_minute_netload_avg_threshold and (current_user.alerts_email or current_user.alerts_phones):
+    if current_user.one_minute_netload_avg_threshold and (current_user.alerts_emails or current_user.alerts_phones):
         facility_query = 'select mean(P) from "%s" where time > now() - 1m;' % meter_id
         facility_result = influxdb.query(facility_query)
         demand = round(facility_result[0]['points'][0][1], 2)
@@ -124,7 +124,7 @@ def netload_avg_check(meter_id, solar_meter_id):
 
 @celery.task(name='tasks.power.factor.check')
 def power_factor_check(meter_id):
-    if current_user.power_factor_threshold and (current_user.alerts_email or current_user.alerts_phones):
+    if current_user.power_factor_threshold and (current_user.alerts_emails or current_user.alerts_phones):
         power_factor_query = 'select mean(L1_PF) from "%s" where time > now() - 30s;' % meter_id
         power_factor_query_result = influxdb.query(power_factor_query)
         power_factor = round(power_factor_query_result[0]['points'][0][1], 2)
@@ -136,7 +136,7 @@ def power_factor_check(meter_id):
 
 @celery.task(name='tasks.voltage.check')
 def voltage_check(meter_id):
-    if current_user.voltage_threshold and (current_user.alerts_email or current_user.alerts_phones):
+    if current_user.voltage_threshold and (current_user.alerts_emails or current_user.alerts_phones):
         voltage_query = 'select mean(L1_V) from "%s" where time > now() - 30s;' % meter_id
         voltage_query_result = influxdb.query(voltage_query)
         voltage = round(voltage_query_result[0]['points'][0][1], 2)

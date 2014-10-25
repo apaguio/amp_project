@@ -47,7 +47,7 @@ class Customer(mongodb.Document):
     one_minute_netload_avg_threshold = mongodb.FloatField()
     power_factor_threshold = mongodb.FloatField()
     voltage_threshold = mongodb.FloatField()
-    alerts_email = mongodb.EmailField()
+    alerts_emails = mongodb.ListField(mongodb.EmailField())
     alerts_phones = mongodb.ListField(mongodb.StringField())
 
     # Flask-Login integration

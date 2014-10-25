@@ -29,7 +29,7 @@ def generate():
     customer.one_minute_netload_avg_threshold = 1400.0
     customer.power_factor_threshold = 0.95
     customer.voltage_threshold = 5.0
-    customer.alerts_email = 'test@exampe.com'
+    customer.alerts_email = ['test@exampe.com',]
     customer.save()
 
 def init_facility_meters():
