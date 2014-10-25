@@ -247,9 +247,20 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 }
 
 #settings {
-    padding-top: 5%;
+    padding: 10px;
+    .security, .tarrif{
+        .whitecontainer;
+        /*margin: 10px;*/
+        .title {
+            border-bottom: 1px solid @darkerBlue;
+            padding: 10px;
+            padding-top: 0;
+            margin-bottom: 20px;
+        }
+    }
     .inlinecontainer {
         margin: 5px auto;
+        vertical-align: middle;
         label{
             min-width: 100px;
         }

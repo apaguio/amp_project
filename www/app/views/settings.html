@@ -1,56 +1,128 @@
 <nav link="settings"></nav>
-<div class="container" id="settings">
 
-  <div class="col-xs-12 inlinecontainer">
-    <form class="form-inline" role="form">
-      <div class="form-group col-xs-2">
-        <label for="username">Username</label>
+<div class="" id="settings">
+
+  <div class="col-xs-12 col-md-6">
+    <div class="security col-xs-12">
+      <div class="col-xs-12 title">
+        <h3> Security </h3>
       </div>
-      <div class="form-group col-xs-8">
-        <input type="text" class="form-control" id="username"
-        placeholder="Username" ng-model="username">
+
+      <div class="col-xs-12 inlinecontainer">
+        <form class="form-inline" role="form">
+          <div class="form-group col-xs-4">
+            <label for="facility">Facility name</label>
+          </div>
+          <div class="form-group col-xs-8">
+            <input type="text" class="form-control" id="facility"
+            placeholder="Facility name" ng-model="facility">
+          </div>
+        </form>
       </div>
-      <button type="submit" class="btn btn-default">Save</button>
-    </form>
+
+      <div class="col-xs-12 inlinecontainer">
+        <form class="form-inline" role="form">
+          <div class="form-group col-xs-4">
+            <label for="username">Username</label>
+          </div>
+          <div class="form-group col-xs-8">
+            <input type="text" class="form-control" id="username"
+            placeholder="Username" ng-model="username" disabled>
+          </div>
+        </form>
+      </div>
+
+      <div class="col-xs-12 inlinecontainer">
+        <form class="form-inline" role="form">
+          <div class="form-group col-xs-4">
+            <label for="password">Password</label>
+          </div>
+          <div class="form-group col-xs-8">
+            <input type="password" class="form-control" id="password" ng-model="password">
+          </div>
+        </form>
+      </div>
+
+      <div class="col-xs-12 inlinecontainer">
+        <form class="form-inline" role="form">
+          <div class="form-group col-xs-4">
+            <label for="cpassword">Confirm Password</label>
+          </div>
+          <div class="form-group col-xs-8">
+            <input type="password" class="form-control" id="cpassword" ng-model="cpassword">
+          </div>
+        </form>
+      </div>
+
+
+      <div class="col-xs-12 inlinecontainer">
+        <button class="btn btn-danger pull-left" ng-click="">
+          <i class="glyphicon glyphicon-remove"></i>
+          Cancel
+        </button>
+        <button class="btn btn-success pull-right" ng-click="">
+          <i class="glyphicon glyphicon-ok"></i>
+          Save
+        </button>
+      </div>
+
+    </div>
   </div>
 
-  <div class="col-xs-12 inlinecontainer">
-    <form class="form-inline" role="form">
-      <div class="form-group col-xs-2">
-        <label for="password">Password</label>
+  <div class="col-xs-12 col-md-6">
+    <div class="tarrif col-xs-12">
+      <div class="col-xs-12 title">
+        <h3> Historical </h3>
       </div>
-      <div class="form-group col-xs-8">
-        <input type="password" class="form-control" id="password" ng-model="password">
-      </div>
-      <button type="submit" class="btn btn-default">Save</button>
-    </form>
-  </div>
 
-  <div class="col-xs-12 inlinecontainer">
-    <form class="form-inline" role="form">
-      <div class="form-group col-xs-2">
-        <label for="facility">Facility name</label>
+      <div class="col-xs-12 inlinecontainer">
+        <form class="form-inline" role="form">
+          <div class="form-group col-xs-5">
+            <label for="bill">Bill Month/Year</label>
+          </div>
+          <div class="form-group col-xs-7">
+            <input type="text" class="form-control" id="bill"
+            placeholder="MM/YY" ng-model="bill">
+          </div>
+        </form>
       </div>
-      <div class="form-group col-xs-8">
-        <input type="text" class="form-control" id="facility"
-        placeholder="Facility name" ng-model="facility">
-      </div>
-      <button type="submit" class="btn btn-default">Save</button>
-    </form>
-  </div>
 
-  <div class="col-xs-12 inlinecontainer">
-    <form class="form-inline" role="form">
-      <div class="form-group col-xs-2">
-        <label for="tariff">Rate tariff</label>
+      <div class="col-xs-12 inlinecontainer">
+        <form class="form-inline" role="form">
+          <div class="form-group col-xs-5">
+            <label for="energy">Total Energy Charges</label>
+          </div>
+          <div class="form-group col-xs-7">
+            <input type="text" class="form-control" id="energy"
+            placeholder="AG-5E" ng-model="energy">
+          </div>
+        </form>
       </div>
-      <div class="form-group col-xs-8">
-        <input type="text" class="form-control" id="tariff"
-        placeholder="Rate tariff" ng-model="username">
-      </div>
-      <button type="submit" class="btn btn-default">Save</button>
-    </form>
-  </div>
 
+      <div class="col-xs-12 inlinecontainer">
+        <form class="form-inline" role="form">
+          <div class="form-group col-xs-5">
+            <label for="demand">Total Demand Charges</label>
+          </div>
+          <div class="form-group col-xs-7">
+            <input type="text" class="form-control" id="demand"
+            placeholder="AG-5E" ng-model="demand">
+          </div>
+        </form>
+      </div>
+
+      <div class="col-xs-12 inlinecontainer">
+        <button class="btn btn-danger pull-left" ng-click="">
+          <i class="glyphicon glyphicon-remove"></i>
+          Cancel
+        </button>
+        <button class="btn btn-success pull-right" ng-click="">
+          <i class="glyphicon glyphicon-ok"></i>
+          Save
+        </button>
+      </div>
+
+    </div>
+  </div>
 </div>
 

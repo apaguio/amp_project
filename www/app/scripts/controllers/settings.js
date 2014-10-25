@@ -1,10 +1,11 @@
 'use strict';
 
-angular.module('insightApp')
-  .controller('SettingsCtrl', function ($scope) {
-    $scope.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
-  });
+(function() {
+
+    function controller($scope) {
+    }
+
+    angular.module('insightApp')
+    .controller('SettingsCtrl', ['$scope', '$http', controller]);
+
+}).call(null);

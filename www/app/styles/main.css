@@ -239,10 +239,27 @@ h6,
   padding: 1px 12px;
 }
 #settings {
-  padding-top: 5%;
+  padding: 10px;
+}
+#settings .security,
+#settings .tarrif {
+  background-color: #fbfcfc;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #cecece;
+  border-radius: 4px;
+  /*margin: 10px;*/
+}
+#settings .security .title,
+#settings .tarrif .title {
+  border-bottom: 1px solid #256188;
+  padding: 10px;
+  padding-top: 0;
+  margin-bottom: 20px;
 }
 #settings .inlinecontainer {
   margin: 5px auto;
+  vertical-align: middle;
 }
 #settings .inlinecontainer label {
   min-width: 100px;
