@@ -24,6 +24,11 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT=['json']
 CELERY_IMPORTS = ["tasks",]
 
+# twilio settings
+TWILIO_ACCOUNT_SID = ''
+TWILIO_AUTH_TOKEN = ''
+TWILIO_NUMBER = ''
+
 # EKM metering scheduled tasks
 EKM_READING_INTERVAL = 5
 
