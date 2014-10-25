@@ -49,6 +49,7 @@ class Customer(mongodb.Document):
     name = mongodb.StringField()
     email = mongodb.EmailField()
     password = mongodb.StringField()
+    facility_name = mongodb.StringField()
     timezone = mongodb.StringField(default='PST8PDT')
     read_cycle = mongodb.EmbeddedDocumentField(ReadCycle)
     seasons = mongodb.ListField(mongodb.EmbeddedDocumentField(Season))

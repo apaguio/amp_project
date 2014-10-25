@@ -44,10 +44,12 @@ def register_views(app):
     from views.performance import performance_app
     from views.powerview import powerview_app
     from views.historical import historical_app
+    from views.settings import settings_app
     from views.auth import auth_app
     app.register_blueprint(performance_app)
     app.register_blueprint(powerview_app)
     app.register_blueprint(historical_app)
+    app.register_blueprint(settings_app)
     app.register_blueprint(auth_app)
 
 

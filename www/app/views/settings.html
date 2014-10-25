@@ -4,6 +4,13 @@
 
   <!--<div class="col-xs-12 col-md-6">-->
   <div class="col-xs-12 col-md-12">
+
+    <div class="alert alert-danger col-xs-12" role="alert" ng-show="error"
+      ng-animate="{show: 'fadeIn', hide:'fadeOut'}">{{error}}</div>
+
+    <div class="alert alert-success col-xs-12" role="alert" ng-show="success"
+      ng-animate="{show: 'fadeIn', hide:'fadeOut'}">{{success}}</div>
+
     <div class="security col-xs-12">
 
       <div class="col-xs-12 title">
@@ -16,7 +23,7 @@
           </div>
           <div class="form-group col-xs-8">
             <input type="text" class="form-control" id="facility"
-            placeholder="Facility name" ng-model="facility">
+            placeholder="Facility name" ng-model="settings.facility_name">
           </div>
         </form>
       </div>
@@ -27,7 +34,7 @@
           </div>
           <div class="form-group col-xs-8">
             <input type="text" class="form-control" id="username"
-            placeholder="Username" ng-model="username" disabled>
+            placeholder="Username" ng-model="settings.name" disabled>
           </div>
         </form>
       </div>
@@ -38,7 +45,8 @@
             <label for="password">Password</label>
           </div>
           <div class="form-group col-xs-8">
-            <input type="password" class="form-control" id="password" ng-model="password">
+            <input type="password" class="form-control" id="password"
+            ng-model="settings.password" ng-change="typing()">
           </div>
         </form>
       </div>
@@ -49,18 +57,18 @@
             <label for="cpassword">Confirm Password</label>
           </div>
           <div class="form-group col-xs-8">
-            <input type="password" class="form-control" id="cpassword" ng-model="cpassword">
+            <input type="password" class="form-control" id="cpassword"
+            ng-model="settings.cpassword" ng-change="typing()">
           </div>
         </form>
       </div>
 
-
       <div class="col-xs-12 inlinecontainer">
-        <button class="btn btn-danger pull-left" ng-click="">
+        <button class="btn btn-danger pull-left" ng-click="cancel()">
           <i class="glyphicon glyphicon-remove"></i>
           Cancel
         </button>
-        <button class="btn btn-success pull-right" ng-click="">
+        <button class="btn btn-success pull-right" ng-click="save()">
           <i class="glyphicon glyphicon-ok"></i>
           Save
         </button>

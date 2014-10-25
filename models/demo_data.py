@@ -14,6 +14,7 @@ def generate():
     read_cycle = db.ReadCycle(name='V', billing_periods=billing_periods, rate_tariff='AG-5E')
     customer.read_cycle = read_cycle
     customer.facility = facility_meters
+    customer.facility_name = 'Cenergy'
     customer.solar = solar_meters
     customer.save()
 
