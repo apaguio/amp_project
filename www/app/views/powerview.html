@@ -55,8 +55,8 @@
         <center><h2> No Data Available</h2></center>
       </div>
       <div class="col-xs-12 chartcontainer" ng-if="!loading && !nodata">
-        <powergraph data="graphdata" max-demand="{{data.max_demand}}"
-        dataupdated="{{dataUpdated}}" graphs="graphs"></powergraph>
+        <powergraph data="graphdata"
+        dataupdated="{{dataUpdated}}" config="graphConfig"></powergraph>
       </div>
       <div class="col-xs-12 timeselectors">
         <a href="javascript:;" ng-click="setTimeFrame('5m')" ng-class="{'selected': timeframe=='5m'}"> 5 min </a> |
@@ -72,17 +72,16 @@
         record your kW demand.">
         <h4 class="title" style="display: inline-block">Current Demand</h4>
       </a>
-      <h3 class="maincontent darkerBlue">{{data.current_demand | number:0}} <small>kW</small></h3>
-      <h4 class="time">{{data.currentDemandStartDate | date:'h:mm'}} - {{data.currentDemandEndDate | date:'h:mm a'}}</h4>
+      <h3 class="maincontent darkerBlue">{{currentDemand.value | number:0}} <small>kW</small></h3>
+      <h4 class="time">{{currentDemand.start | date:'h:mm'}} - {{currentDemand.end | date:'h:mm a'}}</h4>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 largewidget">
-      <a tooltip-placement="top" tooltip="{{maxDemandDescription}}">
-        <h4 class="title" style="display: inline-block">{{maxDemandTitle}}</h4>
+      <a tooltip-placement="top" tooltip="{{maxDemand.tooltip}}">
+        <h4 class="title" style="display: inline-block">{{maxDemand.title}}</h4>
       </a>
-      <h3 class="maincontent darkRed" ng-if="data.peak_period!=='onpeak'">{{data.max_demand | number:0}} <small>kW</small></h3>
-      <h3 class="maincontent darkRed" ng-if="data.peak_period==='onpeak'">{{data.max_demand | number:0}} <small>kW</small></h3>
-      <h4 class="time">{{data.maxDemandStartDate | date:'fullDate'}}<br/>
-        {{data.maxDemandStartDate | date:'h:mm'}} - {{data.maxDemandEndDate | date:'h:mm a'}}</h4>
+      <h3 class="maincontent darkRed">{{maxDemand.value | number:0}} <small>kW</small></h3>
+      <h4 class="time">{{maxDemand.start | date:'fullDate'}}<br/>
+        {{maxDemand.start | date:'h:mm'}} - {{maxDemand.end | date:'h:mm a'}}</h4>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 largewidget">
       <h4 class="title">Current Power Quality</h4>

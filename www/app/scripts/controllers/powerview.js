@@ -9,13 +9,12 @@
  */
 (function() {
 
-    function controller(scope, Session, http, timeout, $q, location, util, dateFilter) {
+    function controller(scope, Session, http, timeout, $q, location, util, powerview) {
 
         scope.titleTooltip = 'Summer rates apply May 1 to October 31. Winter rates apply November 1 to April 30.';
         scope.nodata = false;
         http.defaults.headers.post['CSRF-TOKEN'] = Session.csrfToken;
         scope.lastTime = null;
-        scope.graphs = null;
 
         function onLoad(data) {
             scope.data = data;
@@ -52,47 +51,33 @@
         }
 
         function load(onLoad) {
-            http.get('/api/powerview').then(function (res) {
+            powerview.load().then(function (res) {
                 onLoad(res.data);
-            }, util.onError);
+            }, util.onError());
         }
 
+        scope.graphConfig = {};
         function tick(deferred) {
             if (location.path() !== '/powerview') {
                 return deferred.reject(false);
             }
 
-            var demandAPI = '/api/powerview/max_peak_demand';
-            var dateText = dateFilter(scope.data.maxDemandStartDate, 'fullDate') + " " + dateFilter(scope.data.maxDemandStartDate, 'h:mm') + " - " + dateFilter(scope.data.maxDemandEndDate, 'h:mm a');
-            scope.maxDemandTitle = 'Max Peak Demand';
-            scope.maxDemandDescription = 'This is your maximum kW demand during On Peak times in the current billing period. Your Max Demand this billing period, either on or off peak, is [' + scope.data.max_demand + ' kW], and occurred on [' + dateText + '].';
-            if (scope.data.peak_period === 'offpeak') {
-                scope.maxDemandDescription = 'This is your maximum kW demand during the current billing period, regardless of time. Your Max Peak Demand this billing period is [' + scope.data.max_demand + ' kW], and occurred on [' + dateText + '].';
-                scope.maxDemandTitle = 'Max Demand';
-                demandAPI =  '/api/powerview/max_demand_anytime';
-            }
-            http.get(demandAPI).then(function (result) {
-                var data = result.data;
-                if (!data.max_demand) {
-                    return ;
-                }
-                scope.data.max_demand = data.max_demand;
-                var maxDemandRange = util.toDateRange(data.time);
-                scope.data.maxDemandStartDate = maxDemandRange[0];
-                scope.data.maxDemandEndDate = maxDemandRange[1];
-            }, util.onError);
+            powerview.maxDemand().then(function (result) {
+                var resolved = result[scope.data.peak_period];
+                scope.maxDemand = resolved;
+                scope.graphConfig = {
+                    graphs: null,
+                    maxDemand: scope.maxDemand.value,
+                    maxDemandTitle: scope.maxDemand.title
+                };
+                scope.dataUpdated = ++scope.dataUpdated || 0;
+            }, util.onError());
 
-            http.get('/api/powerview/current_demand').then(function (result) {
-                var data = result.data;
-                scope.data.current_demand = data.current_demand;
-                var currentDemandRange = util.toDateRange(data.time);
-                scope.data.currentDemandStartDate = currentDemandRange[0];
-                scope.data.currentDemandEndDate = currentDemandRange[1];
-            }, util.onError);
+            powerview.currentDemand().then(function (result) {
+                scope.currentDemand = result;
+            }, util.onError());
 
-            var pointsParams = {params : {'timeframe': scope.timeframe, 'resolution':scope.resolution}};
-
-            http.get('/api/powerview/points', pointsParams).then(function (result) {
+            powerview.points(scope.timeframe, scope.resolution).then(function (result) {
                 var data = result.data;
                 var points = _.map(data, function(d) {
                     d.time = moment(d.time).toDate();
@@ -112,10 +97,7 @@
                 deferred.resolve(true);
                 scope.loading = false;
 
-            }, function(err) {
-                util.onError(err);
-                deferred.reject(err);
-            });
+            }, util.onError(deferred));
         }
 
         load(onLoad);
@@ -127,18 +109,18 @@
             scope.timeframe = timeframe;
             scope.loading = true;
             if (timeframe === '24h') {
-                scope.setReloadTime(60000)
+                scope.setReloadTime(60000);
                 return scope.setResolution('5m');
             }
             if (timeframe === '8h') {
-                scope.setReloadTime(30000)
+                scope.setReloadTime(30000);
                 return scope.setResolution('1m');
             }
             if (timeframe === '2h') {
-                scope.setReloadTime(10000)
+                scope.setReloadTime(10000);
                 return scope.setResolution('1m');
             }
-            scope.setReloadTime(5000)
+            scope.setReloadTime(5000);
             return scope.setResolution('1s');
         };
 
@@ -154,6 +136,6 @@
     }
 
     angular.module('insightApp')
-    .controller('PowerviewCtrl', ['$scope', 'Session', '$http', '$timeout', '$q', '$location', 'util', 'dateFilter', controller]);
+    .controller('PowerviewCtrl', ['$scope', 'Session', '$http', '$timeout', '$q', '$location', 'util', 'powerview', controller]);
 
 }).call(null);

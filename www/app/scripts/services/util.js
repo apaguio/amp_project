@@ -28,8 +28,13 @@
             return [d0, d1];
         };
 
-        this.onError = function onError(err) {
-            console.log(err);
+        this.onError = function onErrorBuilder(deferred) {
+            return function onError(err) {
+                console.log(err);
+                if (deferred) {
+                    deferred.reject(err);
+                }
+            };
         };
     }
 

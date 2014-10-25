@@ -10,7 +10,7 @@
  */
 (function() {
 
-    function controller(scope, Session, http, $q, util, historical) {
+    function controller(scope, Session, http, $q, util, historical, powerview) {
 
         scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
         scope.format = scope.formats[0];
@@ -39,7 +39,7 @@
             scope.wrapper.end = moment(scope.wrapper.end).toDate();
             scope.wrapper.zoom_start = moment(scope.wrapper.zoom_start).toDate();
             scope.wrapper.zoom_end = moment(scope.wrapper.zoom_end).toDate();
-            historical.updateSingle(scope.wrapper).success(onUpdate).error(util.onError);
+            historical.updateSingle(scope.wrapper).success(onUpdate).error(util.onError());
         }, 1000);
 
         scope.dateOptions = {
@@ -60,17 +60,28 @@
 
         scope.nodata = false;
 
+        scope.graphConfig = {};
         function load() {
             scope.loading = true;
-            var params = {params : {
-                'resolution': scope.wrapper.resolution
-            }};
+            $q.all([
+                powerview.load(),
+                powerview.maxDemand()
+            ]).then(function(results) {
+                var peak = scope.wrapper.maxDemandPeak || results[0].data.peak_period;
+                scope.wrapper.maxDemandPeak = peak;
+                scope.maxDemand = results[1][peak];
+                scope.graphConfig = {
+                    graphs: scope.wrapper.graphs || null,
+                    maxDemand: scope.maxDemand.value,
+                    maxDemandTitle: scope.maxDemand.title
+                };
+                scope.dataUpdated = ++scope.dataUpdated || 0;
+            }, util.onError());
 
             var start = moment(scope.wrapper.start).utc().unix();
             var end = moment(scope.wrapper.end).utc().unix();
-            var url = '/api/historical/points/' + start + '/' + end;
 
-            http.get(url, params).then(function (result) {
+            historical.points(start, end, scope.wrapper.resolution).then(function (result) {
                 var data = result.data;
                 if (!data || !data.length) {
                     scope.nodata = true;
@@ -85,7 +96,7 @@
                 scope.nodata = false;
                 scope.loading = false;
                 scope.bindDates();
-            }, util.onError);
+            }, util.onError());
         }
 
         scope.toggleGraph = function(graph) {
@@ -97,6 +108,11 @@
             historical.fixServerWrapperObject(wrapper);
             load();
         }
+
+        scope.selectMaxDemand = function(peak) {
+            scope.wrapper.maxDemandPeak = peak;
+            update();
+        };
 
         scope.setResolution = function(resolution) {
             scope.wrapper.resolution = resolution;
@@ -132,7 +148,7 @@
             scope: {
                 wrapper: '='
             },
-            controller: ['$scope', 'Session', '$http', '$q', 'util', 'historical', controller]
+            controller: ['$scope', 'Session', '$http', '$q', 'util', 'historical', 'powerview', controller]
         };
     });
 }).call(null);

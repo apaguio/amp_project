@@ -40,6 +40,7 @@ class Historical(mongodb.EmbeddedDocument):
     end = mongodb.DateTimeField()
     resolution = mongodb.StringField()
     graphs = mongodb.ListField(mongodb.StringField())
+    maxDemandPeak = mongodb.StringField()
 
     def get_id(self):
         return str(self.id)

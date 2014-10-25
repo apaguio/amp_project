@@ -8,7 +8,7 @@
     var marginBetween = 30;
     var bisectDate = d3.bisector(function(d) { return d.time; }).left;
 
-    function plot(scope, el, data, maxDemand) {
+    function plot(scope, el, data, config) {
 
         if (!data || !data.length) {
             return;
@@ -21,12 +21,12 @@
         scope.margin = {top: 20, right: 20, bottom: 20, left: 40};
         scope.width = el.width();
         scope.height = el.height();
-        scope.bigheight = !!scope.graphs.consumption ? scope.height / 2 : 0;
+        scope.bigheight = !!config.graphs.consumption ? scope.height / 2 : 0;
         scope.smallheight = ((scope.height - scope.bigheight) / 2) - (2 * marginBetween);
-        if (!scope.graphs.voltage || !scope.graphs.powerfactor) {
+        if (!config.graphs.voltage || !config.graphs.powerfactor) {
             scope.smallheight += scope.smallheight;
         }
-        if (!scope.graphs.voltage && !scope.graphs.powerfactor) {
+        if (!config.graphs.voltage && !config.graphs.powerfactor) {
             scope.bigheight += scope.bigheight;
             scope.bigheight -= (2*marginBetween) - scope.margin.top - scope.margin.bottom;
         }
@@ -53,7 +53,7 @@
         scope.y = d3.scale.linear().range([scope.bigheight, 0]);
         var minY = _.min([scope.min.P - scope.min.S, 0]);
         var maxY = _.max([scope.max.P]);
-        scope.y.domain([minY, Math.max(maxDemand, maxY) + 20]);
+        scope.y.domain([minY, Math.max(config.maxDemand, maxY) + 20]);
         scope.y.axis = d3.svg.axis().scale(scope.y).ticks(5).orient("left");
 
         // Power Factor Y
@@ -107,21 +107,21 @@
             .attr("class", "big")
             .attr("transform", "translate(" + scope.margin.left + "," + scope.margin.top + ")");
 
-        scope.big.style("display", !!scope.graphs.consumption? "" : "none");
+        scope.big.style("display", !!config.graphs.consumption? "" : "none");
 
-        var powerfactorYshift = scope.margin.top + (!!scope.graphs.consumption? scope.bigheight + marginBetween : 0);
+        var powerfactorYshift = scope.margin.top + (!!config.graphs.consumption? scope.bigheight + marginBetween : 0);
         scope.powerfactorSVG = scope.svg.append("g")
             .attr("class", "powerfactorSVG")
             .attr("transform", "translate(" + scope.margin.left + "," + powerfactorYshift + ")");
 
-        scope.powerfactorSVG.style("display", !!scope.graphs.powerfactor? "" : "none");
+        scope.powerfactorSVG.style("display", !!config.graphs.powerfactor? "" : "none");
 
-        var voltageYshift = powerfactorYshift + (!!scope.graphs.powerfactor? scope.smallheight + marginBetween : 0);
+        var voltageYshift = powerfactorYshift + (!!config.graphs.powerfactor? scope.smallheight + marginBetween : 0);
         scope.voltageSVG = scope.svg.append("g")
             .attr("class", "voltageSVG")
             .attr("transform", "translate(" + scope.margin.left + "," + voltageYshift + ")");
 
-        scope.voltageSVG.style("display", !!scope.graphs.voltage? "" : "none");
+        scope.voltageSVG.style("display", !!config.graphs.voltage? "" : "none");
 
         scope.svg.append("defs").append("clipPath")
             .attr("id", "clip")
@@ -303,7 +303,7 @@
             .on('mouseleave', mouseout);
     }
 
-    function update(scope, data, maxDemand) {
+    function update(scope, data, config) {
         scope.hoverLineGroup.style("opacity", scope.hoverLineOpacity || 1e-6);
         scope.start = scope.min.time;
         scope.end = scope.max.time;
@@ -312,7 +312,7 @@
 
         var minY = _.min([scope.min.P - scope.min.S, 0]);
         var maxY = _.max([scope.max.P]);
-        scope.y.domain([minY, Math.max(maxDemand, maxY)]);
+        scope.y.domain([minY, Math.max(config.maxDemand, maxY)]);
 
         var minPF = scope.min.L1_PF;
         var maxPF = 1;
@@ -335,13 +335,13 @@
         maxdemandLine
             .attr("x1", scope.x(moment(scope.start).toDate()))
             .attr("x2", scope.x(moment(scope.end).toDate()))
-            .attr("y1", scope.y(maxDemand))
-            .attr("y2", scope.y(maxDemand));
+            .attr("y1", scope.y(config.maxDemand))
+            .attr("y2", scope.y(config.maxDemand));
 
         maxdemandText
             .attr("x", scope.x(moment(scope.end).toDate()))
-            .attr("y", scope.y(maxDemand) + 10)
-            .text("Max Demand");
+            .attr("y", scope.y(config.maxDemand) + 10)
+            .text(scope.config.maxDemandTitle || "Max Demand");
 
         // Add the area path.
         var area = scope.lines.select('path.area');
@@ -395,8 +395,8 @@
 
         scope.$watch('dataupdated', function() {
             if (scope.data) {
-                if (!scope.graphs) {
-                    scope.graphs = {
+                if (!scope.config.graphs) {
+                    scope.config.graphs = {
                         'voltage': true,
                         'consumption': true,
                         'powerfactor': true
@@ -436,21 +436,21 @@
 
                 //scope.data = _.sortBy(scope.data, 'time');
 
-                var maxDemand = parseInt(scope.maxDemand) || _.max([scope.max.S, scope.max.P]);
+                scope.config.maxDemand = parseInt(scope.config.maxDemand) || _.max([scope.max.S, scope.max.P]);
 
                 scope.tooltip = d3.select(element[0])
                     .select("div.tooltip")
                     .style("opacity", scope.hoverLineOpacity || 1e-6);
 
                 if (scope.svg) {
-                    update(scope, scope.data, maxDemand);
+                    update(scope, scope.data, scope.config);
                     if (scope.lastPoint) {
                         scope.mousemove(scope.lastPoint);
                     }
                 } else {
                     scope.time = scope.max.time;
-                    plot(scope, element, scope.data, maxDemand);
-                    update(scope, scope.data, maxDemand);
+                    plot(scope, element, scope.data, scope.config);
+                    update(scope, scope.data, scope.config);
                 }
             }
         });
@@ -464,9 +464,9 @@
             restrict: 'E',
             scope: {
                 data: '=',
+                config: '=',
                 dataupdated: '@',
-                maxDemand: '@',
-                graphs: '='
+                maxDemand: '@'
             },
             controller: ['$scope', '$element', controller]
         };

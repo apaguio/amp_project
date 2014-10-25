@@ -23,8 +23,8 @@
                         scope.graphData = res.data;
                         scope.dataUpdated ++;
                         scope.loading = false;
-                    }, util.onError);
-                }, util.onError);
+                    }, util.onError());
+                }, util.onError());
         }
 
         load(onLoad);

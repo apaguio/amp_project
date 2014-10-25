@@ -46,6 +46,14 @@
             });
             return deferred.promise;
         };
+
+        this.points = function points(start, end, resolution) {
+            var url = '/api/historical/points/' + start + '/' + end;
+            var params = {params : {
+                'resolution': resolution
+            }};
+            return http.get(url, params);
+        };
     }
 
     angular.module('insightApp')

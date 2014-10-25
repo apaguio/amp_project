@@ -10,6 +10,7 @@
             scope.wrappers.push({
                 start: moment().subtract(1, 'days').toDate(),
                 end: moment().toDate(),
+                maxDemandPeak: 'onpeak', // offpeak
                 graphs: {
                     powerfactor: true,
                     voltage: true,
@@ -25,11 +26,11 @@
         }
 
         function load() {
-            historical.load().success(onSuccess).error(util.onError);
+            historical.load().success(onSuccess).error(util.onError());
         }
 
         function update(wrappers) {
-            historical.update(wrappers).success(onSuccess).error(util.onError);
+            historical.update(wrappers).success(onSuccess).error(util.onError());
         }
 
         load();
