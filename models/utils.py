@@ -4,13 +4,15 @@ from pytz import timezone
 from datetime import datetime
 from flask_login import current_user
 
-def get_tariff_details():
+def get_tariff_details(user_name=None):
     """
     Gets the tariff Details
     """
     result = dict()
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
-    customer = current_user
+    if not user_name:
+        user_name = current_user.name
+    customer = db.Customer.objects(name=user_name).first()
     customer_tz = timezone(customer.timezone)
     customer_tz_now = customer_tz.fromutc(utc_now)
     if customer:

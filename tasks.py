@@ -59,9 +59,9 @@ def ekm_meter_aggregate_with_resolution(meter_id, resolution):
         influxdb.write_points([data])
 
 @celery.task(name='tasks.ekm.facility.15mins.aggregator')
-def ekm_facility_aggregate(meter_id, solar_meter_id):
+def ekm_facility_aggregate(user_name, meter_id, solar_meter_id):
     utc_now = datetime.utcfromtimestamp(time.time())
-    tariff_data = get_tariff_details()
+    tariff_data = get_tariff_details(user_name)
 
     facility_query = 'select mean(P) as demand from "%s" where time > now() - 15m;' % meter_id
     facility_result = influxdb.query(facility_query)
@@ -80,10 +80,10 @@ def ekm_facility_aggregate(meter_id, solar_meter_id):
     influxdb.write_points([data])
 
 @celery.task(name='tasks.energy.1h.aggregator')
-def energy_1h_aggregate(meter_id):
+def energy_1h_aggregate(user_name, meter_id):
     utc_now = datetime.utcfromtimestamp(time.time())
     # get user information (customer_id) from session
-    tariff_data = get_tariff_details()
+    tariff_data = get_tariff_details(user_name)
 
     energy_query = 'select mean(P) from "%s" where time > now() - 1h;' % meter_id
     energy_query_result = influxdb.query(energy_query)
