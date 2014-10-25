@@ -8,7 +8,6 @@ def get_tariff_details():
     """
     Gets the tariff Details
     """
-    #TODO use customer_id instead of name
     result = dict()
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
     customer = current_user
