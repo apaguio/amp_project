@@ -46,17 +46,17 @@ CELERYBEAT_SCHEDULE = {
     'ekm.facility.15mins.aggregator': {
         'task': 'tasks.ekm.facility.15mins.aggregator',
         'schedule': crontab(minute=[0, 15, 30, 45]),
-        'args': ('10054', '10068')
+        'args': ('test', '10054', '10068')
     },
     'facility.energy.usage.aggregator': {
         'task': 'tasks.energy.1h.aggregator',
         'schedule': crontab(minute=0),
-        'args': ('10054',)
+        'args': ('test', '10054')
     },
     'solar.energy.production.aggregator': {
         'task': 'tasks.energy.1h.aggregator',
         'schedule': crontab(minute=0),
-        'args': ('10068',)
+        'args': ('test', '10068')
     },
     # facility resolution.aggregator series
     'ekm.facility.1m.aggregator': {
