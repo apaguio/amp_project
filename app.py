@@ -11,6 +11,7 @@ app.config.from_object('settings')
 def init_login(app):
     login_manager = LoginManager()
     login_manager.init_app(app)
+    login_manager.anonymous_user = db.Anonymous
 
     @login_manager.user_loader
     def load_user(user_id):

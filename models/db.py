@@ -1,5 +1,5 @@
 from models import mongodb
-import uuid
+from flask_login import AnonymousUserMixin
 
 class EkmMeter(mongodb.EmbeddedDocument):
     id = mongodb.StringField()
@@ -64,3 +64,6 @@ class Customer(mongodb.Document):
         print "Getting customer ID : %s" % self.pk
         return str(self.pk)
 
+class Anonymous(AnonymousUserMixin):
+    def __init__(self):
+        self.name = 'Guest'
