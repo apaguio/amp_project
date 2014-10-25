@@ -48,7 +48,7 @@ class Customer(mongodb.Document):
     power_factor_threshold = mongodb.FloatField()
     voltage_threshold = mongodb.FloatField()
     alerts_email = mongodb.EmailField()
-    alerts_phone = mongodb.StringField()
+    alerts_phones = mongodb.ListField(mongodb.StringField())
 
     # Flask-Login integration
     def is_authenticated(self):
