@@ -227,6 +227,27 @@ h6,
   width: 50px;
   height: 50px;
 }
+#alerts {
+  padding: 10px;
+}
+#alerts .fixed,
+#alerts .dynamic,
+#alerts .send {
+  background-color: #fbfcfc;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #cecece;
+  border-radius: 4px;
+  /*margin: 10px;*/
+}
+#alerts .fixed .title,
+#alerts .dynamic .title,
+#alerts .send .title {
+  border-bottom: 1px solid #256188;
+  padding: 10px;
+  padding-top: 0;
+  margin-bottom: 20px;
+}
 #alerts .inlinecontainer {
   margin: 5px auto;
 }
