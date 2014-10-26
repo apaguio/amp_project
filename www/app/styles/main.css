@@ -171,17 +171,17 @@ h6,
   background-color: white;
   border-radius: 4px;
   border: 1px solid #bbbbbb;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   color: black;
   font-family: "Open Sans", sans-serif;
   height: auto;
-  min-width: 150px;
-  opacity: 0.7;
+  min-width: 200px;
+  opacity: 0.8;
   padding: 10px;
+  pointer-events: none;
   position: absolute;
   text-align: left;
   width: 200px !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  pointer-events: none;
 }
 .graphtooltip .title {
   font-weight: bold;
@@ -301,6 +301,9 @@ h6,
 .powerviewgraphwrapper .powerviewgraph svg * {
   pointer-events: none;
 }
+.powerviewgraphwrapper .powerviewgraph svg .zoomSVG * {
+  pointer-events: all;
+}
 .powerviewgraphwrapper .powerviewgraph svg rect.mouserect {
   pointer-events: all;
 }
@@ -356,17 +359,17 @@ h6,
   background-color: white;
   border-radius: 4px;
   border: 1px solid #bbbbbb;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   color: black;
   font-family: "Open Sans", sans-serif;
   height: auto;
-  min-width: 150px;
-  opacity: 0.7;
+  min-width: 200px;
+  opacity: 0.8;
   padding: 10px;
+  pointer-events: none;
   position: absolute;
   text-align: left;
   width: 200px !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  pointer-events: none;
 }
 .powerviewgraphwrapper div.tooltip .title {
   font-weight: bold;

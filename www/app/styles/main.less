@@ -174,18 +174,17 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     background-color: white;
     border-radius: 4px;
     border: 1px solid #bbbbbb;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
     color: black;
     font-family: "Open Sans", sans-serif;
     height: auto;                 
-    min-width: 150px;
-    opacity: 0.7;
+    min-width: 200px;
+    opacity: 0.8;
     padding: 10px;
-    pointer-events: none;
+    pointer-events: none;         
     position: absolute;           
     text-align: left;           
     width: 200px !important;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    pointer-events: none;         
     .title{
         font-weight: bold;
         text-align: center;
@@ -298,6 +297,11 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 
             * {
                 pointer-events: none;
+            }
+            .zoomSVG {
+                * {
+                    pointer-events: all;
+                }
             }
 
             rect.mouserect {

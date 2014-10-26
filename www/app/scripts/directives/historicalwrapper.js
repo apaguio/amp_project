@@ -12,6 +12,8 @@
 
     function controller(scope, Session, http, $q, util, historical, powerview) {
 
+        scope.zoomEnabled = true;
+
         scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
         scope.format = scope.formats[0];
 
