@@ -126,7 +126,10 @@ h6,
 }
 .mediumwidget .maincontent,
 .smallwidget .maincontent,
-.largewidget .maincontent {
+.largewidget .maincontent,
+.mediumwidget .key,
+.smallwidget .key,
+.largewidget .key {
   margin: 5px auto;
   font-size: 18px;
   font-weight: bold;
@@ -134,7 +137,10 @@ h6,
 }
 .mediumwidget .time,
 .smallwidget .time,
-.largewidget .time {
+.largewidget .time,
+.mediumwidget .value,
+.smallwidget .value,
+.largewidget .value {
   color: #7e7e7e;
   margin: 5px auto;
   font-size: 12px;
@@ -148,10 +154,18 @@ h6,
   font-size: 24px;
 }
 .largewidget .maincontent {
-  font-size: 18px;
+  font-size: 24px;
 }
 .largewidget .time {
   font-size: 14px;
+}
+.largewidget .key {
+  font-size: 20px;
+  text-align: left;
+}
+.largewidget .value {
+  font-size: 20px;
+  text-align: right;
 }
 .leftwidgets {
   padding: 20px;
