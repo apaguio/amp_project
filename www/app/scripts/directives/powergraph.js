@@ -95,6 +95,7 @@
                 zoomDomain = scope.vy.domain();
                 scope.zoomPlotter.y(function(d) { return scope.zoomY(d.L1_V || 0); });
             }
+            console.log(zoomDomain);
             scope.zoomY.domain(zoomDomain);
             scope.zoomY.axis = d3.svg.axis().scale(scope.zoomY).ticks(3).orient("left");
         }
@@ -235,7 +236,7 @@
             .attr("x1", 0)
             .attr("x2", 0)
             .attr("y1", 0)
-            .attr("y2", scope.height - scope.margin.bottom - scope.margin.top);
+            .attr("y2", scope.height);
 
         scope.hoverLineGroup.style("opacity", scope.hoverLineOpacity || 1e-6);
 
