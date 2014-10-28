@@ -122,7 +122,7 @@
         };
 
         if (!scope.wrapper.resolution) {
-            scope.setResolution('30m');
+            scope.setResolution('15m');
         } else {
             load();
         }
