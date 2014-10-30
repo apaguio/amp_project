@@ -29,7 +29,7 @@
 
             scope.data.demandCharge = scope.data.demand_charge;
             if (scope.data.peak_period === 'onpeak') {
-                scope.data.demandCharge += scope.data.peak_demand_charge;
+                scope.data.demandCharge = scope.data.peak_demand_charge;
             }
 
             scope.demandChargesTooltip = 'You pay $' + scope.data.demand_charge + ' / kW for your max demand, ';
