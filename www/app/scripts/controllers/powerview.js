@@ -88,7 +88,9 @@
                     scope.nodata = true;
                     return deferred.reject("Last point is undefined");
                 }
-                scope.lastTime = lastPoint.time;
+                //scope.lastTime = lastPoint.time;
+                scope.lastTime = moment().tz("America/Los_Angeles").format("h:mm a");
+                scope.lastDate = moment().tz("America/Los_Angeles").toDate();
                 scope.data.power_factor = lastPoint.L1_PF;
                 scope.data.voltage = lastPoint.L1_V;
                 scope.graphdata = points;
