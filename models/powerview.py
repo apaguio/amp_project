@@ -24,27 +24,31 @@ def get_ekm_data(meter_id, period, resolution=None):
                     from "%s_%s" where time > now() - %s group by time(%s);''' % (current_user.get_id(), meter_id, period, resolution)
     return utils.collect_ekm_data(query)
 
-def get_current_demand(meter_id, solar_meter_id):
+def _get_power_avg(meter_id, number_of_miutes, utc_now):
+    query = 'select mean(P) from "%s_%s" where time > now() - %ss;' % (current_user.get_id(), meter_id, ((number_of_miutes*60) + utc_now.second))
+    query_result = influxdb.query(query)
+    if query_result:
+        query_result = query_result[0]
+        return round(query_result['points'][0][1], 2)
+    return 0
+
+def get_current_demand():
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
     # round to nearest 15-min interval, and calculate minutes difference
     number_of_miutes = utc_now.minute % 15
     customer_tz = timezone(current_user.timezone)
+    result = dict()
     #utc_now.strftime('%Y-%m-%d %H:%M:%S')
     # (number_of_miutes * 60), to get the seconds precision
-    facility_query = 'select mean(P) as current_demand from "%s" where time > now() - %ss;' % (meter_id, ((number_of_miutes*60) + utc_now.second))
-    facility_query_result = influxdb.query(facility_query)
-    result = dict()
-    if facility_query_result:
-        facility_query_result = facility_query_result[0]
-        current_demand = round(facility_query_result['points'][0][1], 2)
-        result['current_demand'] = current_demand
-        result['time'] = customer_tz.fromutc(utc_now).strftime('%Y-%m-%d %H:%M:%S')
-        solar_query = 'select mean(P) as solar_power from "%s" where time > now() - %ss;' % (solar_meter_id, ((number_of_miutes*60) + utc_now.second))
-        solar_query_result = influxdb.query(solar_query)
-        if solar_query_result:
-            solar_query_result = solar_query_result[0]
-            net_load = current_demand - round(solar_query_result['points'][0][1], 2)
-            result['current_demand'] = net_load
+    consumption = 0.0
+    for meter in current_user.facility:
+        consumption += _get_power_avg(meter.id, number_of_miutes, utc_now)
+    generation = 0.0
+    for meter in current_user.solar:    
+        generation += _get_power_avg(meter.id, number_of_miutes, utc_now)
+
+    result['current_demand'] = consumption - generation
+    result['time'] = customer_tz.fromutc(utc_now).strftime('%Y-%m-%d %H:%M:%S')
     return result
 
 def get_max_peak_demand(meter_id):

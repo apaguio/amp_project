@@ -34,9 +34,7 @@ def powerview_points():
 @powerview_app.route("/powerview/current_demand", methods=["GET"])
 @login_required
 def get_current_demand():
-    consumption_meter_id = 10054
-    solar_meter_id = 10068
-    result = powerview.get_current_demand(consumption_meter_id, solar_meter_id)
+    result = powerview.get_current_demand()
     return r.success(result)
 
 @powerview_app.route("/powerview/max_peak_demand", methods=["GET"])
