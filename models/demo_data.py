@@ -1,6 +1,8 @@
 from datetime import datetime, time
-from models import db
+from models import db, influxdb
 from pytz import timezone, utc
+from celerybeatmongo.models import PeriodicTask
+from settings import EKM_READING_INTERVAL
 
 def generate():
     customer = db.Customer(name='test', email='test@example.com', password='c3nergy')
@@ -19,20 +21,47 @@ def generate():
     customer.save()
 
     summer = db.Season(name='Summer', start=utc.localize(datetime(2014, 5, 1)),
-                       end=utc.localize(datetime(2014, 10, 31)))
+                       end=utc.localize(datetime(2014, 11, 1)))
     get_summer_peak_periods(summer)
-    winter = db.Season(name='Winter', start=utc.localize(datetime(2013, 11, 1)),
-                       end=utc.localize(datetime(2014, 4, 30)))
+    winter = db.Season(name='Winter', start=utc.localize(datetime(2014, 11, 1)),
+                       end=utc.localize(datetime(2015, 5, 1)))
     get_winter_peak_periods(winter)
     customer.seasons = [winter, summer]
+
+    init_customer_tasks(customer)
+
     customer.save()
+
+def init_customer_tasks(customer):
+    user_id = customer.get_id()
+    meters = customer.facility + customer.solar
+    for meter in meters:
+        meter_type = 'solar' if meter.solar else 'facility' 
+        args1 = {'user_id': user_id, 'meter_id': meter.id, 'nr_readings': EKM_READING_INTERVAL,
+                 'key': meter.api_key, 'endpoint': meter.url, 'simulate_solar': meter.solar}
+        p1 = PeriodicTask(name='ekm.%s.%s.%s' % (user_id, meter_type, meter.id), task='tasks.ekm.collect', enabled=True,
+                         interval={'every': EKM_READING_INTERVAL, 'period': 'seconds'}, kwargs=args1).save()
+        args2 = {'user_id': user_id, 'meter_id': meter.id}
+        p2 = PeriodicTask(name='ekm.%s.%s.%s.15mins.aggregator' % (user_id, meter_type, meter.id), task='tasks.ekm.facility.15mins.aggregator', enabled=True,
+                         crontab={'minute': '0, 15, 30, 45'}, kwargs=args2).save()
+        args3 = {'user_id': user_id, 'meter_id': meter.id}
+        p3 = PeriodicTask(name='%s.%s.%s.energy.usage.aggregator' % (user_id, meter_type, meter.id), task='tasks.energy.1h.aggregator', enabled=True,
+                         crontab={'minute': '0'}, kwargs=args3).save()
+        resolutions = ('1m', '5m', '15m', '30m', '1h', '24h')
+        for resolution in resolutions:
+            args1['resolution'] = resolution
+            meter_continuous_query = '''select mean(P) as P, mean(L1_PF) as L1_PF, mean(L1_V) as L1_V
+                                        from "%(user_id)s_%(meter_id)s"
+                                        group by time(%(resolution)s)
+                                        into "%(user_id)s_%(meter_id)s_%(resolution)s"''' % args1
+            influxdb.query(meter_continuous_query)
 
 def init_facility_meters():
     meter1 = db.EkmMeter(id='10054', api_key='MTAxMDoyMDIw')
     return [meter1,]
 
 def init_solar_meters():
-    meter1 = db.EkmMeter(id='10068', api_key='MTAxMDoyMDIw')
+    meter1 = db.EkmMeter(id='10068', api_key='MTAxMDoyMDIw', solar=True)
     return [meter1,]
 
 def get_summer_peak_periods(summer):

@@ -3,6 +3,8 @@ from models import mongodb
 class EkmMeter(mongodb.EmbeddedDocument):
     id = mongodb.StringField()
     api_key = mongodb.StringField()
+    url = mongodb.StringField(default='io.ekmpush.com')
+    solar = mongodb.BooleanField(default=False)
 
 class PeakPeriodSchedule(mongodb.EmbeddedDocument):
     day_of_week = mongodb.IntField()
