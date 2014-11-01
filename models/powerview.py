@@ -50,6 +50,8 @@ def get_current_demand(meter_id, solar_meter_id):
 def get_max_peak_demand(meter_id):
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
     tariff_data = utils.get_tariff_details()
+    if tariff_data['season'] == 'Winter':
+        return get_max_demand_anytime(meter_id)
     customer_tz = timezone(tariff_data['timezone'])
     customer_tz_now = customer_tz.fromutc(utc_now)
     time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tariff_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
