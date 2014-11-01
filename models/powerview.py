@@ -88,7 +88,7 @@ def get_max_demand_anytime():
         query_results = influxdb.query(query)
         for query_result in query_results:
             max_demand = query_result['points'][0][1]
-            time_point_query = 'select time from /^%s_%s_15mins_\.*/ where demand>%s and demand<%s;' % (current_user.get_id(), meter_id, max_demand-1, max_demand+1)
+            time_point_query = 'select time from /^%s_%s_15mins_\.*/ where demand>%s and demand<%s;' % (current_user.get_id(), meter.id, max_demand-1, max_demand+1)
             time_point_query_result = influxdb.query(time_point_query)
             if time_point_query_result:
                 max_demand_time = customer_tz.fromutc(datetime.utcfromtimestamp(time_point_query_result[0]['points'][0][0])).strftime('%Y-%m-%d %H:%M:%S')
