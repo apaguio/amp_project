@@ -12,7 +12,7 @@ Running the application
 (-P gevent, cause we are using gevent socket.io and we're monkeypatching!)
 (note: --purge to purge jobs queue before starting the worker)
 
-* Start celerybeat: celery -A app.celery beat -l info
+* Start celerybeat: celery -A app.celery beat -l info -S celerybeatmongo.schedulers.MongoScheduler
 (note: start celerybeat in a stand-alone mode, cause you can't start it with -B option to the worker, as we're using -P)
 
 * (Optional) Start celey flower: celery flower --broker=redis://
