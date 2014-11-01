@@ -1,5 +1,3 @@
-from gevent import monkey
-from socketio.server import SocketIOServer
 from flask import Flask, request
 from celery import Celery
 from flask_login import LoginManager
@@ -31,8 +29,6 @@ def make_celery(app):
 init_login(app)
 celery = make_celery(app)
 
-monkey.patch_all()
-
 @app.errorhandler(404)
 def page_not_found(error):
     return 'This route does not exist {}'.format(request.url), 404
@@ -52,11 +48,7 @@ def register_views(app):
     app.register_blueprint(settings_app)
     app.register_blueprint(auth_app)
 
-
 register_views(app)
-
-SOCKETIOPORT = 5001
 
 if __name__ == "__main__":
     app.run()
-    SocketIOServer(('', SOCKETIOPORT), app, resource="socket.io").serve_forever()
