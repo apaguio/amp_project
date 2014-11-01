@@ -1,10 +1,7 @@
 from flask import Blueprint, Response, request
-from socketio import socketio_manage
-from socketio.namespace import BaseNamespace
-from socketio.mixins import RoomsMixin, BroadcastMixin
-from servers import r, pubsub
+from servers import r
 from models import powerview, utils
-from flask_login import login_required
+from flask_login import login_required, current_user
 
 powerview_app = Blueprint('powerview', __name__)
 
@@ -19,12 +16,12 @@ def generate_demo_data():
 @login_required
 def powerview_points():
     params = request.args
-    solar_meter_id = 10068
-    consumption_meter_id = 10054
     duration = params.get('timeframe', '10m')
     resolution = params.get('resolution', None)
-    consumption = powerview.get_ekm_data(consumption_meter_id, duration, resolution)
-    solar = powerview.get_ekm_data(solar_meter_id, duration, resolution)
+    for meter in current_user.facility:
+        consumption = powerview.get_ekm_data(meter.id, duration, resolution)
+    for meter in current_user.solar:
+        solar = powerview.get_ekm_data(meter.id, duration, resolution)
     solarLen = len(solar)
     for i, d in enumerate(consumption):
         if i < solarLen:
@@ -60,23 +57,3 @@ def get_max_demand_anytime():
 @login_required
 def powerview_data():
     return r.success(utils.get_tariff_details())
-
-class PowerViewNS(BaseNamespace, RoomsMixin, BroadcastMixin):
-
-    data = []
-
-    def initialize(self):
-        #self.logger = app.logger
-        self.log("Socketio session started")
-        points = pubsub.subscribe(['point'])
-        for point in points:
-            self.broadcast_event('point', point)
-
-@powerview_app.route('/socket.io/<path:remaining>')
-def socketio(remaining):
-    try:
-        socketio_manage(request.environ, {'/powerview': PowerViewNS}, request)
-    except:
-        pass
-        #app.logger.error("Exception while handling socketio connection", exc_info=True)
-    return Response()
