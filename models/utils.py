@@ -4,15 +4,15 @@ from pytz import timezone
 from datetime import datetime
 from flask_login import current_user
 
-def get_tariff_details(user_name=None):
+def get_tariff_details(user_id=None):
     """
     Gets the tariff Details
     """
     result = dict()
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
-    if not user_name:
-        user_name = current_user.name
-    customer = db.Customer.objects(name=user_name).first()
+    if not user_id:
+        user_id = current_user.get_id()
+    customer = db.Customer.objects(pk=user_id).first()
     customer_tz = timezone(customer.timezone)
     customer_tz_now = customer_tz.fromutc(utc_now)
     if customer:
@@ -67,12 +67,11 @@ def collect_ekm_data(query):
             result.append(point_dict)
     return result
 
-acceptableResolutions = ['1m', '5m', '15m', '30m', '1h']
-def acceptableResolution(resolution):
-    if resolution in acceptableResolutions:
+def is_acceptable_resolution(resolution):
+    acceptable_resolutions = ['1m', '5m', '15m', '30m', '1h']
+    if resolution in acceptable_resolutions:
         return resolution
     return False
-
 
 def generate_demo_data():
     import demo_data

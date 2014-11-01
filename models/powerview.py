@@ -12,16 +12,16 @@ def get_ekm_data(meter_id, period, resolution=None):
     @parm resolution data resolution, i.e aggregation interval, same format as period, like: 1m, 5m, etc
           leave it None (default) to get 1s resolution, i.e all data available (large data sets)
     """
-    acceptableResolution = utils.acceptableResolution(resolution)
+    acceptable_resolution = utils.is_acceptable_resolution(resolution)
     if not resolution or resolution == '1s':
-        query = 'select * from "%s" where time > now() - %s;' % (meter_id, period)
+        query = 'select P, L1_PF, L1_V from "%s_%s" where time > now() - %s;' % (current_user.get_id(), meter_id, period)
     else:
-        if acceptableResolution:
-            query = '''select mean(P) as P, mean(L1_PF) as L1_PF, mean(L1_V) as L1_V
-                    from "%s_%s" where time > now() - %s group by time(%s);''' % (meter_id, acceptableResolution, period, acceptableResolution)
+        if acceptable_resolution:
+            query = '''select P, L1_PF, L1_V
+                    from "%s_%s_%s" where time > now() - %s;''' % (current_user.get_id(), meter_id, acceptable_resolution, period)
         else:
             query = '''select mean(P) as P, mean(L1_PF) as L1_PF, mean(L1_V) as L1_V
-                    from "%s" where time > now() - %s group by time(%s);''' % (meter_id, period, resolution)
+                    from "%s_%s" where time > now() - %s group by time(%s);''' % (current_user.get_id(), meter_id, period, resolution)
     return utils.collect_ekm_data(query)
 
 def get_current_demand(meter_id, solar_meter_id):
@@ -50,6 +50,8 @@ def get_current_demand(meter_id, solar_meter_id):
 def get_max_peak_demand(meter_id):
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
     tariff_data = utils.get_tariff_details()
+    if tariff_data['season'] == 'Winter':
+        return get_max_demand_anytime(meter_id)
     customer_tz = timezone(tariff_data['timezone'])
     customer_tz_now = customer_tz.fromutc(utc_now)
     time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tariff_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
