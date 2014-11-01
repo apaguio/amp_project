@@ -19,10 +19,10 @@ def generate():
     customer.save()
 
     summer = db.Season(name='Summer', start=utc.localize(datetime(2014, 5, 1)),
-                       end=utc.localize(datetime(2014, 10, 31)))
+                       end=utc.localize(datetime(2014, 11, 1)))
     get_summer_peak_periods(summer)
-    winter = db.Season(name='Winter', start=utc.localize(datetime(2013, 11, 1)),
-                       end=utc.localize(datetime(2014, 4, 30)))
+    winter = db.Season(name='Winter', start=utc.localize(datetime(2014, 11, 1)),
+                       end=utc.localize(datetime(2015, 5, 1)))
     get_winter_peak_periods(winter)
     customer.seasons = [winter, summer]
     customer.save()
