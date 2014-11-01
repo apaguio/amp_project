@@ -42,7 +42,7 @@ def ekm_facility_aggregate(user_id, meter_id):
     utc_now = datetime.utcfromtimestamp(time.time())
     tariff_data = get_tariff_details(user_id)
 
-    facility_query = 'select mean(P) as demand from "%s" where time > now() - 15m;' % meter_id
+    facility_query = 'select mean(P) as demand from "%s_%s" where time > now() - 15m;' % (user_id, meter_id)
     facility_result = influxdb.query(facility_query)
     demand = round(facility_result[0]['points'][0][1], 2)
 
@@ -56,7 +56,7 @@ def energy_1h_aggregate(user_id, meter_id):
     utc_now = datetime.utcfromtimestamp(time.time())
     tariff_data = get_tariff_details(user_id)
 
-    energy_query = 'select mean(P) from "%s" where time > now() - 1h;' % meter_id
+    energy_query = 'select mean(P) from "%s_%s" where time > now() - 1h;' % (user_id, meter_id)
     energy_query_result = influxdb.query(energy_query)
     energy = round(energy_query_result[0]['points'][0][1], 2)
 
