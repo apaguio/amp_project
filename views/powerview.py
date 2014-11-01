@@ -40,15 +40,13 @@ def get_current_demand():
 @powerview_app.route("/powerview/max_peak_demand", methods=["GET"])
 @login_required
 def get_max_peak_demand():
-    consumption_meter_id = 10054
-    result = powerview.get_max_peak_demand(consumption_meter_id)
+    result = powerview.get_max_peak_demand()
     return r.success(result)
 
 @powerview_app.route("/powerview/max_demand_anytime", methods=["GET"])
 @login_required
 def get_max_demand_anytime():
-    consumption_meter_id = 10054
-    result = powerview.get_max_demand_anytime(consumption_meter_id)
+    result = powerview.get_max_demand_anytime()
     return r.success(result)
 
 @powerview_app.route("/powerview", methods=["GET"])
