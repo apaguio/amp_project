@@ -10,15 +10,15 @@ historical_app = Blueprint('historical', __name__)
 @login_required
 def historical_points(start, end):
     params = request.args
-    solar_meter_id = 10068
-    consumption_meter_id = 10054
     resolution = params.get('resolution', None)
-    consumption = historical.get_ekm_data(consumption_meter_id, start, end, resolution)
-    solar = historical.get_ekm_data(solar_meter_id, start, end, resolution)
-    solarLen = len(solar)
+    for meter in current_user.facility:
+        consumption = historical.get_ekm_data(meter.id, start, end, resolution)
+    for meter in current_user.solar:
+        production = historical.get_ekm_data(meter.id, start, end, resolution)
+    production_data_length = len(production)
     for i, d in enumerate(consumption):
-        if i < solarLen:
-            d['S'] = solar[i].get('P', 0)
+        if i < production_data_length:
+            d['S'] = production[i].get('P', 0)
     # Return consumption after updating with solar
     # NOTE: assumption that S has the same timestamp as P
     consumption = sorted(consumption, key=lambda k: k['time'])
@@ -124,15 +124,12 @@ def update_historical_instance(id):
 @historical_app.route("/historical/<id>", methods=["DELETE"])
 @login_required
 def remove_historical_instance(id):
-    print "Deleteing %s" % id
     user = db.Customer.objects(id=current_user.get_id()).first()
     index = -1
     for i, h in enumerate(user.historicals):
         if h.id == id:
             index = i
             break
-
-    print index
     if index >= 0:
         del user.historicals[index]
         user.save()
