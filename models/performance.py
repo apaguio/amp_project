@@ -16,8 +16,7 @@ def get_energy_data(meter_id):
     time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tariff_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
 
     #current billing period query
-    billing_period_query = 'select mean(energy_kwh) from /^%s_energy_1h_\.*/ where time > now() - %ss;' % (meter_id, time_diff.total_seconds())
-    print billing_period_query
+    billing_period_query = 'select mean(energy_kwh) from /^%s_%s_energy_1h_\.*/ where time > now() - %ss;' % (current_user.get_id(), meter_id, time_diff.total_seconds())
     # until merge('%s_energy_1h_*') with regex works
     billing_period_query_result = influxdb.query(billing_period_query)
     energy_kwh_avgs = list()
@@ -29,7 +28,7 @@ def get_energy_data(meter_id):
         result['this_month'] = float(sum(energy_kwh_avgs))/len(energy_kwh_avgs) if len(energy_kwh_avgs) > 0 else float('nan')
 
     #last month query
-    last_month_query = 'select mean(energy_kwh) from /^%s_energy_1h_\.*/ where time < now() - %sd and time > now() - %sd;' % (meter_id, time_diff.days, time_diff.days + 30)
+    last_month_query = 'select mean(energy_kwh) from /^%s_%s_energy_1h_\.*/ where time < now() - %sd and time > now() - %sd;' % (current_user.get_id(), meter_id, time_diff.days, time_diff.days + 30)
     try:
         last_month_query_result = influxdb.query(last_month_query)
         energy_kwh_avgs = list()
@@ -43,7 +42,7 @@ def get_energy_data(meter_id):
         result['last_month'] = 0
 
     #last year query
-    last_year_query = 'select mean(energy_kwh) from /^%s_energy_1h_\.*/ where time < now() - %sd and time > now() - %sd;' % (meter_id, time_diff.days + 365, time_diff.days + 365 + 30)
+    last_year_query = 'select mean(energy_kwh) from /^%s_%s_energy_1h_\.*/ where time < now() - %sd and time > now() - %sd;' % (current_user.get_id(), meter_id, time_diff.days + 365, time_diff.days + 365 + 30)
     try:
         last_year_query_result = influxdb.query(last_year_query)
         energy_kwh_avgs = list()
@@ -57,7 +56,7 @@ def get_energy_data(meter_id):
         result['last_year'] = 0
     return result
 
-def get_demand_data(meter_id):
+def get_demand_data():
     result = dict()
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
     tariff_data = get_tariff_details()
@@ -66,7 +65,7 @@ def get_demand_data(meter_id):
     time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tariff_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
 
     #current billing period query
-    billing_period_query = 'select max(demand) from /^%s_15mins_\.*/ where time > now() - %ss;' % (meter_id, time_diff.total_seconds())
+    billing_period_query = 'select max(demand) from /^%s_15mins_\.*/ where time > now() - %ss;' % (current_user.get_id(), time_diff.total_seconds())
     billing_period_query_result = influxdb.query(billing_period_query)
     demand_maxs = list()
     for res in billing_period_query_result:
@@ -74,7 +73,7 @@ def get_demand_data(meter_id):
     result['this_month'] = max(demand_maxs)
 
     #last month query
-    last_month_query = 'select max(demand) from /^%s_15mins_\.*/ where time < now() - %sd and time > now() - %sd;' % (meter_id, time_diff.days, time_diff.days + 30)
+    last_month_query = 'select max(demand) from /^%s_15mins_\.*/ where time < now() - %sd and time > now() - %sd;' % (current_user.get_id(), time_diff.days, time_diff.days + 30)
     try:
         last_month_query_result = influxdb.query(last_month_query)
         demand_maxs = list()
@@ -88,7 +87,7 @@ def get_demand_data(meter_id):
         result['last_month'] = 0
 
     #last year query
-    last_year_query = 'select max(demand) from /^%s_15mins_\.*/ where time < now() - %sd and time > now() - %sd;' % (meter_id, time_diff.days + 365, time_diff.days + 365 + 30)
+    last_year_query = 'select max(demand) from /^%s_15mins_\.*/ where time < now() - %sd and time > now() - %sd;' % (current_user.get_id(), time_diff.days + 365, time_diff.days + 365 + 30)
     try:
         last_year_query_result = influxdb.query(last_year_query)
         demand_maxs = list()
@@ -130,12 +129,12 @@ def calculate_energy_charges(meter_id):
     time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tariff_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
 
     #current billing period query
-    energy_query = 'select sum(energy_kwh) from /^%s_energy_1h_\.*/ where time > now() - %sd;' % (meter_id, time_diff.days)
+    energy_query = 'select sum(energy_kwh) from /^%s_%s_energy_1h_\.*/ where time > now() - %sd;' % (current_user.get_id(), meter_id, time_diff.days)
     energy_query_result = influxdb.query(energy_query)
     result['this_month'] = _calculate_energy_charges_helper(energy_query_result, time_diff.days)
 
     #last month query
-    last_month_energy_query = 'select sum(energy_kwh) from /^%s_energy_1h_\.*/ where time < now() - %sd and time > now() - %sd;' % (meter_id, time_diff.days, time_diff.days + 30)
+    last_month_energy_query = 'select sum(energy_kwh) from /^%s_%s_energy_1h_\.*/ where time < now() - %sd and time > now() - %sd;' % (current_user.get_id(), meter_id, time_diff.days, time_diff.days + 30)
     try:
         last_month_energy_query_result = influxdb.query(last_month_energy_query)
         result['last_month'] = _calculate_energy_charges_helper(last_month_energy_query_result)
@@ -143,7 +142,7 @@ def calculate_energy_charges(meter_id):
         result['last_month'] = 0
 
     #last year query
-    last_year_energy_query = 'select sum(energy_kwh) from /^%s_energy_1h_\.*/ where time < now() - %sd and time > now() - %sd;' % (meter_id, time_diff.days + 365, time_diff.days + 365 + 30)
+    last_year_energy_query = 'select sum(energy_kwh) from /^%s_%s_energy_1h_\.*/ where time < now() - %sd and time > now() - %sd;' % (current_user.get_id(), meter_id, time_diff.days + 365, time_diff.days + 365 + 30)
     try:
         last_year_energy_query_result = influxdb.query(last_year_energy_query)
         result['last_year'] = _calculate_energy_charges_helper(last_year_energy_query_result)
@@ -179,7 +178,7 @@ def _calculate_demand_charges_helper(demand_query_result):
         total_demand_charges += max_demand_anytime * demand_charges[season]
     return total_demand_charges
 
-def calculate_demand_charges(meter_id):
+def calculate_demand_charges():
     result = dict()
     utc_now = datetime.utcfromtimestamp(time.time()) # current request time
     tariff_data = get_tariff_details()
@@ -188,12 +187,12 @@ def calculate_demand_charges(meter_id):
     time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tariff_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
 
     # current billing period query
-    demand_query = 'select max(demand) from /^%s_15mins_\.*/ where time > now() - %ss;' % (meter_id, time_diff.total_seconds())
+    demand_query = 'select max(demand) from /^%s_15mins_\.*/ where time > now() - %ss;' % (current_user.get_id(), time_diff.total_seconds())
     demand_query_result = influxdb.query(demand_query)
     result['this_month'] = _calculate_demand_charges_helper(demand_query_result)
 
     # last month query
-    last_month_demand_query = 'select max(demand) from /^%s_15mins_\.*/ where time < now() - %sd and time > now() - %sd;' % (meter_id, time_diff.days, time_diff.days + 30)
+    last_month_demand_query = 'select max(demand) from /^%s_15mins_\.*/ where time < now() - %sd and time > now() - %sd;' % (current_user.get_id(), time_diff.days, time_diff.days + 30)
     try:
         last_month_demand_query_result = influxdb.query(last_month_demand_query)
         result['last_month'] = _calculate_demand_charges_helper(last_month_demand_query_result)
@@ -201,7 +200,7 @@ def calculate_demand_charges(meter_id):
         result['last_month'] = 0
 
     # last year query
-    last_year_demand_query = 'select max(demand) from /^%s_15mins_\.*/ where time < now() - %sd and time > now() - %sd;' % (meter_id, time_diff.days + 365, time_diff.days + 365 + 30)
+    last_year_demand_query = 'select max(demand) from /^%s_15mins_\.*/ where time < now() - %sd and time > now() - %sd;' % (current_user.get_id(), time_diff.days + 365, time_diff.days + 365 + 30)
     try:
         last_year_demand_query_result = influxdb.query(last_year_demand_query)
         result['last_year'] = _calculate_demand_charges_helper(last_year_demand_query_result)
