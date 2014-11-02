@@ -61,16 +61,17 @@ def get_max_peak_demand():
     time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tariff_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
     max_demands = dict()
     result = dict()
-    for meter in current_user.facility:
-        query = 'select max(demand) from "%s_%s_15mins_%s_onpeak" where time > now() - %ss;' % (current_user.get_id(), meter.id, tariff_data['season'], time_diff.total_seconds())
-        query_result = influxdb.query(query)
-        if query_result:
-            query_result = query_result[0]
-            max_demand = round(query_result['points'][0][1], 2)
-            time_point_query = 'select time from "%s_%s_15mins_%s_onpeak" where demand>%s and demand<%s;' % (current_user.get_id(), meter.id, tariff_data['season'], max_demand-1, max_demand+1)
-            time_point_query_result = influxdb.query(time_point_query)
-            if time_point_query_result:
-                max_demands[max_demand] = customer_tz.fromutc(datetime.utcfromtimestamp(time_point_query_result[0]['points'][0][0])).strftime('%Y-%m-%d %H:%M:%S')
+
+    query = 'select max(demand) from "%s_15mins_%s_onpeak" where time > now() - %ss;' % (current_user.get_id(), tariff_data['season'], time_diff.total_seconds())
+    query_result = influxdb.query(query)
+    if query_result:
+        query_result = query_result[0]
+        max_demand = round(query_result['points'][0][1], 2)
+        time_point_query = 'select time from "%s_15mins_%s_onpeak" where demand>%s and demand<%s;' % (current_user.get_id(), tariff_data['season'], max_demand-1, max_demand+1)
+        time_point_query_result = influxdb.query(time_point_query)
+        if time_point_query_result:
+            max_demands[max_demand] = customer_tz.fromutc(datetime.utcfromtimestamp(time_point_query_result[0]['points'][0][0])).strftime('%Y-%m-%d %H:%M:%S')
+
     result['max_demand'] = max(max_demands.keys())
     result['time'] = max_demands[result['max_demand']]
     return result
@@ -83,16 +84,17 @@ def get_max_demand_anytime():
     time_diff = customer_tz_now - customer_tz.localize(datetime.strptime(tariff_data['billing_period_startdate'], '%Y-%m-%d %H:%M:%S'))
     result = dict()
     max_demands = dict()
-    for meter in current_user.facility:
-        query = 'select max(demand) from /^%s_%s_15mins_\.*/ where time > now() - %ss;' % (current_user.get_id(), meter.id, time_diff.total_seconds())
-        query_results = influxdb.query(query)
-        for query_result in query_results:
-            max_demand = query_result['points'][0][1]
-            time_point_query = 'select time from /^%s_%s_15mins_\.*/ where demand>%s and demand<%s;' % (current_user.get_id(), meter.id, max_demand-1, max_demand+1)
-            time_point_query_result = influxdb.query(time_point_query)
-            if time_point_query_result:
-                max_demand_time = customer_tz.fromutc(datetime.utcfromtimestamp(time_point_query_result[0]['points'][0][0])).strftime('%Y-%m-%d %H:%M:%S')
-            max_demands[max_demand] = max_demand_time
+
+    query = 'select max(demand) from /^%s_15mins_\.*/ where time > now() - %ss;' % (current_user.get_id(), time_diff.total_seconds())
+    query_results = influxdb.query(query)
+    for query_result in query_results:
+        max_demand = query_result['points'][0][1]
+        time_point_query = 'select time from /^%s_15mins_\.*/ where demand>%s and demand<%s;' % (current_user.get_id(), max_demand-1, max_demand+1)
+        time_point_query_result = influxdb.query(time_point_query)
+        if time_point_query_result:
+            max_demand_time = customer_tz.fromutc(datetime.utcfromtimestamp(time_point_query_result[0]['points'][0][0])).strftime('%Y-%m-%d %H:%M:%S')
+        max_demands[max_demand] = max_demand_time
+
     result['max_demand'] = max(max_demands.keys())
     result['time'] = max_demands[result['max_demand']]
     return result

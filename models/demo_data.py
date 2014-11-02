@@ -34,26 +34,29 @@ def generate():
 
 def init_customer_tasks(customer):
     user_id = customer.get_id()
+    args1 = {'user_id': user_id}
+    p1 = PeriodicTask(name='%s.15mins.netload.aggregator' % user_id, task='tasks.netload.15m.aggregator', enabled=True,
+                     crontab={'minute': '0, 15, 30, 45'}, kwargs=args1).save()
     meters = customer.facility + customer.solar
     for meter in meters:
         meter_type = 'solar' if meter.solar else 'facility' 
-        args1 = {'user_id': user_id, 'meter_id': meter.id, 'nr_readings': EKM_READING_INTERVAL,
+        args2 = {'user_id': user_id, 'meter_id': meter.id, 'nr_readings': EKM_READING_INTERVAL,
                  'key': meter.api_key, 'endpoint': meter.url, 'simulate_solar': meter.solar}
-        p1 = PeriodicTask(name='ekm.%s.%s.%s' % (user_id, meter_type, meter.id), task='tasks.ekm.collect', enabled=True,
-                         interval={'every': EKM_READING_INTERVAL, 'period': 'seconds'}, kwargs=args1).save()
-        args2 = {'user_id': user_id, 'meter_id': meter.id}
-        p2 = PeriodicTask(name='ekm.%s.%s.%s.15mins.aggregator' % (user_id, meter_type, meter.id), task='tasks.ekm.facility.15mins.aggregator', enabled=True,
-                         crontab={'minute': '0, 15, 30, 45'}, kwargs=args2).save()
+        p2 = PeriodicTask(name='ekm.%s.%s.%s' % (user_id, meter_type, meter.id), task='tasks.ekm.collect', enabled=True,
+                         interval={'every': EKM_READING_INTERVAL, 'period': 'seconds'}, kwargs=args2).save()
         args3 = {'user_id': user_id, 'meter_id': meter.id}
-        p3 = PeriodicTask(name='%s.%s.%s.energy.usage.aggregator' % (user_id, meter_type, meter.id), task='tasks.energy.1h.aggregator', enabled=True,
-                         crontab={'minute': '0'}, kwargs=args3).save()
+        p3 = PeriodicTask(name='ekm.%s.%s.%s.15mins.aggregator' % (user_id, meter_type, meter.id), task='tasks.ekm.facility.15mins.aggregator', enabled=True,
+                         crontab={'minute': '0, 15, 30, 45'}, kwargs=args3).save()
+        args4 = {'user_id': user_id, 'meter_id': meter.id}
+        p4 = PeriodicTask(name='%s.%s.%s.energy.usage.aggregator' % (user_id, meter_type, meter.id), task='tasks.energy.1h.aggregator', enabled=True,
+                         crontab={'minute': '0'}, kwargs=args4).save()
         resolutions = ('1m', '5m', '15m', '30m', '1h', '24h')
         for resolution in resolutions:
-            args1['resolution'] = resolution
+            args2['resolution'] = resolution
             meter_continuous_query = '''select mean(P) as P, mean(L1_PF) as L1_PF, mean(L1_V) as L1_V
                                         from "%(user_id)s_%(meter_id)s"
                                         group by time(%(resolution)s)
-                                        into "%(user_id)s_%(meter_id)s_%(resolution)s"''' % args1
+                                        into "%(user_id)s_%(meter_id)s_%(resolution)s"''' % args2
             influxdb.query(meter_continuous_query)
 
 def init_facility_meters():
