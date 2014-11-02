@@ -34,9 +34,12 @@ def generate():
 
 def init_customer_tasks(customer):
     user_id = customer.get_id()
-    args1 = {'user_id': user_id}
-    p1 = PeriodicTask(name='%s.15mins.netload.aggregator' % user_id, task='tasks.netload.15m.aggregator', enabled=True,
+    args1 = {'user_id': user_id, 'interval': '15m'}
+    p1 = PeriodicTask(name='%s.15mins.netload.aggregator' % user_id, task='tasks.netload.aggregator', enabled=True,
                      crontab={'minute': '0, 15, 30, 45'}, kwargs=args1).save()
+    args1['interval'] = '1h'
+    p1 = PeriodicTask(name='%s.1h.netload.aggregator' % user_id, task='tasks.netload.aggregator', enabled=True,
+                     crontab={'minute': '0'}, kwargs=args1).save()
     meters = customer.facility + customer.solar
     for meter in meters:
         meter_type = 'solar' if meter.solar else 'facility' 

@@ -51,14 +51,14 @@ def ekm_facility_aggregate(user_id, meter_id):
             'points': [[utc_timestamp, demand]]}
     influxdb.write_points([data])
 
-@celery.task(name='tasks.netload.15m.aggregator')
-def ekm_netload_aggregate(user_id):
+@celery.task(name='tasks.netload.aggregator')
+def ekm_netload_aggregate(user_id, interval):
     user = db.Customer.objects(id=user_id).first()
     utc_now = datetime.utcfromtimestamp(time.time())
     tariff_data = get_tariff_details(user_id)
     consumption = 0.0
     generation = 0.0
-    query = 'select mean(P) from /^%s_\d+$/ where time > now() - 15m;' % user_id
+    query = 'select mean(P) from /^%s_\d+$/ where time > now() - %s;' % (user_id, interval)
     query_result = influxdb.query(query)
     facility_meters_ids = [meter.id for meter in user.facility]
     solar_meters_ids = [meter.id for meter in user.solar]
@@ -71,7 +71,7 @@ def ekm_netload_aggregate(user_id):
 
     netload = consumption - generation
     utc_timestamp = int((utc_now - datetime(1970, 1, 1)).total_seconds())
-    data = {'name': '%s_15mins_%s_%s' % (user_id, tariff_data['season'], tariff_data['peak_period']), 'columns': ['time', 'demand'],
+    data = {'name': '%s_%s_%s_%s' % (user_id, interval, tariff_data['season'], tariff_data['peak_period']), 'columns': ['time', 'demand'],
             'points': [[utc_timestamp, netload]]}
     influxdb.write_points([data])
 
