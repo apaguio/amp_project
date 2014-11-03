@@ -318,6 +318,12 @@ h6,
 .powerviewgraphwrapper .powerviewgraph svg .zoomSVG * {
   pointer-events: all;
 }
+.powerviewgraphwrapper .powerviewgraph svg .zoomSVG rect.background {
+  fill: rgba(100, 150, 210, 0.1);
+}
+.powerviewgraphwrapper .powerviewgraph svg .zoomSVG path.zoomGraph {
+  fill: #f7ff00;
+}
 .powerviewgraphwrapper .powerviewgraph svg rect.mouserect {
   pointer-events: all;
 }

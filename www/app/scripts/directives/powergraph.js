@@ -56,9 +56,10 @@
         }
 
         scope.y = d3.scale.linear().range([scope.bigheight - marginBetween, 0]);
-        var minY = _.min([scope.min.P - scope.min.S, 0]);
+        var minY = _.min([scope.min.net, 0]);
+        console.log("MIN Y : ", minY);
         var maxY = _.max([scope.max.P]);
-        scope.y.domain([minY, Math.max(config.maxDemand, maxY) + 20]);
+        scope.y.domain([minY, Math.max(config.maxDemand, maxY)]);
         scope.y.axis = d3.svg.axis().scale(scope.y).ticks(5).orient("left");
 
         // Power Factor Y
@@ -86,7 +87,7 @@
                 zoomDomain = [minY, maxY];
                 scope.zoomPlotter = d3.svg.area()
                     .x(function(d) { return scope.zoomX(moment(d.time).toDate()); })
-                    .y0(function(d) { return (scope.zoomY((d.P || 0) - (d.S || 0))) || 0; })
+                    .y0(function(d) { return scope.zoomY(d.net) || 0; })
                     .y1(function(d) { return (scope.zoomY(d.P || 0)) || 0; });
             } else if (config.graphs.powerfactor) {
                 zoomDomain = scope.pfy.domain();
@@ -106,7 +107,7 @@
 
         scope.lineSolar = d3.svg.line()
             .x(function(d) { return scope.x(moment(d.time).toDate()); })
-            .y(function(d) { return scope.y( (d.P || 0) - (d.S || 0 ) ); });
+            .y(function(d) { return scope.y(d.net); });
 
         scope.linePF = d3.svg.line()
             .x(function(d) { return scope.x(moment(d.time).toDate()); })
@@ -162,6 +163,9 @@
                 .selectAll("rect")
                 .attr("y", scope.zoomY.range()[1])
                 .attr("height", scope.zoomY.range()[0]);
+
+            scope.zoomSVG.selectAll("rect.background")
+                .style("visibility", "visible");
         }
 
         scope.main.append("defs").append("clipPath")
@@ -173,8 +177,8 @@
         // An area generator, for the light fill.
         scope.area = d3.svg.area()
             .x(function(d) { return scope.x(moment(d.time).toDate()); })
-            .y0(function(d) { return (scope.y((d.P || 0) - (d.S || 0))) || 0; })
-            .y1(function(d) { return (scope.y(d.P || 0)) || 0; });
+            .y0(function(d) { return scope.y(d.net) || 0; })
+            .y1(function(d) { return scope.y(d.P || 0) || 0; });
 
         var xEnd = -scope.x(scope.end);
 
@@ -333,9 +337,10 @@
         scope.start = scope.x.domain()[0];
         scope.end = scope.x.domain()[1];
 
-        var minY = _.min([scope.min.P - scope.min.S, 0]);
+        console.log("Min ", scope.min.net);
+        var minY = _.min([scope.min.net, 0]);
         var maxY = _.max([scope.max.P]);
-        scope.y.domain([minY, Math.max(config.maxDemand, maxY) + 20]);
+        scope.y.domain([minY, Math.max(config.maxDemand, maxY)]);
 
         var minPF = scope.min.L1_PF;
         var maxPF = 1;
@@ -444,6 +449,7 @@
                 scope.max = {
                     S: Number.MIN_VALUE,
                     P: Number.MIN_VALUE,
+                    net: Number.MIN_VALUE,
                     L1_V: Number.MIN_VALUE,
                     L1_PF: Number.MIN_VALUE,
                     time: new Date(0)
@@ -451,6 +457,7 @@
                 scope.min = {
                     S: Number.MAX_VALUE,
                     P: Number.MAX_VALUE,
+                    net: Number.MAX_VALUE,
                     L1_V: Number.MAX_VALUE,
                     L1_PF: Number.MAX_VALUE,
                     time: new Date()
@@ -458,17 +465,21 @@
 
                 // Single loop to get them all, single ring to role them all :D
                 _.each(scope.data, function(d) {
+                    d.net = d.P - d.S
                     scope.max.S = scope.max.S < d.S ? d.S : scope.max.S; 
                     scope.max.P = scope.max.P < d.P ? d.P : scope.max.P; 
+                    scope.max.net = scope.max.net < d.net ? d.net : scope.max.net; 
                     scope.max.L1_V = scope.max.L1_V < d.L1_V ? d.L1_V : scope.max.L1_V; 
                     scope.max.L1_PF = scope.max.L1_PF < d.L1_PF ? d.L1_PF : scope.max.L1_PF; 
                     scope.max.time = scope.max.time < d.time ? d.time : scope.max.time; 
 
                     scope.min.S = scope.min.S > d.S ? d.S : scope.min.S; 
                     scope.min.P = scope.min.P > d.P ? d.P : scope.min.P; 
+                    scope.min.net = scope.min.net > d.net ? d.net : scope.min.net; 
                     scope.min.L1_V = scope.min.L1_V > d.L1_V ? d.L1_V : scope.min.L1_V; 
                     scope.min.L1_PF = scope.min.L1_PF > d.L1_PF ? d.L1_PF : scope.min.L1_PF; 
                     scope.min.time = scope.min.time > d.time ? d.time : scope.min.time; 
+                    if (_.isUndefined(scope.min.net)) debugger;
                     // Filter based on P & S
                     return d.P && d.S && d.L1_V && d.L1_PF;
                 });
