@@ -27,12 +27,15 @@
         } else {
             scope.zoomHeight = 0;
         }
-        scope.bigheight = !!config.graphs.consumption ? scope.height / 2 : 0;
+        scope.bigheight = scope.height / 2;
+        if (config.graphs) {
+            scope.bigheight = !!config.graphs.consumption ? scope.height / 2 : 0;
+        }
         scope.smallheight = ((scope.height - scope.bigheight) / 2);
-        if (!config.graphs.voltage || !config.graphs.powerfactor) {
+        if (config.graphs && (!config.graphs.voltage || !config.graphs.powerfactor)) {
             scope.smallheight += scope.smallheight;
         }
-        if (!config.graphs.voltage && !config.graphs.powerfactor) {
+        if (config.graphs && (!config.graphs.voltage && !config.graphs.powerfactor)) {
             scope.bigheight += scope.bigheight;
         }
 
@@ -136,21 +139,33 @@
         scope.big = scope.main.append("g")
             .attr("class", "big");
 
-        scope.big.style("display", !!config.graphs.consumption? "" : "none");
+        if (config.graphs) {
+            scope.big.style("display", !!config.graphs.consumption? "" : "none");
+        }
 
-        var powerfactorYshift = !!config.graphs.consumption? scope.bigheight : 0;
+        var powerfactorYshift = scope.bigheight;
+        if (config.graphs) {
+            powerfactorYshift = !!config.graphs.consumption? scope.bigheight : 0;
+        }
         scope.powerfactorSVG = scope.main.append("g")
             .attr("class", "powerfactorSVG")
             .attr("transform", "translate(0, " + powerfactorYshift + ")");
 
-        scope.powerfactorSVG.style("display", !!config.graphs.powerfactor? "" : "none");
+        if (config.graphs) {
+            scope.powerfactorSVG.style("display", !!config.graphs.powerfactor? "" : "none");
+        }
 
-        var voltageYshift = powerfactorYshift + (!!config.graphs.powerfactor? scope.smallheight : 0);
+        var voltageYshift = scope.smallheight;
+        if (config.graphs) {
+            voltageYshift = powerfactorYshift + (!!config.graphs.powerfactor? scope.smallheight : 0);
+        }
         scope.voltageSVG = scope.main.append("g")
             .attr("class", "voltageSVG")
             .attr("transform", "translate(0, " + voltageYshift + ")");
 
-        scope.voltageSVG.style("display", !!config.graphs.voltage? "" : "none");
+        if (config.graphs) { 
+            scope.voltageSVG.style("display", !!config.graphs.voltage? "" : "none");
+        }
 
         if (scope.zoom) {
             scope.zoomSVG = scope.main.append("g")
@@ -439,13 +454,6 @@
 
         scope.$watch('dataupdated', function() {
             if (scope.data) {
-                if (!scope.config.graphs) {
-                    scope.config.graphs = {
-                        'voltage': true,
-                        'consumption': true,
-                        'powerfactor': true
-                    };
-                }
                 scope.max = {
                     S: Number.MIN_VALUE,
                     P: Number.MIN_VALUE,
@@ -465,7 +473,7 @@
 
                 // Single loop to get them all, single ring to role them all :D
                 _.each(scope.data, function(d) {
-                    d.net = d.P - d.S
+                    d.net = d.P - d.S;
                     scope.max.S = scope.max.S < d.S ? d.S : scope.max.S; 
                     scope.max.P = scope.max.P < d.P ? d.P : scope.max.P; 
                     scope.max.net = scope.max.net < d.net ? d.net : scope.max.net; 
@@ -479,7 +487,6 @@
                     scope.min.L1_V = scope.min.L1_V > d.L1_V ? d.L1_V : scope.min.L1_V; 
                     scope.min.L1_PF = scope.min.L1_PF > d.L1_PF ? d.L1_PF : scope.min.L1_PF; 
                     scope.min.time = scope.min.time > d.time ? d.time : scope.min.time; 
-                    if (_.isUndefined(scope.min.net)) debugger;
                     // Filter based on P & S
                     return d.P && d.S && d.L1_V && d.L1_PF;
                 });

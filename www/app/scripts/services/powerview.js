@@ -49,6 +49,7 @@
                         end: end
                     }
                 };
+                resolved.partpeak = resolved.offpeak;
                 deferred.resolve(resolved);
             }, util.onError(deferred));
             return deferred.promise;

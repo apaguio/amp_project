@@ -16,7 +16,8 @@
 
         scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'dd.MM.yyyy', 'shortDate'];
         scope.format = scope.formats[0];
-
+        var initialGraphs = { 'voltage': true, 'consumption': true, 'powerfactor': true };
+        scope.nodata = false;
         scope.settings = false;
         scope.showSettings = function showSettings() {
             scope.settings = true;
@@ -31,6 +32,10 @@
 
         if (!scope.wrapper.end) {
             scope.wrapper.end = new Date();
+        }
+
+        if (!scope.wrapper.graphs) {
+            scope.wrapper.graphs = initialGraphs;
         }
         var update = _.throttle(function () {
             if (!scope.wrapper.id) {
@@ -60,9 +65,6 @@
             scope.isOpen[picker] = true;
         };
 
-        scope.nodata = false;
-
-        scope.graphConfig = {};
         function load() {
             scope.loading = true;
             $q.all([
@@ -73,7 +75,7 @@
                 scope.wrapper.maxDemandPeak = peak;
                 scope.maxDemand = results[1][peak];
                 scope.graphConfig = {
-                    graphs: scope.wrapper.graphs || null,
+                    graphs: scope.wrapper.graphs || initialGraphs,
                     maxDemand: scope.maxDemand.value,
                     maxDemandTitle: scope.maxDemand.title
                 };
