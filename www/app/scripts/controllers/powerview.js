@@ -56,7 +56,15 @@
             }, util.onError());
         }
 
-        scope.graphConfig = {};
+        scope.graphConfig = {
+            graphs: {
+                powerfactor: true,
+                voltage: true,
+                consumption: true
+            },
+            maxDemand: scope.maxDemand && scope.maxDemand.value,
+            maxDemandTitle: scope.maxDemand && scope.maxDemand.title
+        };
         function tick(deferred) {
             if (location.path() !== '/powerview') {
                 return deferred.reject(false);
@@ -66,7 +74,11 @@
                 var resolved = result[scope.data.peak_period];
                 scope.maxDemand = resolved;
                 scope.graphConfig = {
-                    graphs: null,
+                    graphs: {
+                        powerfactor: true,
+                        voltage: true,
+                        consumption: true
+                    },
                     maxDemand: scope.maxDemand.value,
                     maxDemandTitle: scope.maxDemand.title
                 };
