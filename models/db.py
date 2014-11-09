@@ -50,7 +50,7 @@ class Customer(mongodb.Document):
     alerts_emails = mongodb.ListField(mongodb.EmailField())
     alerts_phones = mongodb.ListField(mongodb.StringField())
     alert_frequency_in_minutes = mongodb.IntField(default=15)
-    last_alerted = mongodb.DateTimeField()
+    last_alerted = mongodb.IntField()
 
     # Flask-Login integration
     def is_authenticated(self):

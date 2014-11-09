@@ -100,7 +100,8 @@ def _send_alerts(current_user, title, msg):
     if current_user.alerts_phones:
         for phone in current_user.alerts_phones:
             sms.send(phone, msg)
-    current_user.last_alerted = time.time()
+    current_user.last_alerted = int(time.time())
+    current_user.save()
 
 def _can_send_alert(current_user):
     time_diff = datetime.fromtimestamp(time.time()) - datetime.fromtimestamp(current_user.last_alerted)
