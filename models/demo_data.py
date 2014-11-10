@@ -31,7 +31,7 @@ def generate():
     customer.power_factor_threshold = 0.97
     customer.voltage_threshold = 3.0
     customer.alerts_email = ['test@example.com',]
-    customer.alerts_phones = ['+201225037840', ]
+    customer.alerts_phones = ['+16509194215', ]
     customer.last_alerted = int(ttime.time())
     customer.save()
 
