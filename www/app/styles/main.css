@@ -1,6 +1,13 @@
 /* Space out content a bit */
 /*@main: #B9E3E3;*/
+/*@darkYellow : darken(@yellow, 2%);*/
+/*@lightYellow : lighten(@yellow, 10%);*/
+/*@darkRed: #800000;*/
+/*@lightGreen: #56E800;*/
+/*@darkGreen: #008000;*/
 /*@lightBlue: rgb(179, 204, 253);*/
+/*@lightBlue: #06DAFF;*/
+/*@darkBlue: #05B3D1;*/
 body {
   font-family: "Open Sans", sans-serif;
   padding-top: 0px;
@@ -8,31 +15,31 @@ body {
   background-color: #ececec;
 }
 .darkRed {
-  color: #800000;
+  color: #ff0217;
 }
 .lightRed {
   color: #e85600;
 }
 .darkGreen {
-  color: #008000;
+  color: #029a3f;
 }
 .lightGreen {
-  color: #56e800;
+  color: #05be50;
 }
 .darkBlue {
-  color: #05b3d1;
+  color: #4375a0;
 }
 .lightBlue {
-  color: #05b3d1;
+  color: #4375a0;
 }
 .darkerBlue {
   color: #256188;
 }
 .lightYellow {
-  color: #f9ff33;
+  color: #fefa52;
 }
 .darkYellow {
-  color: #edf500;
+  color: #c5c33e;
 }
 .uppercase {
   text-transform: uppercase;
@@ -213,8 +220,8 @@ h6,
   border-bottom: 2px dashed #256188;
 }
 .graphtooltip .body .entry.solar {
-  background-color: #f9ff33;
-  color: #8a8f00;
+  background-color: #fefa52;
+  color: #797724;
 }
 .graphtooltip .body .entry.netdemand {
   border-bottom: 1px solid #256188;
@@ -407,8 +414,8 @@ h6,
   border-bottom: 2px dashed #256188;
 }
 .powerviewgraphwrapper div.tooltip .body .entry.solar {
-  background-color: #f9ff33;
-  color: #8a8f00;
+  background-color: #fefa52;
+  color: #797724;
 }
 .powerviewgraphwrapper div.tooltip .body .entry.netdemand {
   border-bottom: 1px solid #256188;
@@ -437,31 +444,31 @@ h6,
   text-anchor: middle;
 }
 #performance svg g.demand rect {
-  fill: #05b3d1;
-  stroke: #049eb8;
+  fill: #4375a0;
+  stroke: #3b688e;
 }
 #performance svg g.energy rect {
-  fill: #008000;
-  stroke: #006700;
+  fill: #029a3f;
+  stroke: #028135;
 }
 #performance svg g.solar rect {
-  fill: #edf500;
-  stroke: #d4db00;
+  fill: #c5c33e;
+  stroke: #b4b236;
 }
 #performance svg g.total {
   /*sub rectangles*/
 }
 #performance svg g.total rect.solar {
-  fill: #edf500;
-  stroke: #d4db00;
+  fill: #c5c33e;
+  stroke: #b4b236;
 }
 #performance svg g.total rect.energy {
-  fill: #008000;
-  stroke: #006700;
+  fill: #029a3f;
+  stroke: #028135;
 }
 #performance svg g.total rect.demand {
-  fill: #05b3d1;
-  stroke: #049eb8;
+  fill: #4375a0;
+  stroke: #3b688e;
 }
 #performance svg g text {
   text-anchor: middle;
@@ -477,31 +484,31 @@ h6,
   stroke-width: 1px;
 }
 #performance svg g .arrow.green {
-  fill: #008000;
-  stroke: #009a00;
+  fill: #029a3f;
+  stroke: #02b349;
 }
 #performance svg g .arrow.red {
-  fill: #800000;
-  stroke: #9a0000;
+  fill: #ff0217;
+  stroke: #ff1c2e;
 }
 #performance svg g .monthAnalysis,
 #performance svg g .yearAnalysis {
   font-size: 10px;
-  fill: #05b3d1;
-  stroke: #05b3d1;
+  fill: #4375a0;
+  stroke: #4375a0;
 }
 #performance svg g .monthAnalysis .percent.red,
 #performance svg g .yearAnalysis .percent.red,
 #performance svg g .monthAnalysis .value.red,
 #performance svg g .yearAnalysis .value.red {
-  stroke: #800000;
+  stroke: #ff0217;
   fill: none;
 }
 #performance svg g .monthAnalysis .percent.green,
 #performance svg g .yearAnalysis .percent.green,
 #performance svg g .monthAnalysis .value.green,
 #performance svg g .yearAnalysis .value.green {
-  stroke: #008000;
+  stroke: #029a3f;
   fill: none;
 }
 #historical {

@@ -6,6 +6,19 @@
 
     var duration = 1000;
 
+    function signOfChange(group, value) {
+        if (group === "solar") {
+            if (_.isUndefined(value)) {
+                return "";
+            }
+            return value < 0 ? " - " : " + ";
+        }
+        if (_.isUndefined(value)) {
+            return "";
+        }
+        return value > 0 ? " - " : " + ";
+    }
+
     function classOfChange(group, value) {
         if (group === "solar") {
             if (_.isUndefined(value)) {
@@ -17,22 +30,6 @@
             return "red";
         }
         return value > 0 ? "red" : "green";
-    }
-
-    function arrowUp(g, cls) {
-        return g.append("path")
-            .attr("d", "M52,84V21.656l21.457,21.456c1.561,1.562,4.095,1.562,5.656,0.001c1.562-1.562,1.562-4.096,0-5.658L50.829,9.172l0,0  c-0.186-0.186-0.391-0.352-0.609-0.498c-0.101-0.067-0.21-0.114-0.315-0.172c-0.124-0.066-0.242-0.142-0.373-0.195  c-0.135-0.057-0.275-0.089-0.415-0.129c-0.111-0.033-0.216-0.076-0.331-0.099C48.527,8.027,48.264,8,48.001,8l0,0  c-0.003,0-0.006,0.001-0.009,0.001c-0.259,0.001-0.519,0.027-0.774,0.078c-0.12,0.024-0.231,0.069-0.349,0.104  c-0.133,0.039-0.268,0.069-0.397,0.123c-0.139,0.058-0.265,0.136-0.396,0.208c-0.098,0.054-0.198,0.097-0.292,0.159  c-0.221,0.146-0.427,0.314-0.614,0.501L16.889,37.456c-1.562,1.562-1.562,4.095-0.001,5.657c1.562,1.562,4.094,1.562,5.658,0  L44,21.657V84c0,2.209,1.791,4,4,4S52,86.209,52,84z")
-            .attr("class", "arrow up " + cls);
-    }
-
-    function arrowDown(g, cls) {
-        return g.append("path")
-            .attr("d", "M44,12v62.344L22.543,52.888c-1.561-1.562-4.094-1.562-5.656-0.001c-1.562,1.562-1.562,4.096,0,5.658l28.284,28.283l0,0  c0.186,0.186,0.391,0.352,0.609,0.498c0.101,0.067,0.21,0.114,0.315,0.172c0.124,0.066,0.242,0.142,0.373,0.195  c0.135,0.057,0.275,0.089,0.415,0.129c0.111,0.033,0.216,0.076,0.331,0.099C47.474,87.973,47.737,88,48,88l0,0  c0.003,0,0.006-0.001,0.009-0.001c0.259-0.001,0.519-0.027,0.774-0.078c0.12-0.024,0.231-0.069,0.348-0.104  c0.133-0.039,0.268-0.069,0.397-0.123c0.139-0.058,0.265-0.136,0.396-0.208c0.098-0.054,0.198-0.097,0.292-0.159  c0.221-0.146,0.427-0.314,0.614-0.501l28.281-28.282c1.562-1.562,1.562-4.095,0.001-5.657c-1.562-1.562-4.095-1.562-5.657,0  L52,74.343V12c0-2.209-1.791-4-4-4S44,9.791,44,12z")
-            .attr("class", "arrow down " + cls);
-    }
-
-    function arrowOf(svg, group, value) {
-        return (value < 0 ? arrowDown : arrowUp)(svg, classOfChange(group, value));
     }
 
     function updateData(originalData) {
@@ -430,24 +427,6 @@
                 .attr("class", "monthAnalysis");
 
             var line1y = 40;
-            var r = 2;
-            var analysisMargin = 40;
-            yearAnalysis.append("line")
-                .attr("x1", analysisMargin)
-                .attr("x2", scope.x.rangeBand() - analysisMargin)
-                .attr("y1", line1y)
-                .attr("y2", line1y);
-
-            yearAnalysis.append("circle")
-                .attr("cx", analysisMargin)
-                .attr("cy", line1y)
-                .attr("r", r);
-
-            yearAnalysis.append("circle")
-                .attr("cx", scope.x.rangeBand() - analysisMargin)
-                .attr("cy", line1y)
-                .attr("r", r);
-
             var yearXshift = scope.x.rangeBand()/2;
 
             var changeValCharges = 0;
@@ -457,10 +436,9 @@
                 if (chartData.last_year_money !== 0) {
                     changeValCharges = chartData.this_month_money - chartData.last_year_money;
                     var percentVal = 100 * changeValCharges / chartData.last_year_money;
-                    percentText = Math.round(Math.abs(percentVal)) + '%';
-                    changeText = '$ ' + Math.round(Math.abs(changeValCharges)) + " / day";
-                    var yearArrow = arrowOf(yearAnalysis, barsGroupName, changeValCharges);
-                    yearArrow.attr("transform", "translate(" + 0 +  ", " + 5 + "), scale(0.35)");
+                    var sign = signOfChange(barsGroupName, changeValCharges);
+                    percentText = sign + Math.round(Math.abs(percentVal)) + '%';
+                    changeText = sign + ' $ ' + Math.round(Math.abs(changeValCharges)) + " / day";
                 }
             }
 
@@ -474,23 +452,6 @@
                 .text(changeText)
                 .attr("transform", "translate(" + yearXshift +  ", " + 30 + ")");
 
-            var line2y = line1y * 2;
-            monthAnalysis.append("line")
-                .attr("x1", miniX.rangeBand() + analysisMargin)
-                .attr("x2", scope.x.rangeBand() - analysisMargin)
-                .attr("y1", line2y)
-                .attr("y2", line2y);
-
-            monthAnalysis.append("circle")
-                .attr("cx", miniX.rangeBand() + analysisMargin)
-                .attr("cy", line2y)
-                .attr("r", r);
-
-            monthAnalysis.append("circle")
-                .attr("cx", scope.x.rangeBand() - analysisMargin)
-                .attr("cy", line2y)
-                .attr("r", r);
-
             var monthXshift = miniX.rangeBand() + ((scope.x.rangeBand() - miniX.rangeBand())/2);
 
             var monthChangeValCharges = 0;
@@ -499,11 +460,10 @@
             if (!_.isUndefined(chartData.last_month_money)) {
                 if (chartData.last_month_money) {
                     monthChangeValCharges = chartData.this_month_money - chartData.last_month_money;
+                    var sign = signOfChange(barsGroupName, monthChangeValCharges);
                     var monthPercentVal = 100 * monthChangeValCharges / chartData.last_month_money;
-                    monthPercentText = Math.round(Math.abs(monthPercentVal)) + '%';
-                    monthChangeText = '$ ' + Math.round(Math.abs(monthChangeValCharges)) + " / day";
-                    var monthArrow = arrowOf(monthAnalysis, barsGroupName, monthChangeValCharges);
-                    monthArrow.attr("transform", "translate(" + miniX.rangeBand() +  ", " + (line1y + 5) + "), scale(0.35)");
+                    monthPercentText = sign + Math.round(Math.abs(monthPercentVal)) + '%';
+                    monthChangeText = sign + ' $ ' + Math.round(Math.abs(monthChangeValCharges)) + " / day";
                 }
             }
 
@@ -516,9 +476,7 @@
                 .attr("class", "value " + classOfChange(barsGroupName, monthChangeValCharges))
                 .text(monthChangeText)
                 .attr("transform", "translate(" + monthXshift +  ", " + (line1y + 30) + ")");
-
         });
-
     }
 
     function controller(scope, element) {
