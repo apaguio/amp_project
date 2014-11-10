@@ -27,9 +27,9 @@ def generate():
     customer.seasons = [winter, summer]
 
     #alerts values
-    customer.one_minute_netload_avg_threshold = 1400.0
+    customer.one_minute_netload_avg_threshold = 1500.0
     customer.power_factor_threshold = 0.97
-    customer.voltage_threshold = 3.0
+    customer.voltage_threshold = 5.0
     customer.alerts_email = ['test@example.com',]
     customer.alerts_phones = ['+16509194215', ]
     customer.last_alerted = int(ttime.time())
