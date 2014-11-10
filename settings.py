@@ -24,6 +24,11 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT=['json']
 CELERY_IMPORTS = ["tasks",]
 
+# twilio settings
+TWILIO_ACCOUNT_SID = 'ACf04a9654ef7dfe275e97c6a903760840'
+TWILIO_AUTH_TOKEN = 'aa39b45c1d2a5a1b685ab09e26c14fb5'
+TWILIO_NUMBER = '+16502854611'
+
 # EKM metering scheduled tasks
 EKM_READING_INTERVAL = 5
 
@@ -114,5 +119,21 @@ CELERYBEAT_SCHEDULE = {
         'task': 'tasks.ekm.meter.resolution.aggregator',
         'schedule': timedelta(hours=24),
         'args': ('10068', '24h')
+    },
+    # alerts
+    'one.minute.netload.avg.check': {
+        'task': 'tasks.one.minute.netload.avg.check',
+        'schedule': timedelta(minutes=1),
+        'args': ('test', '10054', '10068')
+    },
+    'power.factor.check': {
+        'task': 'tasks.power.factor.check',
+        'schedule': timedelta(seconds=30),
+        'args': ('test', '10054')
+    },
+    'voltage.check': {
+        'task': 'tasks.voltage.check',
+        'schedule': timedelta(seconds=30),
+        'args': ('test', '10054')
     },
 }

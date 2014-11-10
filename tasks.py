@@ -3,13 +3,12 @@ import time
 from app import celery
 from celery.utils.log import get_task_logger
 import xml.etree.ElementTree as ET
-from influxdb_factory import get_influxdb
 from datetime import datetime
 from redis import Redis
+from models import db, influxdb
 from models.utils import get_tariff_details
-from flask_login import current_user
+from lib import emailer, sms
 
-influxdb = get_influxdb()
 logger = get_task_logger(__name__)
 redis = Redis()
 
@@ -93,3 +92,69 @@ def energy_1h_aggregate(user_name, meter_id):
     data = {'name': '%s_energy_1h_%s_%s' % (meter_id, tariff_data['season'], tariff_data['peak_period']), 'columns': ['time', 'energy_kwh'],
             'points': [[utc_timestamp, energy]]}
     influxdb.write_points([data])
+
+def _send_alerts(current_user, title, msg):
+    if current_user.alerts_emails:
+        emailer.send_email(current_user.alerts_emails, title, msg)
+    if current_user.alerts_phones:
+        for phone in current_user.alerts_phones:
+            sms.send(phone, msg)
+    current_user.last_alerted = int(time.time())
+    current_user.save()
+
+def _can_send_alert(current_user):
+    time_diff = datetime.fromtimestamp(time.time()) - datetime.fromtimestamp(current_user.last_alerted)
+    return time_diff.total_seconds() > (current_user.alert_frequency_in_minutes * 60)
+
+@celery.task(name='tasks.one.minute.netload.avg.check')
+def netload_avg_check(user_name, meter_id, solar_meter_id):
+    current_user = db.Customer.objects(name=user_name).first()
+    if _can_send_alert(current_user):
+        if current_user.one_minute_netload_avg_threshold and (current_user.alerts_emails or current_user.alerts_phones):
+            facility_query = 'select mean(P) from "%s" where time > now() - 1m;' % meter_id
+            facility_result = influxdb.query(facility_query)
+            demand = round(facility_result[0]['points'][0][1], 2)
+
+            solar_power = 0
+            solar_query = 'select mean(P) from "%s" where time > now() - 1m;' % solar_meter_id
+            solar_result = influxdb.query(solar_query)
+            if solar_result:
+                solar_power = round(solar_result[0]['points'][0][1], 2)
+            net_load = demand - solar_power
+
+            if net_load > current_user.one_minute_netload_avg_threshold:
+                title = 'WARNING: Net load average exceeded threshold'
+                msg = 'Net load average (currently %s kW) just exceeded your current threshold %s kW' % (net_load, current_user.one_minute_netload_avg_threshold)
+                _send_alerts(current_user, title, msg)
+
+@celery.task(name='tasks.power.factor.check')
+def power_factor_check(user_name, meter_id):
+    current_user = db.Customer.objects(name=user_name).first()
+    if _can_send_alert(current_user):
+        if current_user.power_factor_threshold and (current_user.alerts_emails or current_user.alerts_phones):
+            power_factor_query = 'select mean(L1_PF) from "%s" where time > now() - 30s;' % meter_id
+            power_factor_query_result = influxdb.query(power_factor_query)
+            power_factor = round(power_factor_query_result[0]['points'][0][1], 2)
+
+            if power_factor < current_user.power_factor_threshold:
+                msg = 'Power factor (currently %s) just went below your current threshold %s' % (power_factor, current_user.power_factor_threshold)
+                title = 'WARNING: Power factor went below threshold'
+                _send_alerts(current_user, title, msg)
+
+@celery.task(name='tasks.voltage.check')
+def voltage_check(user_name, meter_id):
+    current_user = db.Customer.objects(name=user_name).first()
+    if _can_send_alert(current_user):
+        if current_user.voltage_threshold and (current_user.alerts_emails or current_user.alerts_phones):
+            voltage_query = 'select mean(L1_V) from "%s" where time > now() - 30s;' % meter_id
+            voltage_query_result = influxdb.query(voltage_query)
+            voltage = round(voltage_query_result[0]['points'][0][1], 2)
+
+            if (voltage < 120 - current_user.voltage_threshold):
+                msg = 'Voltage (currently %s) just went below your current threshold %s' % (voltage, 120 - current_user.voltage_threshold)
+                title = 'WARNING: Voltage went below threshold'
+                _send_alerts(current_user, title, msg)
+            elif (voltage > 120 + current_user.voltage_threshold):
+                msg = 'Voltage (currently %s) just went above your current threshold %s' % (voltage, 120 + current_user.voltage_threshold)
+                title = 'WARNING: Voltage went above threshold'
+                _send_alerts(current_user, title, msg)

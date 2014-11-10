@@ -1,4 +1,5 @@
 from models import mongodb
+from flask_login import AnonymousUserMixin
 
 class EkmMeter(mongodb.EmbeddedDocument):
     id = mongodb.StringField()
@@ -57,6 +58,13 @@ class Customer(mongodb.Document):
     solar = mongodb.ListField(mongodb.EmbeddedDocumentField(EkmMeter))
     holidays = mongodb.ListField(mongodb.DateTimeField())
     historicals = mongodb.ListField(mongodb.EmbeddedDocumentField(Historical))
+    one_minute_netload_avg_threshold = mongodb.FloatField()
+    power_factor_threshold = mongodb.FloatField()
+    voltage_threshold = mongodb.FloatField()
+    alerts_emails = mongodb.ListField(mongodb.EmailField())
+    alerts_phones = mongodb.ListField(mongodb.StringField())
+    alert_frequency_in_minutes = mongodb.IntField(default=15)
+    last_alerted = mongodb.IntField()
 
     # Flask-Login integration
     def is_authenticated(self):
@@ -71,3 +79,6 @@ class Customer(mongodb.Document):
     def get_id(self):
         return str(self.pk)
 
+class Anonymous(AnonymousUserMixin):
+    def __init__(self):
+        self.name = 'Guest'

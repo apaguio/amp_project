@@ -1,4 +1,5 @@
 from datetime import datetime, time
+import time as ttime
 from models import db
 from pytz import timezone, utc
 
@@ -25,6 +26,14 @@ def generate():
                        end=utc.localize(datetime(2015, 5, 1)))
     get_winter_peak_periods(winter)
     customer.seasons = [winter, summer]
+
+    #alerts values
+    customer.one_minute_netload_avg_threshold = 1500.0
+    customer.power_factor_threshold = 0.97
+    customer.voltage_threshold = 5.0
+    customer.alerts_email = ['test@example.com',]
+    customer.alerts_phones = ['+16509194215', ]
+    customer.last_alerted = int(ttime.time())
     customer.save()
 
 def init_facility_meters():
