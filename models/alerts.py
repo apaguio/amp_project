@@ -6,7 +6,7 @@ def update_customer_alerts(one_minute_netload_avg_threshold, power_factor_thresh
     current_user.voltage_threshold = voltage_threshold
     current_user.save()
 
-def update_customer_contacts(alerts_email, alerts_phone):
-    current_user.alerts_email = alerts_email
-    current_user.alerts_phone = alerts_phone
+def update_customer_contacts(alerts_emails, alerts_phones):
+    current_user.alerts_emails = alerts_emails
+    current_user.alerts_phones = alerts_phones
     current_user.save()
