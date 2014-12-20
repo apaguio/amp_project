@@ -25,6 +25,8 @@ def ekm_collect(meter_id, nr_readings, key, endpoint='io.ekmpush.com', simulate_
     uri = 'http://%s/%s~%s.xml?%s' % (endpoint, meter_id, nr_readings, key)
     ekm_data = requests.get(uri).content
     data = {'name': meter_id, 'columns': ['time', 'P', 'L1_PF', 'L1_V'], 'points': []}
+    if not simulate_solar:
+        data['name'] = '10054'
     root = ET.fromstring(ekm_data)
     for read in root.iter('read'):
         #seq = (long(read.get('seq'))/1000) - 300 # -300 seconds, fix ekm bug +5 mins

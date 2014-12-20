@@ -37,7 +37,7 @@ def generate():
     customer.save()
 
 def init_facility_meters():
-    meter1 = db.EkmMeter(id='10054', api_key='MTAxMDoyMDIw')
+    meter1 = db.EkmMeter(id='10068', api_key='MTAxMDoyMDIw')
     return [meter1,]
 
 def init_solar_meters():

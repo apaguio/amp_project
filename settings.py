@@ -36,7 +36,7 @@ CELERYBEAT_SCHEDULE = {
     'ekm.facility': {
         'task': 'tasks.ekm.collect',
         'schedule': EKM_READING_INTERVAL,
-        'args': ('10054', EKM_READING_INTERVAL, 'MTAxMDoyMDIw', 'io.ekmpush.com', False)
+        'args': ('10068', EKM_READING_INTERVAL, 'MTAxMDoyMDIw', 'io.ekmpush.com', False)
     },
     'ekm.solar': {
         'task': 'tasks.ekm.collect',
