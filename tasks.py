@@ -8,9 +8,39 @@ from redis import Redis
 from models import db, influxdb
 from models.utils import get_tariff_details
 from lib import emailer, sms
+from pymodbus.client.sync import ModbusTcpClient
+from pymodbus.payload import BinaryPayloadDecoder
+from pymodbus.constants import Endian
 
 logger = get_task_logger(__name__)
 redis = Redis()
+
+@celery.task(name='tasks.accuenergy.collect')
+def accuenergy_collect():
+    client = ModbusTcpClient('108.174.20.70', 2502)
+    def _decode_result(result):
+        decoder = BinaryPayloadDecoder.fromRegisters(result.registers, endian=Endian.Big)
+        return decoder.decode_32bit_float()
+    # read voltage value
+    result = client.read_holding_registers(0x4002, 2, unit=1)
+    V = round(_decode_result(result), 2)
+
+    # read power value
+    result = client.read_holding_registers(0x401c, 2, unit=1)
+    P = round(_decode_result(result), 2)
+
+    # read power factor value
+    result = client.read_holding_registers(0x4034, 2, unit=1)
+    PF = round(_decode_result(result), 2)
+
+    utc_now = datetime.utcfromtimestamp(time.time())
+    utc_timestamp = int((utc_now - datetime(1970, 1, 1)).total_seconds())
+
+    data = {'name': 'accuenergy_test',
+            'columns': ['time', 'P', 'L1_PF', 'L1_V'],
+            'points': [utc_timestamp, P, PF, V]}
+    influxdb.write_points([data])
+    return data
 
 @celery.task(name="tasks.ekm.collect")
 def ekm_collect(meter_id, nr_readings, key, endpoint='io.ekmpush.com', simulate_solar=False):

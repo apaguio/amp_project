@@ -33,6 +33,13 @@ TWILIO_NUMBER = '+16502854611'
 EKM_READING_INTERVAL = 5
 
 CELERYBEAT_SCHEDULE = {
+
+    'accuenergy.test': {
+        'task': 'tasks.accuenergy.collect',
+        'schedule': 1,
+        'args': ()
+    },
+
     'ekm.facility': {
         'task': 'tasks.ekm.collect',
         'schedule': EKM_READING_INTERVAL,
