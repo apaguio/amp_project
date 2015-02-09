@@ -17,7 +17,7 @@ redis = Redis()
 
 @celery.task(name='tasks.accuenergy.collect')
 def accuenergy_collect():
-    client = ModbusTcpClient('108.174.20.70', 2502)
+    client = ModbusTcpClient('108.174.20.70', 4502)
     def _decode_result(result):
         decoder = BinaryPayloadDecoder.fromRegisters(result.registers, endian=Endian.Big)
         return decoder.decode_32bit_float()
@@ -38,7 +38,7 @@ def accuenergy_collect():
 
     data = {'name': 'accuenergy_test',
             'columns': ['time', 'P', 'L1_PF', 'L1_V'],
-            'points': [utc_timestamp, P, PF, V]}
+            'points': [[utc_timestamp, P, PF, V],]}
     influxdb.write_points([data])
     return data
 
