@@ -2,6 +2,7 @@ from datetime import datetime, time
 import time as ttime
 from models import db
 from pytz import timezone, utc
+from meter_settings import SOLAR_METER_ID, CONSUMPTION_METER_ID
 
 def generate():
     customer = db.Customer(name='test', email='test@example.com', password='c3nergy')
@@ -19,11 +20,11 @@ def generate():
     customer.solar = solar_meters
     customer.save()
 
-    summer = db.Season(name='Summer', start=utc.localize(datetime(2014, 5, 1)),
-                       end=utc.localize(datetime(2014, 11, 1)))
+    summer = db.Season(name='Summer', start=utc.localize(datetime(2015, 5, 1)),
+                       end=utc.localize(datetime(2015, 11, 1)))
     get_summer_peak_periods(summer)
-    winter = db.Season(name='Winter', start=utc.localize(datetime(2014, 11, 1)),
-                       end=utc.localize(datetime(2015, 5, 1)))
+    winter = db.Season(name='Winter', start=utc.localize(datetime(2015, 11, 1)),
+                       end=utc.localize(datetime(2016, 5, 1)))
     get_winter_peak_periods(winter)
     customer.seasons = [winter, summer]
 
@@ -37,11 +38,11 @@ def generate():
     customer.save()
 
 def init_facility_meters():
-    meter1 = db.EkmMeter(id='10068', api_key='MTAxMDoyMDIw')
+    meter1 = db.EkmMeter(id=CONSUMPTION_METER_ID, api_key='MTAxMDoyMDIw')
     return [meter1,]
 
 def init_solar_meters():
-    meter1 = db.EkmMeter(id='10068', api_key='MTAxMDoyMDIw')
+    meter1 = db.EkmMeter(id=CONSUMPTION_METER_ID, api_key='MTAxMDoyMDIw')
     return [meter1,]
 
 def get_summer_peak_periods(summer):

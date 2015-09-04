@@ -3,6 +3,7 @@ from servers import r
 from models import historical, db, utils
 from flask_login import login_required, current_user
 from uuid import uuid4
+from meter_settings import SOLAR_METER_ID, CONSUMPTION_METER_ID
 
 historical_app = Blueprint('historical', __name__)
 
@@ -10,11 +11,9 @@ historical_app = Blueprint('historical', __name__)
 @login_required
 def historical_points(start, end):
     params = request.args
-    solar_meter_id = 10068
-    consumption_meter_id = 10054
     resolution = params.get('resolution', None)
-    consumption = historical.get_ekm_data(consumption_meter_id, start, end, resolution)
-    solar = historical.get_ekm_data(solar_meter_id, start, end, resolution)
+    consumption = historical.get_ekm_data(CONSUMPTION_METER_ID, start, end, resolution)
+    solar = historical.get_ekm_data(SOLAR_METER_ID, start, end, resolution)
     solarLen = len(solar)
     for i, d in enumerate(consumption):
         if i < solarLen:

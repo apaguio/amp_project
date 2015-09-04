@@ -5,6 +5,7 @@ from socketio.mixins import RoomsMixin, BroadcastMixin
 from servers import r, pubsub
 from models import powerview, utils
 from flask_login import login_required
+from meter_settings import SOLAR_METER_ID, CONSUMPTION_METER_ID
 
 powerview_app = Blueprint('powerview', __name__)
 
@@ -19,12 +20,10 @@ def generate_demo_data():
 @login_required
 def powerview_points():
     params = request.args
-    solar_meter_id = 10068
-    consumption_meter_id = 10054
     duration = params.get('timeframe', '10m')
     resolution = params.get('resolution', None)
-    consumption = powerview.get_ekm_data(consumption_meter_id, duration, resolution)
-    solar = powerview.get_ekm_data(solar_meter_id, duration, resolution)
+    consumption = powerview.get_ekm_data(CONSUMPTION_METER_ID, duration, resolution)
+    solar = powerview.get_ekm_data(SOLAR_METER_ID, duration, resolution)
     solarLen = len(solar)
     for i, d in enumerate(consumption):
         if i < solarLen:
@@ -37,23 +36,19 @@ def powerview_points():
 @powerview_app.route("/powerview/current_demand", methods=["GET"])
 @login_required
 def get_current_demand():
-    consumption_meter_id = 10054
-    solar_meter_id = 10068
-    result = powerview.get_current_demand(consumption_meter_id, solar_meter_id)
+    result = powerview.get_current_demand(SOLAR_METER_ID, CONSUMPTION_METER_ID)
     return r.success(result)
 
 @powerview_app.route("/powerview/max_peak_demand", methods=["GET"])
 @login_required
 def get_max_peak_demand():
-    consumption_meter_id = 10054
-    result = powerview.get_max_peak_demand(consumption_meter_id)
+    result = powerview.get_max_peak_demand(SOLAR_METER_ID)
     return r.success(result)
 
 @powerview_app.route("/powerview/max_demand_anytime", methods=["GET"])
 @login_required
 def get_max_demand_anytime():
-    consumption_meter_id = 10054
-    result = powerview.get_max_demand_anytime(consumption_meter_id)
+    result = powerview.get_max_demand_anytime(SOLAR_METER_ID)
     return r.success(result)
 
 @powerview_app.route("/powerview", methods=["GET"])
