@@ -5,7 +5,7 @@ from datetime import datetime
 from redis import Redis
 from meter_settings import SOLAR_METER_ID, CONSUMPTION_METER_ID
 
-PSUEDO_FEED = True
+PSUEDO_FEED = False
 
 if PSUEDO_FEED:
     import pprint
