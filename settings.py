@@ -42,16 +42,16 @@ CELERYBEAT_SCHEDULE = {
     #    'args': ()
     #},
 
-    'ekm.facility': {
-        'task': 'tasks.ekm.collect',
-        'schedule': EKM_READING_INTERVAL,
-        'args': (CONSUMPTION_METER_ID, EKM_READING_INTERVAL, 'MTAxMDoyMDIw', 'io.ekmpush.com', False)
-    },
-    'ekm.solar': {
-        'task': 'tasks.ekm.collect',
-        'schedule': EKM_READING_INTERVAL,
-        'args': (CONSUMPTION_METER_ID, EKM_READING_INTERVAL, 'MTAxMDoyMDIw', 'io.ekmpush.com', True)
-    },
+    #'ekm.facility': {
+    #    'task': 'tasks.ekm.collect',
+    #    'schedule': EKM_READING_INTERVAL,
+    #    'args': (CONSUMPTION_METER_ID, EKM_READING_INTERVAL, 'MTAxMDoyMDIw', 'io.ekmpush.com', False)
+    #},
+    #'ekm.solar': {
+    #    'task': 'tasks.ekm.collect',
+    #    'schedule': EKM_READING_INTERVAL,
+    #    'args': (CONSUMPTION_METER_ID, EKM_READING_INTERVAL, 'MTAxMDoyMDIw', 'io.ekmpush.com', True)
+    #},
     'ekm.facility.15mins.aggregator': {
         'task': 'tasks.ekm.facility.15mins.aggregator',
         'schedule': crontab(minute=[0, 15, 30, 45]),

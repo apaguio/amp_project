@@ -1,0 +1,243 @@
+ -======================================-
+-= Retrieve the source code from github =-
+ -======================================-
+
+$:> git clone https://github.com/flowtime2020/cenergy_insight.git
+
+
+ -======================================-
+-= The front-end requires the following =-
+ -======================================-
+
+$:> sudo apt-get install nodejs
+
+# create symbolic link to nodejs
+$:> sudo ln -s /usr/bin/nodejs /usr/bin/node
+
+$:> sudo apt-get install npm
+
+# Run the following command above the 'app' directory within the cenergy insight source code
+# (i.e. when you execute ls command and find the app directory in the list
+
+$:> /usr/local/bin/bower install
+
+When asked during bower install...
+
+Unable to find a suitable version for angular, please choose one:
+    1) angular#1.2.15 which resolved to 1.2.15 and is required by angular-cookies#1.2.15, angular-resource#1.2.15, angular-route#1.2.15, angular-sanitize#1.2.15
+    2) angular#1.2.28 which resolved to 1.2.28 and is required by angular-mocks#1.2.28, angular-scenario#1.2.28
+    3) angular#~1.3.0 which resolved to 1.3.17 and is required by insight
+    4) angular#>=1 which resolved to 1.3.17 and is required by angular-bootstrap#0.11.2
+
+Prefix the choice with ! to persist it to bower.json
+
+? Answer: < When you see a prompt similiar to this, choose the option that ends in "required by insight" so for the example above, choose 3 >
+
+
+ -===================================-
+-= The backend requires the following =-
+ -===================================-
+
+$:> sudo apt-get install python-dev mongodb-server redis-server python-pip nginx
+
+# install InfluxDB
+$:> wget influxdb_0.8.0_amd64.deb
+$:> sudo dpkg -i influxdb_0.8.0_amd64.deb
+
+# install Python dependencies
+$:> pip install flask
+$:> pip install flask-jsonpify
+$:> pip install flask-mongoengine
+$:> pip install flask-compress
+$:> pip install flask-login
+$:> pip install celery
+$:> pip install redis
+$:> pip install influxdb==0.4.1
+$:> pip install gevent-socketio
+$:> pip install flower
+$:> pip install twilio
+
+
+ -================-
+-= InfluxDB setup =-
+ -================-
+
+# Start the influxdb server
+$:> sudo /etc/init.d/influxdb start
+
+Point your browser to localhost:8083
+
+Enter the username 'root' and password 'root' and click Connect.
+
+Create a database named 'cenergy_insights'
+
+
+ -===============-
+-= MongoDB setup =-
+ -===============-
+
+$:> mongo
+> use cenergy_insights
+> exit
+
+
+ -=================================================================-
+-= /etc/nginx/nginx.conf edit to increase size of uploads excepted =-
+ -=================================================================-
+
+Within the http {...} section, add the following directive:
+
+client_max_body_size 20M;
+
+
+ -===========================================================================-
+-= nginx site configuration file to save as /etc/nginx/site-avaiable/default =-
+ -===========================================================================-
+
+# You may add here your
+# server {
+#	...
+# }
+# statements for each of your virtual hosts to this file
+
+##
+# You should look at the following URL's in order to grasp a solid understanding
+# of Nginx configuration files in order to fully unleash the power of Nginx.
+# http://wiki.nginx.org/Pitfalls
+# http://wiki.nginx.org/QuickStart
+# http://wiki.nginx.org/Configuration
+#
+# Generally, you will want to move this file somewhere, and start with a clean
+# file but keep this around for reference. Or just disable in sites-enabled.
+#
+# Please see /usr/share/doc/nginx-doc/examples/ for more detailed examples.
+##
+server {
+        listen   6000; ## listen for ipv4; this line is default and implied
+        #listen   [::]:80 default ipv6only=on; ## listen for ipv6
+
+        # Make site accessible from http://localhost/
+        server_name _;
+
+        location / {
+            proxy_pass  http://localhost:6000/;
+            proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+            proxy_redirect off;
+            proxy_buffering off;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+}
+
+
+server {
+	listen 80 default_server;
+	listen [::]:80 default_server ipv6only=on;
+
+    #============================================================================================#
+    # NOTE: The 'root' directive below must point to the location of the 'app' folder within the #
+    #       cenergy insight source code                                                          #
+    #============================================================================================#
+	root /home/adept/cenergy/cenergy_insight/www/app;
+	index index.html index.htm;
+
+    #===================================================#
+	# NOTE: Make site accessible from http://localhost/ #
+    #===================================================#
+	server_name _;
+
+	location / {
+		# First attempt to serve request as file, then
+		# as directory, then fall back to displaying a 404.
+		try_files $uri $uri/ =404;
+		# Uncomment to enable naxsi on this location
+		# include /etc/nginx/naxsi.rules
+	}
+        location /api/ {
+            #====================================================================================#
+            # NOTE: The 'proxy_pass' directive below must be set to the url the flask            #
+            #       application runs on. to the location of the 'app' folder within the          #
+            #       cenergy insight source code                                                  #
+            #====================================================================================#
+            proxy_pass  http://localhost:5000/;
+            proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+            proxy_redirect off;
+            proxy_buffering off;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+
+
+	# Only for nginx-naxsi used with nginx-naxsi-ui : process denied requests
+	#location /RequestDenied {
+	#	proxy_pass http://127.0.0.1:8080;    
+	#}
+
+	#error_page 404 /404.html;
+
+	# redirect server error pages to the static page /50x.html
+	#
+	#error_page 500 502 503 504 /50x.html;
+	#location = /50x.html {
+	#	root /usr/share/nginx/html;
+	#}
+
+	# pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+	#
+	#location ~ \.php$ {
+	#	fastcgi_split_path_info ^(.+\.php)(/.+)$;
+	#	# NOTE: You should have "cgi.fix_pathinfo = 0;" in php.ini
+	#
+	#	# With php5-cgi alone:
+	#	fastcgi_pass 127.0.0.1:9000;
+	#	# With php5-fpm:
+	#	fastcgi_pass unix:/var/run/php5-fpm.sock;
+	#	fastcgi_index index.php;
+	#	include fastcgi_params;
+	#}
+
+	# deny access to .htaccess files, if Apache's document root
+	# concurs with nginx's one
+	#
+	#location ~ /\.ht {
+	#	deny all;
+	#}
+}
+
+
+# another virtual host using mix of IP-, name-, and port-based configuration
+#
+#server {
+#	listen 8000;
+#	listen somename:8080;
+#	server_name somename alias another.alias;
+#	root html;
+#	index index.html index.htm;
+#
+#	location / {
+#		try_files $uri $uri/ =404;
+#	}
+#}
+
+
+# HTTPS server
+#
+#server {
+#	listen 443;
+#	server_name localhost;
+#
+#	root html;
+#	index index.html index.htm;
+#
+#	ssl on;
+#	ssl_certificate cert.pem;
+#	ssl_certificate_key cert.key;
+#
+#	ssl_session_timeout 5m;
+#
+#	ssl_protocols SSLv3 TLSv1 TLSv1.1 TLSv1.2;
+#	ssl_ciphers "HIGH:!aNULL:!MD5 or HIGH:!aNULL:!MD5:!3DES";
+#	ssl_prefer_server_ciphers on;
+#
+#	location / {
+#		try_files $uri $uri/ =404;
+#	}
+#}
