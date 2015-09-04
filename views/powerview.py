@@ -22,8 +22,8 @@ def powerview_points():
     params = request.args
     duration = params.get('timeframe', '10m')
     resolution = params.get('resolution', None)
-    consumption = powerview.get_ekm_data(CONSUMPTION_METER_ID, duration, resolution)
-    solar = powerview.get_ekm_data(SOLAR_METER_ID, duration, resolution)
+    consumption = powerview.get_ekm_data(SOLAR_METER_ID, duration, resolution)
+    solar = powerview.get_ekm_data(CONSUMPTION_METER_ID, duration, resolution)
     solarLen = len(solar)
     for i, d in enumerate(consumption):
         if i < solarLen:
