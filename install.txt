@@ -1,9 +1,17 @@
+ *** THESE INSTRUCTIONS ASSUME YOU ARE USING UBUNTU ***
+ 
  -======================================-
 -= Retrieve the source code from github =-
  -======================================-
 
-$:> git clone https://github.com/flowtime2020/cenergy_insight.git
+$:> cd /opt
+$:> mkdir code
+$:> cd code
+$:> git clone https://github.com/flowtime2020/cenergy_insight.git cenergy_insights
 
+# Copy the upstart files to /etc/init
+$:> cp cenergy_insights/upstart/cenergy_insights.conf /etc/init
+$:> cp cenergy_insights/upstart/influxdb.conf /etc/init
 
  -======================================-
 -= The front-end requires the following =-
@@ -16,10 +24,12 @@ $:> sudo ln -s /usr/bin/nodejs /usr/bin/node
 
 $:> sudo apt-get install npm
 
+$:> sudo npm install -g bower
+
 # Run the following command above the 'app' directory within the cenergy insight source code
 # (i.e. when you execute ls command and find the app directory in the list
 
-$:> /usr/local/bin/bower install
+$:> /usr/local/bin/bower install # include the --allow-root switch if installing as root
 
 When asked during bower install...
 
@@ -41,7 +51,7 @@ Prefix the choice with ! to persist it to bower.json
 $:> sudo apt-get install python-dev mongodb-server redis-server python-pip nginx
 
 # install InfluxDB
-$:> wget influxdb_0.8.0_amd64.deb
+$:> wget http://get.influxdb.org.s3.amazonaws.com/influxdb_0.8.0_amd64.deb
 $:> sudo dpkg -i influxdb_0.8.0_amd64.deb
 
 # install Python dependencies
@@ -56,29 +66,6 @@ $:> pip install influxdb==0.4.1
 $:> pip install gevent-socketio
 $:> pip install flower
 $:> pip install twilio
-
-
- -================-
--= InfluxDB setup =-
- -================-
-
-# Start the influxdb server
-$:> sudo /etc/init.d/influxdb start
-
-Point your browser to localhost:8083
-
-Enter the username 'root' and password 'root' and click Connect.
-
-Create a database named 'cenergy_insights'
-
-
- -===============-
--= MongoDB setup =-
- -===============-
-
-$:> mongo
-> use cenergy_insights
-> exit
 
 
  -=================================================================-
@@ -129,21 +116,61 @@ server {
 }
 
 
+#server {
+#        #listen 443;
+#        listen 104.236.169.173:443 ssl spdy;
+#        # Make site accessible from http://localhost/
+#        server_name _;
+#
+#
+#        #root html;
+#        root /opt/code/cenergy_insights/www/app;
+#        index index.html index.htm;
+#
+#        ssl on;
+#        ssl_certificate /etc/nginx/ssl.crt/server.cert;
+#        ssl_certificate_key /etc/nginx/ssl.key/server.key;
+#
+#        ssl_session_timeout 5m;
+#
+#        ssl_protocols SSLv3 TLSv1 TLSv1.1 TLSv1.2;
+#        ssl_ciphers "HIGH:!aNULL:!MD5 or HIGH:!aNULL:!MD5:!3DES";
+#        ssl_prefer_server_ciphers on;
+#
+#        location /consume {
+#            proxy_set_header   Host             $host;
+#            proxy_pass http://localhost:5000/consume;
+#            proxy_redirect default;
+#            proxy_set_header   X-Real-IP        $remote_addr;
+#            proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+#        }
+#
+#}
+
+
 server {
 	listen 80 default_server;
 	listen [::]:80 default_server ipv6only=on;
 
-    #============================================================================================#
-    # NOTE: The 'root' directive below must point to the location of the 'app' folder within the #
-    #       cenergy insight source code                                                          #
-    #============================================================================================#
-	root /home/adept/cenergy/cenergy_insight/www/app;
-	index index.html index.htm;
+        #root html;
+        root /opt/code/cenergy_insights/www/app;
+        index index.html index.htm;
 
-    #===================================================#
-	# NOTE: Make site accessible from http://localhost/ #
-    #===================================================#
-	server_name _;
+        #location /demo_data/generate {
+        #    proxy_set_header   Host             $host;
+        #    proxy_pass http://localhost:5000/demo_data/generate;
+        #    proxy_redirect default;
+        #    proxy_set_header   X-Real-IP        $remote_addr;
+        #    proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        #}
+
+        location /consume {
+            proxy_set_header   Host             $host;
+            proxy_pass http://localhost:5000/consume;
+            proxy_redirect default;
+            proxy_set_header   X-Real-IP        $remote_addr;
+            proxy_set_header   X-Forwarded-For  $proxy_add_x_forwarded_for;
+        }
 
 	location / {
 		# First attempt to serve request as file, then
@@ -152,12 +179,8 @@ server {
 		# Uncomment to enable naxsi on this location
 		# include /etc/nginx/naxsi.rules
 	}
+
         location /api/ {
-            #====================================================================================#
-            # NOTE: The 'proxy_pass' directive below must be set to the url the flask            #
-            #       application runs on. to the location of the 'app' folder within the          #
-            #       cenergy insight source code                                                  #
-            #====================================================================================#
             proxy_pass  http://localhost:5000/;
             proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
             proxy_redirect off;
@@ -241,3 +264,54 @@ server {
 #		try_files $uri $uri/ =404;
 #	}
 #}
+
+
+ -================-
+-= InfluxDB setup =-
+ -================-
+
+# Start the influxdb server
+$:> sudo /etc/init.d/influxdb start
+
+Point your browser to http://<your-host>:8083 # <your-host> is the domain associated with the server you install influxdb on
+
+Enter the username 'root' and password 'root' and click Connect.
+
+Create a database named 'cenergy_insights'
+
+
+ -===============-
+-= MongoDB setup =-
+ -===============-
+
+$:> mongo
+> use cenergy_insights
+> exit
+
+# Within the nginx defaut configuration file, uncomment the location definition for /demo_data/generate and save the file.
+# Restart nginx using "service nginx restart" the open http://<your-host>/demo_data/generate in your web. The page should
+# how True as the result.
+
+
+ -=================-
+-= Demo start|stop =-
+ -=================-
+
+# Start flask app
+start cenergy_insights
+
+# Stop flask app
+stop cenergy_insights
+
+# Start celery tasks
+$:> cd /opt/code/cenergy_insights
+$:> celery -A app.celery worker -P gevent &
+$:> celery -A app.celery beat &
+
+# Stop celery tasks (will way for queued tasks to complete)
+$:> ps auxww | grep 'celery worker' | awk '{print $2}' | xargs kill
+$:> ps auxww | grep 'celery beat' | awk '{print $2}' | xargs kill
+
+# If you want the celery tasks to stop immediately
+$:> ps auxww | grep 'celery worker' | awk '{print $2}' | xargs kill -9
+$:> ps auxww | grep 'celery beat' | awk '{print $2}' | xargs kill -9
