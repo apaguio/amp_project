@@ -73,7 +73,7 @@ def consume_a8810_data():
             return ('FAILURE', 406, [])
     else:
         data = request.get_data()
-        return ('SUCCESS'¸ 200, [])
+        return ('SUCCESS', 200, [])
 
 #if __name__ == '__main__':
 #    pass
