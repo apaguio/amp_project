@@ -41,7 +41,7 @@ def log_data_received(request):
     compressed_data = StringIO.StringIO(logfile.read())
     uncompressed_data = gzip.GzipFile(fileobj=compressed_data, mode='rb')
     
-    data = {'name': device_address, 'columns': ['time', 'P', 'L1_PF', 'L1_V'], 'points': []}
+    data = {'name': str(int(device_address)), 'columns': ['time', 'P', 'L1_PF', 'L1_V'], 'points': []}
     
     for row in unicode_csv_reader(uncompressed_data.read()):
         utc_reading = datetime.strptime(row[0].replace("'", ""), '%Y-%m-%d %H:%M:%S')
