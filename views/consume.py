@@ -63,17 +63,17 @@ def consume_a8810_data():
             data = request.get_data()
             if request.form['PASSWORD'] in VALID_PASSWORDS:
                 log_data_received(request)
-                return 'SUCCESS'
+                return ('SUCCESS', 200, [])
             else:
                 raise Exception('Password not found.')
         except Exception as ex:
             f = open('/tmp/a8810_error.txt', 'a')
             f.write(str(ex))
             f.close()
-            return 'FAILURE'
+            return ('FAILURE', 406, [])
     else:
         data = request.get_data()
-        return 'SUCCESS'
+        return ('SUCCESS'¸ 200, [])
 
 #if __name__ == '__main__':
 #    pass
