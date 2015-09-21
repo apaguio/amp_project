@@ -17,13 +17,13 @@ SUCCESS = """<html>
 <body>
 SUCCESS
 </body>
-<html>"""
+</html>"""
 
 FAILURE = """<html>
 <body>
 FAILURE
 </body>
-<html>"""
+</html>"""
 
 consume_app = Blueprint('consume_app', __name__)
 
