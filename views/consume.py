@@ -56,6 +56,10 @@ def log_data_received(request):
     data = {'name': str(int(device_address)), 'columns': ['time', 'P', 'L1_PF', 'L1_V'], 'points': []}
     
     for row in unicode_csv_reader(uncompressed_data.read()):
+        # NOTE: If the reading does not contain the required data points ("Total Net Instantaneous Real Power", "Total Power Factor"
+        #       or "Voltage, Phase A - N"), ignore the reading and continue processing the log
+        if row[14] == u'' or row[17] == u'' or row[70] == u'':
+            continue
         utc_reading = datetime.strptime(row[0].replace("'", ""), '%Y-%m-%d %H:%M:%S')
         timestamp = int((utc_reading - datetime(1970, 1, 1)).total_seconds()) # save points in db with UTC timestamps                    
         #power = long(float(row[14])) * 1000 # converted data point "Total Net Instantaneous Real Power" to watts like EKM meters provide
@@ -67,7 +71,9 @@ def log_data_received(request):
         point = [timestamp, power, power_factor, voltage]
         data['points'].append(point)            
     
-    influxdb.write_points([data])
+    # NOTE: Only write to the database if there are points extracted from the log
+    if len(data['points']) > 0:
+        influxdb.write_points([data])
 
 @consume_app.route('/consume', methods=['GET', 'POST'])
 def consume_a8810_data():
