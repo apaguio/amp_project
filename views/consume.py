@@ -58,9 +58,12 @@ def log_data_received(request):
     for row in unicode_csv_reader(uncompressed_data.read()):
         utc_reading = datetime.strptime(row[0].replace("'", ""), '%Y-%m-%d %H:%M:%S')
         timestamp = int((utc_reading - datetime(1970, 1, 1)).total_seconds()) # save points in db with UTC timestamps                    
-        power = long(float(row[14])) * 1000 # converted data point "Total Net Instantaneous Real Power" to watts like EKM meters provide
+        #power = long(float(row[14])) * 1000 # converted data point "Total Net Instantaneous Real Power" to watts like EKM meters provide
+        #power_factor = float(row[17]) # data point "Total Power Factor"
+        #voltage = int(float(row[70])) # data point "Voltage, Phase A - N"
+        power = float(row[14]) # data point "Total Net Instantaneous Real Power"
         power_factor = float(row[17]) # data point "Total Power Factor"
-        voltage = int(float(row[70])) # data point "Voltage, Phase A - N"
+        voltage = float(row[70]) # data point "Voltage, Phase A - N"
         point = [timestamp, power, power_factor, voltage]
         data['points'].append(point)            
     
