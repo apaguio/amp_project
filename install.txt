@@ -189,7 +189,10 @@ server {
  -================-
 
 # Start the influxdb server
-$:> sudo /etc/init.d/influxdb start
+$:> start influxdb
+
+# To stop the influxdb server
+$:> stop influxdb
 
 Point your browser to http://<your-host>:8083 # <your-host> is the domain associated with the server you install influxdb on
 
@@ -208,7 +211,7 @@ $:> mongo
 
 # Within the nginx defaut configuration file, uncomment the location definition for /demo_data/generate and save the file.
 # Restart nginx using "service nginx restart" the open http://<your-host>/demo_data/generate in your web. The page should
-# how True as the result.
+# show True as the result.
 
 
  -=================-
