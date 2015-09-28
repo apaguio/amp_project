@@ -1,0 +1,135 @@
+When a 2-meter setup is detected (for solar, load and utility), only 2 of the
+3 meters are specified in the settings screen (to be added), the missing
+meter can be calculated using the following formulas:
+
+
+utility meter readings = load meter readings - solar meter readings
+
+load meter readings = solar meter readings + utility meter readings
+
+solar meter readings = load meter readings - utility meter readings
+
+
+A possible solution would be the following:
+
+-= consume.py view changes =-
+
+When building the data structure to save to influxdb, the value of the 'name'
+key should be a string combining '<serial number>_<meter ID>' where
+<serial number> comes from the form variable request.form['SERIALNUMBER'] and
+<meter ID> comes from the meter id embedded in the log file name.
+
+-= MongoDB Changes =-
+
+In Customer class ...
+
+Remove the following fields:
+
+facility
+solar
+
+Add the following fields:
+
+load = mongodb.StringField()
+solar = mongodb.StringField()
+utility = mongodb.StringField()
+logger_serial_number = mongodb.StringField()
+logger_password = mongodb.StringField()
+
+-= Settings page =-
+
+Add fields to store data for the new Customer fields added above.
+
+-= New celery task =-
+
+#
+# WARNING !!! PSEUDO CODE BELOW !!!
+#
+@celery.task(name='tasks.one.minute.compute.missing.meter')
+def compute_missing_meter():
+    customers = db.Customer.object()
+    for customer in customers:
+        solar_meter_missing = False
+        load_meter_missing = False
+        utility_meter_missing = False
+
+        # find missing meter
+        if len(customer.solar.strip()) == 0:
+            solar_meter_missing = True
+        if len(customer.load.strip()) == 0:
+            load_meter_missing = True
+        if len(customer.utility.strip()) == 0:
+            utility_meter_missing = True
+    
+        if not solar_meter_missing and not load_meter_missing and not utility_meter_missing:
+            # This customer has all three meters defined so proceed with the next customer
+            continue
+        
+        data = {'name': customer.logger_serial_number + '_missing_meter'), 'columns': ['time', 'P', 'L1_PF', 'L1_V'], 'points': []}
+
+        if solar_meter_missing:
+        
+            load_query = 'select * from "%s" where time > now() - 1m;' % (customer.logger_serial_number + '_' + customer.load, )
+            load_result = influxdb.query(load_query)
+            load_points = [record for record in load_result]
+
+            utility_query = 'select * from "%s" where time > now() - 1m;' % (customer.logger_serial_number + '_' + customer.utility, )
+            utility_result = influxdb.query(utility_query)
+            utility_points = [record for record in utility_result]
+
+            print 'number of load ', len(load_points), 'number of utility ', ĺen(utility_points)
+
+            # TODO: solar meter readings = load meter readings - utility meter readings
+            for i, reading in enumerate(load_points):
+                computed_timestamp = reading[0]
+                power = float(reading[1]) - float(utility_points[i][1]) # data point "Total Net Instantaneous Real Power"
+                power_factor = float(reading[2]) - float(utility_points[i][2]) # data point "Total Power Factor"
+                voltage = float(reading[3]) - float(utility_points[i][3]) # data point "Voltage, Phase A - N"
+                point = [computed_timestamp, power, power_factor, voltage]
+                data['points'].append(point)            
+
+        if load_meter_missing:
+        
+            solar_query = 'select * from "%s" where time > now() - 1m;' % (customer.logger_serial_number + '_' + customer.solar, )
+            solar_result = influxdb.query(solar_query)
+            solar_points = [record for record in solar_result]
+
+            utility_query = 'select * from "%s" where time > now() - 1m;' % (customer.logger_serial_number + '_' + customer.utility, )
+            utility_result = influxdb.query(utility_query)
+            utility_points = [record for record in utility_result]
+
+            print 'number of solar ', len(solar_points), 'number of utility ', ĺen(utility_points)
+
+            # TODO: load meter readings = solar meter readings + utility meter readings
+            for i, reading in enumerate(solar_points):
+                computed_timestamp = reading[0]
+                power = float(reading[1]) + float(utility_points[i][1]) # data point "Total Net Instantaneous Real Power"
+                power_factor = float(reading[2]) + float(utility_points[i][2]) # data point "Total Power Factor"
+                voltage = float(reading[3]) + float(utility_points[i][3]) # data point "Voltage, Phase A - N"
+                point = [computed_timestamp, power, power_factor, voltage]
+                data['points'].append(point)            
+
+        if utility_meter_missing:
+        
+            load_query = 'select * from "%s" where time > now() - 1m;' % (customer.logger_serial_number + '_' + customer.load, )
+            load_result = influxdb.query(load_query)
+            load_points = [record for record in load_result]
+
+            solar_query = 'select * from "%s" where time > now() - 1m;' % (customer.logger_serial_number + '_' + customer.solar, )
+            solar_result = influxdb.query(solar_query)
+            solar_points = [record for record in solar_result]
+
+            print 'number of load ', len(load_points), 'number of solar ', ĺen(solar_points)
+
+            # TODO: utility meter readings = load meter readings - solar meter readings
+            for i, reading in enumerate(load_points):
+                computed_timestamp = reading[0]
+                power = float(reading[1]) - float(solar_points[i][1]) # data point "Total Net Instantaneous Real Power"
+                power_factor = float(reading[2]) - float(solar_points[i][2]) # data point "Total Power Factor"
+                voltage = float(reading[3]) - float(solar_points[i][3]) # data point "Voltage, Phase A - N"
+                point = [computed_timestamp, power, power_factor, voltage]
+                data['points'].append(point)            
+
+        # NOTE: Only write to the database if there are points computed for the missing meter
+        if len(data['points']) > 0:
+            influxdb.write_points([data])
