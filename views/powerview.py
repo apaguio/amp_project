@@ -22,8 +22,8 @@ def powerview_points():
     params = request.args
     duration = params.get('timeframe', '10m')
     resolution = params.get('resolution', None)
-    consumption = powerview.get_ekm_data(SOLAR_METER_ID, duration, resolution)
-    solar = powerview.get_ekm_data(CONSUMPTION_METER_ID, duration, resolution)
+    consumption = powerview.get_ekm_data(CONSUMPTION_METER_ID, duration, resolution)
+    solar = powerview.get_ekm_data(SOLAR_METER_ID, duration, resolution)
     solarLen = len(solar)
     for i, d in enumerate(consumption):
         if i < solarLen:
@@ -36,19 +36,19 @@ def powerview_points():
 @powerview_app.route("/powerview/current_demand", methods=["GET"])
 @login_required
 def get_current_demand():
-    result = powerview.get_current_demand(SOLAR_METER_ID, CONSUMPTION_METER_ID)
+    result = powerview.get_current_demand(CONSUMPTION_METER_ID, SOLAR_METER_ID)
     return r.success(result)
 
 @powerview_app.route("/powerview/max_peak_demand", methods=["GET"])
 @login_required
 def get_max_peak_demand():
-    result = powerview.get_max_peak_demand(SOLAR_METER_ID)
+    result = powerview.get_max_peak_demand(CONSUMPTION_METER_ID)
     return r.success(result)
 
 @powerview_app.route("/powerview/max_demand_anytime", methods=["GET"])
 @login_required
 def get_max_demand_anytime():
-    result = powerview.get_max_demand_anytime(SOLAR_METER_ID)
+    result = powerview.get_max_demand_anytime(CONSUMPTION_METER_ID)
     return r.success(result)
 
 @powerview_app.route("/powerview", methods=["GET"])
