@@ -1,3 +1,6 @@
+This document assumes that multiple AcquiSuites are configured to upload to
+the same server.
+
 When a 2-meter setup is detected (for solar, load and utility), only 2 of the
 3 meters are specified in the settings screen (to be added), the missing
 meter can be calculated using the following formulas:
@@ -12,18 +15,11 @@ solar meter readings = load meter readings - utility meter readings
 
 A possible solution would be the following:
 
--= consume.py view changes =-
-
-When building the data structure to save to influxdb, the value of the 'name'
-key should be a string combining '<serial number>_<meter ID>' where
-<serial number> comes from the form variable request.form['SERIALNUMBER'] and
-<meter ID> comes from the meter id embedded in the log file name.
-
 -= MongoDB Changes =-
 
 In Customer class ...
 
-Remove the following fields:
+Change the following fields to mongodb.StringField():
 
 facility
 solar
@@ -31,14 +27,52 @@ solar
 Add the following fields:
 
 load = mongodb.StringField()
-solar = mongodb.StringField()
-utility = mongodb.StringField()
 logger_serial_number = mongodb.StringField()
 logger_password = mongodb.StringField()
 
 -= Settings page =-
 
-Add fields to store data for the new Customer fields added above.
+Add fields to store data for the following in the Customer fields above.
+
+serial number (AcquiSuite) => stored in logger_serial_number
+password (AcquiSuite) => stored in logger_password
+facility (meter ID) => stored in facility
+load (meter ID) => stored in load
+solar (meter ID) => stored in solar
+
+-= consume.py view changes =-
+
+Each AcquiSuite transmits form variables for the serial number and the password
+along with the gzipped log data.
+
+When building the data structure to save to influxdb, the value of the 'name'
+key should be a string combining '<serial number>_<meter ID>' where
+<serial number> comes from the form variable request.form['SERIALNUMBER'] and
+<meter ID> comes from the meter id embedded in the log file name. Within
+consume.py, the meter ID is already extracted and stored in a variable called
+device_address
+To prevent an unauthorized AcquiSuite from transmitting data to the server,
+along with the serial number, the password obtained from the form variable
+request.form('PASSWORD') must match what is defined in the Cenergy Insights'
+settings page (fields to be added at some point).
+
+-= overall changes =-
+
+There is a module called meter_settings.py which contains the hardcoded meter
+IDs in use now. This needs to be removed and every file relying on this module
+changed. Celery tasks and flask views should obtain the meter IDs from mongodb.
+
+All of the existing celery tasks need to be altered to work with the meters for
+all customers. For each celery task in tasks.py, the meter ID parameter(s) should
+be removed as well as the enties in settings.py then add code to each task to
+query Customers within mongodb to get the meter IDs in '<serial number>_<meter ID>'
+format to use where <serial_number> is the logger_serial_number field and
+<meter_id> can be the facility, load or solar field which ever is needed for the
+task to work.
+
+What I cannot describe are the changes needed on the front-end.
+
+Finally there is the celery task to compute the readings for the missing meter.
 
 -= New celery task =-
 
